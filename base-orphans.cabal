@@ -19,7 +19,7 @@ cabal-version:       >=1.8
 extra-source-files:  CHANGES.markdown, README.markdown
 description:         TODO: Better description
 
-source-repository: head
+source-repository head
   type:                git
   location:            https://github.com/haskell-compat/base-orphans
 
