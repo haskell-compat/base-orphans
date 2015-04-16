@@ -7,7 +7,7 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module GHC.Generics.Orphans () where
 
-#if !MIN_VERSION_base(4,7,0)
+#if __GLASGOW_HASKELL__ >= 702 && !MIN_VERSION_base(4,7,0)
 import           GHC.Read
 import           GHC.Generics
 import qualified Text.ParserCombinators.ReadPrec as ReadPrec

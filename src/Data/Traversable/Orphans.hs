@@ -4,9 +4,7 @@ module Data.Traversable.Orphans () where
 
 #if !MIN_VERSION_base(4,7,0)
 import Control.Applicative (Const(..), pure, (<$>))
-import Data.Either (Either(..))
 import Data.Foldable.Orphans ()
-import Data.Function (($))
 import Data.Traversable
 
 instance Traversable (Either a) where

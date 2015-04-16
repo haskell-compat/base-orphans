@@ -3,10 +3,12 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Control.Applicative.Orphans () where
 
+#if !MIN_VERSION_base(4,7,0)
+import Data.Monoid
+#endif
+
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative
-import Data.Monoid
-import Prelude
 #endif
 
 #if !MIN_VERSION_base(4,7,0)

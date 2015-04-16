@@ -4,7 +4,6 @@ module Data.Foldable.Orphans () where
 
 #if !MIN_VERSION_base(4,7,0)
 import Control.Applicative (Const(..))
-import Data.Either (Either(..))
 import Data.Foldable
 import Data.Monoid (mempty)
 
