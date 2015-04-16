@@ -17,23 +17,42 @@ category:            Compatibility
 build-type:          Simple
 cabal-version:       >=1.8
 extra-source-files:  CHANGES.markdown, README.markdown
-description:         TODO: Better description
+description:         @base-orphans@ defines orphan instances that mimic instances
+                     available in later versions of @base@ to a wider (older) range
+                     of compilers. @base-orphans@ does not export anything except
+                     the orphan instances themselves, making it a leaner dependency
+                     than @<http://hackage.haskell.org/package/base-compat base-compat>@.
+                     .
+                     See the README for what instances are covered:
+                     <https://github.com/haskell-compat/base-orphans#readme>
 
 source-repository head
-  type:                git
-  location:            https://github.com/haskell-compat/base-orphans
+  type:              git
+  location:          https://github.com/haskell-compat/base-orphans
 
 library
   ghc-options:
       -Wall
   build-depends:
       base == 4.*
+    , ghc-prim
   hs-source-dirs:
       src
   
   exposed-modules:
       BaseOrphans
-  -- other-modules:
+  other-modules:
+      Control.Applicative.Orphans
+      Control.Exception.Orphans
+      Data.Bits.Orphans
+      Data.Foldable.Orphans
+      Data.Monoid.Orphans
+      Data.Ord.Orphans
+      Data.Traversable.Orphans
+      Data.Version.Orphans
+      Foreign.Storable.Orphans
+      GHC.Generics.Orphans
+      System.Console.GetOpt.Orphans
 
 test-suite spec
   type:
@@ -48,4 +67,3 @@ test-suite spec
       base > 4.0
     , base-orphans
     , hspec >= 1.8
-    , QuickCheck
