@@ -1,8 +1,8 @@
 module Control.Exception.OrphansSpec (main, spec) where
 
 import Test.Hspec
-import BaseOrphans ()
 import Control.Exception
+import Data.Orphans ()
 
 main :: IO ()
 main = hspec spec

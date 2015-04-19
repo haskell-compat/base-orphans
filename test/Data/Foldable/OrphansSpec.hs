@@ -2,10 +2,10 @@ module Data.Foldable.OrphansSpec (main, spec) where
 
 import Test.Hspec
 
-import BaseOrphans ()
 import Control.Applicative
 import Data.Foldable as F
 import Data.Monoid
+import Data.Orphans ()
 import Prelude
 
 main :: IO ()

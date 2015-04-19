@@ -1,8 +1,8 @@
 module Foreign.Storable.OrphansSpec (main, spec) where
 
 import Test.Hspec
-import BaseOrphans ()
 import Data.Complex
+import Data.Orphans ()
 import Data.Ratio
 import Foreign.Storable
 

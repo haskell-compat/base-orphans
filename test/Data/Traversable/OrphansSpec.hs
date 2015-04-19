@@ -2,8 +2,8 @@ module Data.Traversable.OrphansSpec (main, spec) where
 
 import Test.Hspec
 
-import BaseOrphans ()
 import Control.Applicative
+import Data.Orphans ()
 import Data.Traversable
 import Prelude
 

@@ -1,8 +1,8 @@
 module Control.Applicative.OrphansSpec (main, spec) where
 
 import Test.Hspec
-import BaseOrphans ()
 import Control.Applicative
+import Data.Orphans ()
 import Data.Monoid
 import Prelude
 
