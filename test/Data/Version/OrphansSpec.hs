@@ -6,8 +6,8 @@ module Data.Version.OrphansSpec (main, spec) where
 
 import Test.Hspec
 
-import BaseOrphans ()
 import Data.Data
+import Data.Orphans ()
 import Data.Version
 
 main :: IO ()

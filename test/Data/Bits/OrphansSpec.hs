@@ -4,8 +4,8 @@ module Data.Bits.OrphansSpec (main, spec) where
 import Test.Hspec
 
 #if MIN_VERSION_base(4,6,0)
-import BaseOrphans ()
 import Data.Bits
+import Data.Orphans ()
 #endif
 
 main :: IO ()

@@ -1,8 +1,8 @@
 module Data.Monoid.OrphansSpec (main, spec) where
 
 import Test.Hspec
-import BaseOrphans ()
 import Data.Monoid
+import Data.Orphans ()
 
 main :: IO ()
 main = hspec spec

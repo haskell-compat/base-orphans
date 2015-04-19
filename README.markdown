@@ -6,7 +6,7 @@
 
 ## Usage
 
-To use `base-orphans`, simply `import BaseOrphans ()`.
+To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## What is covered
 
@@ -25,6 +25,7 @@ To use `base-orphans`, simply `import BaseOrphans ()`.
  * `Num` instance for `Sum` and `Product`
  * `Storable` instance for `Complex` and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`
+ * `Typeable` instance for most data types and typeclasses (when possible)
 
 ## Supported versions of GHC/`base`
 

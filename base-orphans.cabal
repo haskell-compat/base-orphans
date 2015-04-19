@@ -40,7 +40,7 @@ library
       src
   
   exposed-modules:
-      BaseOrphans
+      Data.Orphans
   other-modules:
       Control.Applicative.Orphans
       Control.Exception.Orphans
@@ -49,6 +49,7 @@ library
       Data.Monoid.Orphans
       Data.Ord.Orphans
       Data.Traversable.Orphans
+      Data.Typeable.Orphans
       Data.Version.Orphans
       Foreign.Storable.Orphans
       GHC.Generics.Orphans
