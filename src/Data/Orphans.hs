@@ -31,7 +31,6 @@ import GHC.IO.Encoding.Failure
 
 #if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
 import GHC.Generics as Generics
-import Text.Read.Lex hiding (lex)
 # endif
 
 #if MIN_VERSION_base(4,5,0) && __GLASGOW_HASKELL__ < 710
@@ -47,11 +46,12 @@ import GHC.TypeLits
 
 #if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
 import Control.Concurrent.QSem
+import Text.Read.Lex (Number)
 # endif
 
 #if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
 import Control.Arrow
-import Control.Category
+import Control.Category hiding ((.))
 import Control.Monad
 import Control.Monad.Fix
 import Control.Monad.Zip
