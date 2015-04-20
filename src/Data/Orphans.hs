@@ -31,7 +31,7 @@ import GHC.IO.Encoding.Failure
 
 #if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
 import GHC.Generics as Generics
-import Text.Read.Lex
+import Text.Read.Lex hiding (lex)
 # endif
 
 #if MIN_VERSION_base(4,5,0) && __GLASGOW_HASKELL__ < 710
@@ -43,10 +43,6 @@ import GHC.Stats
 import Data.Bits
 import Data.Ord
 import GHC.TypeLits
-#endif
-
-#if __GLASGOW_HASKELL__ >= 702 && !(MIN_VERSION_base(4,7,0))
-import GHC.Read
 #endif
 
 #if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
