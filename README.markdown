@@ -10,7 +10,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## What is covered
 
- * Added `Eq` and `Ord` instances for `Contro.Exception.ErrorCall`
+ * Added `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * Added `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
  * Added `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
  * Added `Read` and `Show` instances for `Down`
