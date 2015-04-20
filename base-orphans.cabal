@@ -38,22 +38,8 @@ library
     , ghc-prim
   hs-source-dirs:
       src
-  
   exposed-modules:
       Data.Orphans
-  other-modules:
-      Control.Applicative.Orphans
-      Control.Exception.Orphans
-      Data.Bits.Orphans
-      Data.Foldable.Orphans
-      Data.Monoid.Orphans
-      Data.Ord.Orphans
-      Data.Traversable.Orphans
-      Data.Typeable.Orphans
-      Data.Version.Orphans
-      Foreign.Storable.Orphans
-      GHC.Generics.Orphans
-      System.Console.GetOpt.Orphans
 
 test-suite spec
   type:
