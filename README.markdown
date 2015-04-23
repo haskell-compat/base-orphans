@@ -2,7 +2,10 @@
 
 ## Scope
 
-`base-orphans` defines orphan instances that mimic instances available in later versions of `base` to a wider (older) range of compilers. `base-orphans` does not export anything except the orphan instances themselves, making it a leaner dependency than `base-compat`.
+`base-orphans` defines orphan instances that mimic instances available in later
+versions of `base` to a wider (older) range of compilers. `base-orphans` does
+not export anything except the orphan instances themselves and complements
+[base-compat](http://hackage.haskell.org/package/base-compat).
 
 ## Usage
 
