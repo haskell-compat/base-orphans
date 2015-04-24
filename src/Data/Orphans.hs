@@ -24,9 +24,12 @@ import Data.Unique
 # endif
 
 #if MIN_VERSION_base(4,4,0) && __GLASGOW_HASKELL__ < 710
-import GHC.Event
 import GHC.Fingerprint
 import GHC.IO.Encoding.Failure
+
+# if !defined(mingw32_HOST_OS) && !defined(__GHCJS__)
+import GHC.Event
+# endif
 #endif
 
 #if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
@@ -95,6 +98,10 @@ import System.IO.Error
 import Text.ParserCombinators.ReadP
 import Text.ParserCombinators.ReadPrec as ReadPrec
 import Text.Read
+
+# if defined(mingw32_HOST_OS)
+import GHC.IO.Encoding.CodePage.Table
+# endif
 #endif
 
 -------------------------------------------------------------------------------
@@ -388,7 +395,13 @@ deriving instance Typeable  TextEncoding
 deriving instance Typeable  ThreadStatus
 deriving instance Typeable1 ZipList
 
-#if MIN_VERSION_base(4,2,0) && !(MIN_VERSION_base(4,3,0))
+# if defined(mingw32_HOST_OS)
+deriving instance Typeable  CodePageArrays
+deriving instance Typeable2 CompactArray
+deriving instance Typeable1 ConvArray
+# endif
+
+# if MIN_VERSION_base(4,2,0) && !(MIN_VERSION_base(4,3,0))
 deriving instance Typeable  Unique
 # endif
 
@@ -399,11 +412,14 @@ deriving instance Typeable  MaskingState
 # if MIN_VERSION_base(4,4,0)
 deriving instance Typeable  CodingFailureMode
 deriving instance Typeable  CodingProgress
+deriving instance Typeable  Fingerprint
+
+#  if !defined(mingw32_HOST_OS) && !defined(__GHCJS__)
 deriving instance Typeable  Event
 deriving instance Typeable  EventManager
 deriving instance Typeable  FdKey
-deriving instance Typeable  Fingerprint
 deriving instance Typeable  TimeoutKey
+#  endif
 # endif
 
 # if __GLASGOW_HASKELL__ >= 702
