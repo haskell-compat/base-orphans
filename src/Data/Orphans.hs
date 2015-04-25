@@ -20,9 +20,8 @@ To use them, simply @import Data.Orphans ()@.
 module Data.Orphans () where
 
 #if !(MIN_VERSION_base(4,4,0))
-import Control.Concurrent.Chan
 import Control.Concurrent.SampleVar
-import Control.Monad.ST as Safe
+import Control.Monad.ST as Strict
 import Data.List
 #endif
 
@@ -57,15 +56,11 @@ import GHC.TypeLits
 #endif
 
 #if !(MIN_VERSION_base(4,6,0))
-import Control.Monad (ap)
-#endif
-
-#if MIN_VERSION_base(4,7,0)
-import Control.Concurrent.QSem
-import Control.Concurrent.QSemN
+import Control.Monad (ap, mplus, mzero)
 #endif
 
 #if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
+import Control.Concurrent.QSem
 import Data.Proxy
 import Text.Read.Lex (Number)
 # endif
@@ -108,9 +103,9 @@ import Foreign.Storable
 import GHC.Conc
 import GHC.Desugar
 import GHC.IO.Buffer
-import GHC.IO.Device
+import GHC.IO.Device (IODevice, IODeviceType, RawIO, SeekMode)
 import GHC.IO.Encoding
-import GHC.IO.Types (BufferList, HandleType)
+import GHC.IO.Handle.Types (BufferList, HandleType)
 import GHC.ST
 import System.Console.GetOpt
 import System.IO
@@ -127,9 +122,7 @@ import GHC.IO.Encoding.CodePage.Table
 -------------------------------------------------------------------------------
 
 #if !(MIN_VERSION_base(4,4,0))
-deriving instance Eq (Chan a)
-
-instance HasResolution a => Read (Fixed) where
+instance HasResolution a => Read (Fixed a) where
     readsPrec _ = readsFixed
 
 readsFixed :: (HasResolution a) => ReadS (Fixed a)
@@ -160,17 +153,6 @@ instance Applicative (Strict.ST s) where
 instance Applicative (Lazy.ST s) where
     pure  = return
     (<*>) = ap
-#endif
-
-#if !(MIN_VERSION_base(4,4,0)) || MIN_VERSION_base(4,7,0)
--- These instance were introduced in base-4.4.0.0, but seem to have been removed
--- (accidentally?) in base-4.7.0.0, hence the bizarre CPP bounds.
-deriving instance Eq QSem
-deriving instance Eq QSemN
-
-# if __GLASGOW_HASKELL__ < 710
-deriving instance Typeable QSem
-# endif
 #endif
 
 -- These instances are only valid if Bits isn't a subclass of Num (as Bool is
@@ -477,7 +459,7 @@ deriving instance Typeable1 Product
 deriving instance Typeable1 ReadP
 deriving instance Typeable1 ReadPrec
 deriving instance Typeable  SeekMode
-deriving instance Typeable2 ST
+deriving instance Typeable2 Lazy.ST
 deriving instance Typeable2 STret
 deriving instance Typeable1 Sum
 deriving instance Typeable  TextEncoding
@@ -546,6 +528,8 @@ deriving instance Typeable KProxy
 deriving instance Typeable Number
 deriving instance Typeable SomeNat
 deriving instance Typeable SomeSymbol
+deriving instance Typeable QSem -- This instance seems to have been removed
+                                -- (accidentally?) in base-4.7.0.0
 # endif
 
 # if __GLASGOW_HASKELL__ >= 708

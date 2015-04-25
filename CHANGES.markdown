@@ -2,7 +2,6 @@
  - Drop GHC 6.12 (and `base-4.2.0.0`) compatibility
  - Fix Windows, GHCJS build
  - `Read` instance for `Fixed`
- - `Eq` instances for `Chan`, `QSem`, and `QSemN`
  - `Applicative` instances for strict and lazy `ST`
  - `Typeable` instance for `SampleVar`
  - `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
