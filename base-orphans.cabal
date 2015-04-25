@@ -55,3 +55,4 @@ test-suite spec
       base >= 4.3
     , base-orphans
     , hspec >= 1.8
+    , QuickCheck

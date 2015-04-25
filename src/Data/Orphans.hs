@@ -103,7 +103,7 @@ import Foreign.Storable
 import GHC.Conc
 import GHC.Desugar
 import GHC.IO.Buffer
-import GHC.IO.Device (IODevice, IODeviceType, RawIO, SeekMode)
+import GHC.IO.Device (IODeviceType)
 import GHC.IO.Encoding
 import GHC.IO.Handle.Types (BufferList, HandleType)
 import GHC.ST
