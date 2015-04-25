@@ -7,3 +7,5 @@
  - `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
  - `Typeable` instance for `KProxy`
  - `Typeable` instances for more data types in `GHC.`-prefixed modules
+ - `Generic` instances for `Arity`, `Associativity`, and `Fixity` from
+   the `GHC.Generics` module

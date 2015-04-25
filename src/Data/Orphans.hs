@@ -272,9 +272,17 @@ instance Functor ArgDescr where
 -- Although DeriveGeneric has been around since GHC 7.2, various bugs cause
 -- the standalone-derived code below to fail to compile unless a fairly
 -- recent version of GHC is used.
-# if __GLASGOW_HASKELL__ >= 706
+# if __GLASGOW_HASKELL__ >= 704
 deriving instance Generic All
 deriving instance Generic Any
+deriving instance Generic Arity
+deriving instance Generic Associativity
+deriving instance Generic Generics.Fixity
+
+deriving instance Generic (U1 p)
+# endif
+
+# if __GLASGOW_HASKELL__ >= 706
 deriving instance Generic (Const a b)
 deriving instance Generic (Dual a)
 deriving instance Generic (Endo a)
@@ -296,7 +304,6 @@ deriving instance Generic1 (WrappedArrow a b)
 deriving instance Generic1 (WrappedMonad m)
 deriving instance Generic1 ZipList
 
-deriving instance Generic (U1 p)
 deriving instance Generic (Par1 p)
 deriving instance Generic (Rec1 f p)
 deriving instance Generic (K1 i c p)
