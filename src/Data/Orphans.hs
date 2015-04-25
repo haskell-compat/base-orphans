@@ -19,6 +19,17 @@ To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
 
+#if !(MIN_VERSION_base(4,4,0))
+import Control.Concurrent.Chan
+import Control.Concurrent.SampleVar
+import Control.Monad.ST as Safe
+import Data.List
+#endif
+
+#if !(MIN_VERSION_base(4,4,0)) || (__GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710)
+import Data.Fixed
+#endif
+
 #if MIN_VERSION_base(4,4,0) && __GLASGOW_HASKELL__ < 710
 import GHC.Fingerprint
 import GHC.IO.Encoding.Failure
@@ -40,11 +51,22 @@ import GHC.Stats
 #if MIN_VERSION_base(4,6,0) && __GLASGOW_HASKELL__ < 710
 import Data.Bits
 import Data.Ord
+import GHC.ForeignPtr
+import GHC.GHCi
 import GHC.TypeLits
 #endif
 
-#if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
+#if !(MIN_VERSION_base(4,6,0))
+import Control.Monad (ap)
+#endif
+
+#if MIN_VERSION_base(4,7,0)
 import Control.Concurrent.QSem
+import Control.Concurrent.QSemN
+#endif
+
+#if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
+import Data.Proxy
 import Text.Read.Lex (Number)
 # endif
 
@@ -54,7 +76,6 @@ import Control.Category hiding ((.))
 import Control.Monad
 import Control.Monad.Fix
 import Control.Monad.Zip
-import Data.Fixed
 import Data.Ix
 import Data.Type.Coercion
 import Data.Type.Equality
@@ -74,7 +95,7 @@ import GHC.Real (Ratio(..), (%))
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
 import Control.Exception
-import Control.Monad.ST.Lazy
+import Control.Monad.ST.Lazy as Lazy
 import Data.Char
 import Data.Data as Data
 import Data.Foldable
@@ -85,9 +106,12 @@ import Foreign.C.Types
 import Foreign.Marshal.Pool
 import Foreign.Storable
 import GHC.Conc
+import GHC.Desugar
 import GHC.IO.Buffer
 import GHC.IO.Device
 import GHC.IO.Encoding
+import GHC.IO.Types (BufferList, HandleType)
+import GHC.ST
 import System.Console.GetOpt
 import System.IO
 import System.IO.Error
@@ -101,6 +125,53 @@ import GHC.IO.Encoding.CodePage.Table
 #endif
 
 -------------------------------------------------------------------------------
+
+#if !(MIN_VERSION_base(4,4,0))
+deriving instance Eq (Chan a)
+
+instance HasResolution a => Read (Fixed) where
+    readsPrec _ = readsFixed
+
+readsFixed :: (HasResolution a) => ReadS (Fixed a)
+readsFixed = readsSigned
+    where readsSigned ('-' : xs) = [ (negate x, rest)
+                                   | (x, rest) <- readsUnsigned xs ]
+          readsSigned xs = readsUnsigned xs
+          readsUnsigned xs = case span isDigit xs of
+                             ([], _) -> []
+                             (is, xs') ->
+                                 let i = fromInteger (read is)
+                                 in case xs' of
+                                    '.' : xs'' ->
+                                        case span isDigit xs'' of
+                                        ([], _) -> []
+                                        (js, xs''') ->
+                                            let j = fromInteger (read js)
+                                                l = genericLength js :: Integer
+                                            in [(i + (j / (10 ^ l)), xs''')]
+                                    _ -> [(i, xs')]
+
+deriving instance Typeable1 SampleVar
+
+instance Applicative (Strict.ST s) where
+    pure  = return
+    (<*>) = ap
+
+instance Applicative (Lazy.ST s) where
+    pure  = return
+    (<*>) = ap
+#endif
+
+#if !(MIN_VERSION_base(4,4,0)) || MIN_VERSION_base(4,7,0)
+-- These instance were introduced in base-4.4.0.0, but seem to have been removed
+-- (accidentally?) in base-4.7.0.0, hence the bizarre CPP bounds.
+deriving instance Eq QSem
+deriving instance Eq QSemN
+
+# if __GLASGOW_HASKELL__ < 710
+deriving instance Typeable QSem
+# endif
+#endif
 
 -- These instances are only valid if Bits isn't a subclass of Num (as Bool is
 -- not a Num instance), which is only true as of base-4.6.0.0 and later.
@@ -134,6 +205,24 @@ instance Bits Bool where
 
 deriving instance Read a => Read (Down a)
 deriving instance Show a => Show (Down a)
+#endif
+
+#if !(MIN_VERSION_base(4,6,0))
+instance Applicative ReadP where
+    pure  = return
+    (<*>) = ap
+
+instance Alternative ReadP where
+    empty = mzero
+    (<|>) = mplus
+
+instance Applicative ReadPrec where
+    pure  = return
+    (<*>) = ap
+
+instance Alternative ReadPrec where
+    empty = mzero
+    (<|>) = mplus
 #endif
 
 #if !(MIN_VERSION_base(4,7,0))
@@ -348,12 +437,14 @@ instance (Storable a, Integral a) => Storable (Ratio a) where
 
 #if __GLASGOW_HASKELL__ < 710
 deriving instance Typeable  All
+deriving instance Typeable  AnnotationWrapper
 deriving instance Typeable1 ArgDescr
 deriving instance Typeable1 ArgOrder
 deriving instance Typeable  Monoid.Any
 deriving instance Typeable  BlockReason
 deriving instance Typeable1 Buffer
 deriving instance Typeable3 BufferCodec
+deriving instance Typeable1 BufferList
 deriving instance Typeable  BufferMode
 deriving instance Typeable  BufferState
 deriving instance Typeable  CFile
@@ -372,6 +463,7 @@ deriving instance Typeable  Data.Fixity
 deriving instance Typeable  GeneralCategory
 deriving instance Typeable  HandlePosn
 deriving instance Typeable1 Handler
+deriving instance Typeable  HandleType
 deriving instance Typeable  IODeviceType
 deriving instance Typeable  IOErrorType
 deriving instance Typeable  IOMode
@@ -386,6 +478,7 @@ deriving instance Typeable1 ReadP
 deriving instance Typeable1 ReadPrec
 deriving instance Typeable  SeekMode
 deriving instance Typeable2 ST
+deriving instance Typeable2 STret
 deriving instance Typeable1 Sum
 deriving instance Typeable  TextEncoding
 deriving instance Typeable  ThreadStatus
@@ -438,7 +531,9 @@ deriving instance Typeable  GCStats
 
 # if MIN_VERSION_base(4,6,0)
 deriving instance Typeable1 Down
+deriving instance Typeable  ForeignPtrContents
 deriving instance Typeable  Nat
+deriving instance Typeable1 NoIO
 deriving instance Typeable  Symbol
 # endif
 
@@ -447,11 +542,10 @@ deriving instance Typeable FieldFormat
 deriving instance Typeable FormatAdjustment
 deriving instance Typeable FormatParse
 deriving instance Typeable FormatSign
+deriving instance Typeable KProxy
 deriving instance Typeable Number
 deriving instance Typeable SomeNat
 deriving instance Typeable SomeSymbol
-deriving instance Typeable QSem -- This instance seems to have been removed
-                                -- (accidentally?) in base-4.7.0.0
 # endif
 
 # if __GLASGOW_HASKELL__ >= 708
@@ -547,6 +641,7 @@ deriving instance Typeable Fractional
 deriving instance Typeable Functor
 deriving instance Typeable Generic
 deriving instance Typeable Generic1
+deriving instance Typeable GHCiSandboxIO
 deriving instance Typeable HasResolution
 deriving instance Typeable HPrintfType
 deriving instance Typeable Integral
