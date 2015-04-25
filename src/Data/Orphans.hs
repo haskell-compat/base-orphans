@@ -19,10 +19,6 @@ To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
 
-#if MIN_VERSION_base(4,2,0) && !(MIN_VERSION_base(4,3,0))
-import Data.Unique
-# endif
-
 #if MIN_VERSION_base(4,4,0) && __GLASGOW_HASKELL__ < 710
 import GHC.Fingerprint
 import GHC.IO.Encoding.Failure
@@ -399,10 +395,6 @@ deriving instance Typeable1 ZipList
 deriving instance Typeable  CodePageArrays
 deriving instance Typeable2 CompactArray
 deriving instance Typeable1 ConvArray
-# endif
-
-# if MIN_VERSION_base(4,2,0) && !(MIN_VERSION_base(4,3,0))
-deriving instance Typeable  Unique
 # endif
 
 # if MIN_VERSION_base(4,3,0)

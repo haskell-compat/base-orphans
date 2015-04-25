@@ -35,7 +35,7 @@ library
   ghc-options:
       -Wall
   build-depends:
-      base == 4.*
+      base >= 4.3
     , ghc-prim
   hs-source-dirs:
       src
@@ -52,6 +52,6 @@ test-suite spec
   main-is:
       Spec.hs
   build-depends:
-      base > 4.0
+      base >= 4.3
     , base-orphans
     , hspec >= 1.8

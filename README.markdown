@@ -48,8 +48,5 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `ghc-7.0.3`  / `base-4.3.1.0`
  * `ghc-7.0.2`  / `base-4.3.1.0`
  * `ghc-7.0.1`  / `base-4.3.0.0`
- * `ghc-6.12.3` / `base-4.2.0.2`
- * `ghc-6.12.2` / `base-4.2.0.1`
- * `ghc-6.12.1` / `base-4.2.0.0`
 
 Patches are welcome; add tests for new code!
