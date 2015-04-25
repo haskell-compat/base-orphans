@@ -9,3 +9,4 @@
  - `Typeable` instances for more data types in `GHC.`-prefixed modules
  - `Generic` instances for `Arity`, `Associativity`, and `Fixity` from
    the `GHC.Generics` module
+ - Corrected the `Generic` instance for `(:*:)` to work around GHC bug #9830

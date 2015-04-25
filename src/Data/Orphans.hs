@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -312,8 +313,29 @@ deriving instance Generic (Rec1 f p)
 deriving instance Generic (K1 i c p)
 deriving instance Generic (M1 i c f p)
 deriving instance Generic ((f :+: g) p)
-deriving instance Generic ((f :*: g) p)
 deriving instance Generic ((f :.: g) p)
+
+-- Due to a GHC bug (https://ghc.haskell.org/trac/ghc/ticket/9830), the derived
+-- Generic instances for infix data constructors will use the wrong
+-- precedence (prior to GHC 7.10).
+-- We'll manually derive a Generic :*: instance to avoid this.
+instance Generic ((f :*: g) p) where
+    type Rep ((f :*: g) p) =
+        D1 D_Product (C1 C_Product (S1 NoSelector (Rec0 (f p))
+                                :*: S1 NoSelector (Rec0 (g p))))
+    from (f :*: g) = M1 (M1 (M1 (K1 f) :*: M1 (K1 g)))
+    to (M1 (M1 (M1 (K1 f) :*: M1 (K1 g)))) = f :*: g
+
+data D_Product
+data C_Product
+
+instance Datatype D_Product where
+    datatypeName _ = ":*:"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C_Product where
+    conName _ = ":*:"
+    conFixity _ = Generics.Infix RightAssociative 6
 # endif
 
 deriving instance Eq (U1 p)
