@@ -5,6 +5,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DeriveFunctor #-}
 
 #if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE DeriveGeneric #-}
@@ -182,18 +183,9 @@ deriving instance Ord a => Ord (ZipList a)
 deriving instance Read a => Read (ZipList a)
 deriving instance Show a => Show (ZipList a)
 
-instance Functor ArgOrder where
-    fmap _ RequireOrder      = RequireOrder
-    fmap _ Permute           = Permute
-    fmap f (ReturnInOrder g) = ReturnInOrder (f . g)
-
-instance Functor OptDescr where
-    fmap f (Option a b argDescr c) = Option a b (fmap f argDescr) c
-
-instance Functor ArgDescr where
-    fmap f (NoArg a)    = NoArg (f a)
-    fmap f (ReqArg g s) = ReqArg (f . g) s
-    fmap f (OptArg g s) = OptArg (f . g) s
+deriving instance Functor ArgOrder
+deriving instance Functor OptDescr
+deriving instance Functor ArgDescr
 #endif
 
 #if __GLASGOW_HASKELL__ >= 702 && !(MIN_VERSION_base(4,7,0))
