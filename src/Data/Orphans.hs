@@ -76,6 +76,7 @@ import Data.Type.Coercion
 import Data.Type.Equality
 import GHC.Exts
 import GHC.IO.BufferedIO
+import GHC.IO.Device (IODevice, RawIO)
 import GHC.IP
 import Text.Printf
 #endif
