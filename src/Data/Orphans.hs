@@ -1,14 +1,17 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE DeriveFunctor #-}
+
+#if __GLASGOW_HASKELL__ >= 704
+{-# LANGUAGE DeriveGeneric #-}
+#endif
 
 #if __GLASGOW_HASKELL__ >= 706
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE PolyKinds #-}
 #endif
 
@@ -19,6 +22,16 @@ Exports orphan instances that mimic instances available in later versions of @ba
 To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
+
+#if !(MIN_VERSION_base(4,4,0))
+import Control.Concurrent.SampleVar
+import Control.Monad.ST as Strict
+import Data.List
+#endif
+
+#if !(MIN_VERSION_base(4,4,0)) || (__GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710)
+import Data.Fixed
+#endif
 
 #if MIN_VERSION_base(4,4,0) && __GLASGOW_HASKELL__ < 710
 import GHC.Fingerprint
@@ -41,11 +54,18 @@ import GHC.Stats
 #if MIN_VERSION_base(4,6,0) && __GLASGOW_HASKELL__ < 710
 import Data.Bits
 import Data.Ord
+import GHC.ForeignPtr
+import GHC.GHCi
 import GHC.TypeLits
+#endif
+
+#if !(MIN_VERSION_base(4,6,0))
+import Control.Monad (ap, mplus, mzero)
 #endif
 
 #if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
 import Control.Concurrent.QSem
+import Data.Proxy
 import Text.Read.Lex (Number)
 # endif
 
@@ -55,12 +75,12 @@ import Control.Category hiding ((.))
 import Control.Monad
 import Control.Monad.Fix
 import Control.Monad.Zip
-import Data.Fixed
 import Data.Ix
 import Data.Type.Coercion
 import Data.Type.Equality
 import GHC.Exts
 import GHC.IO.BufferedIO
+import GHC.IO.Device (IODevice, RawIO)
 import GHC.IP
 import Text.Printf
 #endif
@@ -75,7 +95,7 @@ import GHC.Real (Ratio(..), (%))
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
 import Control.Exception
-import Control.Monad.ST.Lazy
+import Control.Monad.ST.Lazy as Lazy
 import Data.Char
 import Data.Data as Data
 import Data.Foldable
@@ -86,9 +106,12 @@ import Foreign.C.Types
 import Foreign.Marshal.Pool
 import Foreign.Storable
 import GHC.Conc
+import GHC.Desugar
 import GHC.IO.Buffer
-import GHC.IO.Device
+import GHC.IO.Device (IODeviceType)
 import GHC.IO.Encoding
+import GHC.IO.Handle.Types (BufferList, HandleType)
+import GHC.ST
 import System.Console.GetOpt
 import System.IO
 import System.IO.Error
@@ -102,6 +125,40 @@ import GHC.IO.Encoding.CodePage.Table
 #endif
 
 -------------------------------------------------------------------------------
+
+#if !(MIN_VERSION_base(4,4,0))
+instance HasResolution a => Read (Fixed a) where
+    readsPrec _ = readsFixed
+
+readsFixed :: (HasResolution a) => ReadS (Fixed a)
+readsFixed = readsSigned
+    where readsSigned ('-' : xs) = [ (negate x, rest)
+                                   | (x, rest) <- readsUnsigned xs ]
+          readsSigned xs = readsUnsigned xs
+          readsUnsigned xs = case span isDigit xs of
+                             ([], _) -> []
+                             (is, xs') ->
+                                 let i = fromInteger (read is)
+                                 in case xs' of
+                                    '.' : xs'' ->
+                                        case span isDigit xs'' of
+                                        ([], _) -> []
+                                        (js, xs''') ->
+                                            let j = fromInteger (read js)
+                                                l = genericLength js :: Integer
+                                            in [(i + (j / (10 ^ l)), xs''')]
+                                    _ -> [(i, xs')]
+
+deriving instance Typeable1 SampleVar
+
+instance Applicative (Strict.ST s) where
+    pure  = return
+    (<*>) = ap
+
+instance Applicative (Lazy.ST s) where
+    pure  = return
+    (<*>) = ap
+#endif
 
 -- These instances are only valid if Bits isn't a subclass of Num (as Bool is
 -- not a Num instance), which is only true as of base-4.6.0.0 and later.
@@ -135,6 +192,24 @@ instance Bits Bool where
 
 deriving instance Read a => Read (Down a)
 deriving instance Show a => Show (Down a)
+#endif
+
+#if !(MIN_VERSION_base(4,6,0))
+instance Applicative ReadP where
+    pure  = return
+    (<*>) = ap
+
+instance Alternative ReadP where
+    empty = mzero
+    (<|>) = mplus
+
+instance Applicative ReadPrec where
+    pure  = return
+    (<*>) = ap
+
+instance Alternative ReadPrec where
+    empty = mzero
+    (<|>) = mplus
 #endif
 
 #if !(MIN_VERSION_base(4,7,0))
@@ -192,9 +267,17 @@ deriving instance Functor ArgDescr
 -- Although DeriveGeneric has been around since GHC 7.2, various bugs cause
 -- the standalone-derived code below to fail to compile unless a fairly
 -- recent version of GHC is used.
-# if __GLASGOW_HASKELL__ >= 706
+# if __GLASGOW_HASKELL__ >= 704
 deriving instance Generic All
 deriving instance Generic Any
+deriving instance Generic Arity
+deriving instance Generic Associativity
+deriving instance Generic Generics.Fixity
+
+deriving instance Generic (U1 p)
+# endif
+
+# if __GLASGOW_HASKELL__ >= 706
 deriving instance Generic (Const a b)
 deriving instance Generic (Dual a)
 deriving instance Generic (Endo a)
@@ -216,14 +299,34 @@ deriving instance Generic1 (WrappedArrow a b)
 deriving instance Generic1 (WrappedMonad m)
 deriving instance Generic1 ZipList
 
-deriving instance Generic (U1 p)
 deriving instance Generic (Par1 p)
 deriving instance Generic (Rec1 f p)
 deriving instance Generic (K1 i c p)
 deriving instance Generic (M1 i c f p)
 deriving instance Generic ((f :+: g) p)
-deriving instance Generic ((f :*: g) p)
 deriving instance Generic ((f :.: g) p)
+
+-- Due to a GHC bug (https://ghc.haskell.org/trac/ghc/ticket/9830), the derived
+-- Generic instances for infix data constructors will use the wrong
+-- precedence (prior to GHC 7.10).
+-- We'll manually derive a Generic :*: instance to avoid this.
+instance Generic ((f :*: g) p) where
+    type Rep ((f :*: g) p) =
+        D1 D_Product (C1 C_Product (S1 NoSelector (Rec0 (f p))
+                                :*: S1 NoSelector (Rec0 (g p))))
+    from (f :*: g) = M1 (M1 (M1 (K1 f) :*: M1 (K1 g)))
+    to (M1 (M1 (M1 (K1 f) :*: M1 (K1 g)))) = f :*: g
+
+data D_Product
+data C_Product
+
+instance Datatype D_Product where
+    datatypeName _ = ":*:"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C_Product where
+    conName _ = ":*:"
+    conFixity _ = Generics.Infix RightAssociative 6
 # endif
 
 deriving instance Eq (U1 p)
@@ -340,12 +443,14 @@ instance (Storable a, Integral a) => Storable (Ratio a) where
 
 #if __GLASGOW_HASKELL__ < 710
 deriving instance Typeable  All
+deriving instance Typeable  AnnotationWrapper
 deriving instance Typeable1 ArgDescr
 deriving instance Typeable1 ArgOrder
 deriving instance Typeable  Monoid.Any
 deriving instance Typeable  BlockReason
 deriving instance Typeable1 Buffer
 deriving instance Typeable3 BufferCodec
+deriving instance Typeable1 BufferList
 deriving instance Typeable  BufferMode
 deriving instance Typeable  BufferState
 deriving instance Typeable  CFile
@@ -364,6 +469,7 @@ deriving instance Typeable  Data.Fixity
 deriving instance Typeable  GeneralCategory
 deriving instance Typeable  HandlePosn
 deriving instance Typeable1 Handler
+deriving instance Typeable  HandleType
 deriving instance Typeable  IODeviceType
 deriving instance Typeable  IOErrorType
 deriving instance Typeable  IOMode
@@ -377,7 +483,8 @@ deriving instance Typeable1 Product
 deriving instance Typeable1 ReadP
 deriving instance Typeable1 ReadPrec
 deriving instance Typeable  SeekMode
-deriving instance Typeable2 ST
+deriving instance Typeable2 Lazy.ST
+deriving instance Typeable2 STret
 deriving instance Typeable1 Sum
 deriving instance Typeable  TextEncoding
 deriving instance Typeable  ThreadStatus
@@ -430,7 +537,9 @@ deriving instance Typeable  GCStats
 
 # if MIN_VERSION_base(4,6,0)
 deriving instance Typeable1 Down
+deriving instance Typeable  ForeignPtrContents
 deriving instance Typeable  Nat
+deriving instance Typeable1 NoIO
 deriving instance Typeable  Symbol
 # endif
 
@@ -439,6 +548,7 @@ deriving instance Typeable FieldFormat
 deriving instance Typeable FormatAdjustment
 deriving instance Typeable FormatParse
 deriving instance Typeable FormatSign
+deriving instance Typeable KProxy
 deriving instance Typeable Number
 deriving instance Typeable SomeNat
 deriving instance Typeable SomeSymbol
@@ -539,6 +649,7 @@ deriving instance Typeable Fractional
 deriving instance Typeable Functor
 deriving instance Typeable Generic
 deriving instance Typeable Generic1
+deriving instance Typeable GHCiSandboxIO
 deriving instance Typeable HasResolution
 deriving instance Typeable HPrintfType
 deriving instance Typeable Integral

@@ -13,6 +13,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## What is covered
 
+ * Added `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
  * Added `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * Added `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
  * Added `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
@@ -20,12 +21,14 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * Added `Eq`, `Ord`, `Read`, and `Show` instances for `ZipList`
  * Added `Monad` instance for `WrappedMonad`
  * Added `Data` and `IsList` instances for `Version`
+ * `Applicative` instance for strict and lazy `ST`
  * `Bits` instance for `Bool`
  * `Generic` instance for `All`, `Any`, `Const`, `Dual`, `Endo`, `First`, `Last`, `Product`, `Sum`, `WrappedArrow`, `WrappedMonad`, and `ZipList`
  * `Generic1` instance for `Const`, `Dual`, `First`, `Last`, `Product`, `Sum`, `WrappedArrow`, `WrappedMonad`, and `ZipList`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Functor` instance for `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Num` instance for `Sum` and `Product`
+ * `Read` instance for `Fixed`
  * `Storable` instance for `Complex` and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`
  * `Typeable` instance for most data types and typeclasses (when possible)
