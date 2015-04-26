@@ -1,4 +1,4 @@
-## Changes in next
+## Changes in 0.2.0
  - Drop GHC 6.12 (and `base-4.2.0.0`) compatibility
  - Fix Windows, GHCJS build
  - `Read` instance for `Fixed`
