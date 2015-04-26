@@ -23,6 +23,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * Added `Data` and `IsList` instances for `Version`
  * `Applicative` instance for strict and lazy `ST`
  * `Bits` instance for `Bool`
+ * `Generic` instances for the data types in `GHC.Generics`
  * `Generic` instance for `All`, `Any`, `Const`, `Dual`, `Endo`, `First`, `Last`, `Product`, `Sum`, `WrappedArrow`, `WrappedMonad`, and `ZipList`
  * `Generic1` instance for `Const`, `Dual`, `First`, `Last`, `Product`, `Sum`, `WrappedArrow`, `WrappedMonad`, and `ZipList`
  * `Foldable` instance for `Either`, `(,)` and `Const`

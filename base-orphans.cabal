@@ -1,5 +1,5 @@
 name:                base-orphans
-version:             0.1.0
+version:             0.2.0
 synopsis:            Backwards-compatible orphan instances for base
 homepage:            https://github.com/haskell-compat/base-orphans
 license:             MIT
