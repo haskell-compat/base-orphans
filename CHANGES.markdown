@@ -1,3 +1,14 @@
+## Changes in next
+ - `Data.Orphans` is now `Trustworthy`
+ - Backported the `Generic` and `Generic1` instances available in `base-4.7.0.0`
+   to GHC 7.2, 7.4, and 7.6, namely
+   * `Const`, `WrappedMonad`, and `ZipList` from `Control.Applicative`
+   * `WrappedArrow` from `Control.Category`
+   * `All`, `Any`, `Dual`, `Endo`, `First`, `Last`, `Product`, and `Sum` from
+     `Data.Monoid`
+   * `U1`, `Par1`, `Rec1`, `K1`, `M1`, `(:+:)`, `(:*:)`, `(:.:)`, `Arity`,
+     `Associativity`, and `Fixity` from `GHC.Generics`
+
 ## Changes in 0.2.0
  - Drop GHC 6.12 (and `base-4.2.0.0`) compatibility
  - Fix Windows, GHCJS build
