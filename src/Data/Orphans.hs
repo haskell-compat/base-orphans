@@ -44,7 +44,7 @@ import GHC.Event
 # endif
 #endif
 
-#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
+#if __GLASGOW_HASKELL__ >= 701 && __GLASGOW_HASKELL__ < 710
 import GHC.Generics as Generics
 # endif
 
@@ -253,7 +253,7 @@ deriving instance Functor OptDescr
 deriving instance Functor ArgDescr
 #endif
 
-#if __GLASGOW_HASKELL__ >= 702 && !(MIN_VERSION_base(4,7,0))
+#if __GLASGOW_HASKELL__ >= 701 && !(MIN_VERSION_base(4,7,0))
 -----
 -- Although DeriveGeneric has been around since GHC 7.2, various bugs cause
 -- standalone Generic instances to fail to compile unless a fairly recent
@@ -1249,7 +1249,7 @@ deriving instance Typeable  TimeoutKey
 #  endif
 # endif
 
-# if __GLASGOW_HASKELL__ >= 702
+# if __GLASGOW_HASKELL__ >= 701
 deriving instance Typeable  Arity
 deriving instance Typeable  Associativity
 deriving instance Typeable  C
