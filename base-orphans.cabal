@@ -1,9 +1,9 @@
--- This file has been generated from package.yaml by hpack version 0.1.1.
+-- This file has been generated from package.yaml by hpack version 0.1.2.
 --
 -- see: https://github.com/sol/hpack
 
 name:                base-orphans
-version:             0.2.0
+version:             0.3.0
 synopsis:            Backwards-compatible orphan instances for base
 homepage:            https://github.com/haskell-compat/base-orphans#readme
 bug-reports:         https://github.com/haskell-compat/base-orphans/issues
@@ -57,6 +57,7 @@ test-suite spec
       Data.Traversable.OrphansSpec
       Data.Version.OrphansSpec
       Foreign.Storable.OrphansSpec
+      GHC.Fingerprint.OrphansSpec
   build-depends:
       base >= 4.3 && < 5
 

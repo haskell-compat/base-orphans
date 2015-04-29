@@ -1,4 +1,5 @@
-## Changes in next
+## Changes in 0.3.0
+ - `Show` instance for `Fingerprint`
  - `Data.Orphans` is now `Trustworthy`
  - Backported the `Generic` and `Generic1` instances available in `base-4.7.0.0`
    to GHC 7.2, 7.4, and 7.6, namely
