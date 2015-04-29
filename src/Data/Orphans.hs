@@ -1,14 +1,16 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
-#if __GLASGOW_HASKELL__ >= 704
-{-# LANGUAGE DeriveGeneric #-}
+#if __GLASGOW_HASKELL__ >= 702
+{-# LANGUAGE Trustworthy #-}
 #endif
 
 #if __GLASGOW_HASKELL__ >= 706
@@ -42,7 +44,7 @@ import GHC.Event
 # endif
 #endif
 
-#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
+#if __GLASGOW_HASKELL__ >= 701 && __GLASGOW_HASKELL__ < 710
 import GHC.Generics as Generics
 # endif
 
@@ -213,6 +215,11 @@ instance Alternative ReadPrec where
 #endif
 
 #if !(MIN_VERSION_base(4,7,0))
+deriving instance Foldable (Const m)
+deriving instance Foldable (Either a)
+deriving instance Traversable (Const m)
+deriving instance Traversable (Either a)
+
 instance Foldable ((,) a) where
     foldMap f (_, y) = f y
     
@@ -221,26 +228,9 @@ instance Foldable ((,) a) where
 instance Traversable ((,) a) where
     traverse f (x, y) = (,) x <$> f y
 
-instance Foldable (Const m) where
-    foldMap _ _ = mempty
-
 instance Monoid a => Monoid (Const a b) where
     mempty = Const mempty
     mappend (Const a) (Const b) = Const (mappend a b)
-
-instance Traversable (Const m) where
-    traverse _ (Const m) = pure $ Const m
-
-instance Foldable (Either a) where
-    foldMap _ (Left _) = mempty
-    foldMap f (Right y) = f y
-    
-    foldr _ z (Left _) = z
-    foldr f z (Right y) = f y z
-
-instance Traversable (Either a) where
-    traverse _ (Left x) = pure (Left x)
-    traverse f (Right y) = Right <$> f y
 
 deriving instance Eq ErrorCall
 deriving instance Ord ErrorCall
@@ -263,71 +253,817 @@ deriving instance Functor OptDescr
 deriving instance Functor ArgDescr
 #endif
 
-#if __GLASGOW_HASKELL__ >= 702 && !(MIN_VERSION_base(4,7,0))
+#if __GLASGOW_HASKELL__ >= 701 && !(MIN_VERSION_base(4,7,0))
+-----
 -- Although DeriveGeneric has been around since GHC 7.2, various bugs cause
--- the standalone-derived code below to fail to compile unless a fairly
--- recent version of GHC is used.
-# if __GLASGOW_HASKELL__ >= 704
-deriving instance Generic All
-deriving instance Generic Any
-deriving instance Generic Arity
-deriving instance Generic Associativity
-deriving instance Generic Generics.Fixity
+-- standalone Generic instances to fail to compile unless a fairly recent
+-- version of GHC is used. For this reason, we manually implement all Generic
+-- and Generic1 instances to maintain GHC 7.2 and 7.4 support.
+-----
 
-deriving instance Generic (U1 p)
-# endif
+instance Generic All where
+    type Rep All = D1 D1All (C1 C1_0All (S1 S1_0_0All (Rec0 Bool)))
+    from (All a) = M1 (M1 (M1 (K1 a)))
+    to (M1 (M1 (M1 (K1 a)))) = All a
 
-# if __GLASGOW_HASKELL__ >= 706
-deriving instance Generic (Const a b)
-deriving instance Generic (Dual a)
-deriving instance Generic (Endo a)
-deriving instance Generic (First a)
-deriving instance Generic (Last a)
-deriving instance Generic (Product a)
-deriving instance Generic (Sum a)
-deriving instance Generic (WrappedArrow a b c)
-deriving instance Generic (WrappedMonad m a)
-deriving instance Generic (ZipList a)
+data D1All
+data C1_0All
+data S1_0_0All
 
-deriving instance Generic1 (Const a)
-deriving instance Generic1 Dual
-deriving instance Generic1 First
-deriving instance Generic1 Last
-deriving instance Generic1 Product
-deriving instance Generic1 Sum
-deriving instance Generic1 (WrappedArrow a b)
-deriving instance Generic1 (WrappedMonad m)
-deriving instance Generic1 ZipList
+instance Datatype D1All where
+    datatypeName _ = "All"
+    moduleName   _ = "Data.Monoid"
 
-deriving instance Generic (Par1 p)
-deriving instance Generic (Rec1 f p)
-deriving instance Generic (K1 i c p)
-deriving instance Generic (M1 i c f p)
-deriving instance Generic ((f :+: g) p)
-deriving instance Generic ((f :.: g) p)
+instance Constructor C1_0All where
+    conName     _ = "All"
+    conIsRecord _ = True
 
--- Due to a GHC bug (https://ghc.haskell.org/trac/ghc/ticket/9830), the derived
--- Generic instances for infix data constructors will use the wrong
--- precedence (prior to GHC 7.10).
--- We'll manually derive a Generic :*: instance to avoid this.
+instance Selector S1_0_0All where
+    selName _ = "getAll"
+
+-----
+
+instance Generic Any where
+    type Rep Any = D1 D1Any (C1 C1_0Any (S1 S1_0_0Any (Rec0 Bool)))
+    from (Any a) = M1 (M1 (M1 (K1 a)))
+    to (M1 (M1 (M1 (K1 a)))) = Any a
+
+data D1Any
+data C1_0Any
+data S1_0_0Any
+
+instance Datatype D1Any where
+    datatypeName _ = "Any"
+    moduleName   _ = "Data.Monoid"
+
+instance Constructor C1_0Any where
+    conName     _ = "Any"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Any where
+    selName _ = "getAny"
+
+-----
+
+instance Generic Arity where
+    type Rep Arity = D1 D1Arity (C1 C1_0Arity U1
+                             :+: C1 C1_1Arity (S1 NoSelector (Rec0 Int)))
+
+    from NoArity   = M1 (L1 (M1 U1))
+    from (Arity a) = M1 (R1 (M1 (M1 (K1 a))))
+
+    to (M1 (L1 (M1 U1)))          = NoArity
+    to (M1 (R1 (M1 (M1 (K1 a))))) = Arity a
+
+data D1Arity
+data C1_0Arity
+data C1_1Arity
+
+instance Datatype D1Arity where
+    datatypeName _ = "Arity"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0Arity where
+    conName _ = "NoArity"
+
+instance Constructor C1_1Arity where
+    conName _ = "Arity"
+
+-----
+
+instance Generic Associativity where
+    type Rep Associativity = D1 D1Associativity (C1 C1_0Associativity U1
+                                            :+: (C1 C1_1Associativity U1
+                                            :+:  C1 C1_2Associativity U1))
+
+    from LeftAssociative  = M1 (L1 (M1 U1))
+    from RightAssociative = M1 (R1 (L1 (M1 U1)))
+    from NotAssociative   = M1 (R1 (R1 (M1 U1)))
+
+    to (M1 (L1 (M1 U1)))      = LeftAssociative
+    to (M1 (R1 (L1 (M1 U1)))) = RightAssociative
+    to (M1 (R1 (R1 (M1 U1)))) = NotAssociative
+
+data D1Associativity
+data C1_0Associativity
+data C1_1Associativity
+data C1_2Associativity
+
+instance Datatype D1Associativity where
+    datatypeName _ = "Associativity"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0Associativity where
+    conName _ = "LeftAssociative"
+
+instance Constructor C1_1Associativity where
+    conName _ = "RightAssociative"
+
+instance Constructor C1_2Associativity where
+    conName _ = "NotAssociative"
+
+-----
+
+instance Generic (Const a b) where
+    type Rep (Const a b) = D1 D1Const (C1 C1_0Const (S1 S1_0_0Const (Rec0 a)))
+    from (Const a) = M1 (M1 (M1 (K1 a)))
+    to (M1 (M1 (M1 (K1 a)))) = Const a
+
+instance Generic1 (Const a) where
+    type Rep1 (Const a) = D1 D1Const (C1 C1_0Const (S1 S1_0_0Const (Rec0 a)))
+    from1 (Const a) = M1 (M1 (M1 (K1 a)))
+    to1 (M1 (M1 (M1 (K1 a)))) = Const a
+
+data D1Const
+data C1_0Const
+data S1_0_0Const
+
+instance Datatype D1Const where
+    datatypeName _ = "Const"
+    moduleName   _ = "Control.Applicative"
+
+instance Constructor C1_0Const where
+    conName     _ = "Const"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Const where
+    selName _ = "getConst"
+
+-----
+
+instance Generic (Dual a) where
+    type Rep (Dual a) = D1 D1Dual (C1 C1_0Dual (S1 S1_0_0Dual (Rec0 a)))
+    from (Dual d) = M1 (M1 (M1 (K1 d)))
+    to (M1 (M1 (M1 (K1 d)))) = Dual d
+
+instance Generic1 Dual where
+    type Rep1 Dual = D1 D1Dual (C1 C1_0Dual (S1 S1_0_0Dual Par1))
+    from1 (Dual d) = M1 (M1 (M1 (Par1 d)))
+    to1 (M1 (M1 (M1 (Par1 d)))) = Dual d
+
+data D1Dual
+data C1_0Dual
+data S1_0_0Dual
+
+instance Datatype D1Dual where
+    datatypeName _ = "Dual"
+    moduleName   _ = "Data.Monoid"
+
+instance Constructor C1_0Dual where
+    conName     _ = "Dual"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Dual where
+    selName _ = "getDual"
+
+-----
+
+instance Generic (Endo a) where
+    type Rep (Endo a) = D1 D1Endo (C1 C1_0Endo (S1 S1_0_0Endo (Rec0 (a -> a))))
+    from (Endo e) = M1 (M1 (M1 (K1 e)))
+    to (M1 (M1 (M1 (K1 e)))) = Endo e
+
+data D1Endo
+data C1_0Endo
+data S1_0_0Endo
+
+instance Datatype D1Endo where
+    datatypeName _ = "Endo"
+    moduleName   _ = "Data.Monoid"
+
+instance Constructor C1_0Endo where
+    conName     _ = "Endo"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Endo where
+    selName _ = "appEndo"
+
+-----
+
+instance Generic (First a) where
+    type Rep (First a) = D1 D1First (C1 C1_0First (S1 S1_0_0First (Rec0 (Maybe a))))
+    from (First f) = M1 (M1 (M1 (K1 f)))
+    to (M1 (M1 (M1 (K1 f)))) = First f
+
+instance Generic1 First where
+    type Rep1 First = D1 D1First (C1 C1_0First (S1 S1_0_0First (Rec1 Maybe)))
+    from1 (First f) = M1 (M1 (M1 (Rec1 f)))
+    to1 (M1 (M1 (M1 (Rec1 f)))) = First f
+
+data D1First
+data C1_0First
+data S1_0_0First
+
+instance Datatype D1First where
+    datatypeName _ = "First"
+    moduleName   _ = "Data.Monoid"
+
+instance Constructor C1_0First where
+    conName     _ = "First"
+    conIsRecord _ = True
+
+instance Selector S1_0_0First where
+    selName _ = "getFirst"
+
+-----
+
+instance Generic Generics.Fixity where
+    type Rep Generics.Fixity = D1 D1Fixity (C1 C1_0Fixity U1
+                                        :+: C1 C1_1Fixity (S1 NoSelector (Rec0 Associativity)
+                                                       :*: S1 NoSelector (Rec0 Int)))
+
+    from Generics.Prefix      = M1 (L1 (M1 U1))
+    from (Generics.Infix a i) = M1 (R1 (M1 (M1 (K1 a) :*: M1 (K1 i))))
+
+    to (M1 (L1 (M1 U1)))                        = Generics.Prefix
+    to (M1 (R1 (M1 (M1 (K1 a) :*: M1 (K1 i))))) = Generics.Infix a i
+
+data D1Fixity
+data C1_0Fixity
+data C1_1Fixity
+
+instance Datatype D1Fixity where
+    datatypeName _ = "Fixity"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0Fixity where
+    conName _ = "Prefix"
+
+instance Constructor C1_1Fixity where
+    conName _ = "Infix"
+
+-----
+
+instance Generic (Last a) where
+    type Rep (Last a) = D1 D1Last (C1 C1_0Last (S1 S1_0_0Last (Rec0 (Maybe a))))
+    from (Last l) = M1 (M1 (M1 (K1 l)))
+    to (M1 (M1 (M1 (K1 l)))) = Last l
+
+instance Generic1 Last where
+    type Rep1 Last = D1 D1Last (C1 C1_0Last (S1 S1_0_0Last (Rec1 Maybe)))
+    from1 (Last l) = M1 (M1 (M1 (Rec1 l)))
+    to1 (M1 (M1 (M1 (Rec1 l)))) = Last l
+
+data D1Last
+data C1_0Last
+data S1_0_0Last
+
+instance Datatype D1Last where
+    datatypeName _ = "Last"
+    moduleName   _ = "Data.Monoid"
+
+instance Constructor C1_0Last where
+    conName     _ = "Last"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Last where
+    selName _ = "getLast"
+
+-----
+
+instance Generic (Product a) where
+    type Rep (Product a) = D1 D1Product (C1 C1_0Product (S1 S1_0_0Product (Rec0 a)))
+    from (Product p) = M1 (M1 (M1 (K1 p)))
+    to (M1 (M1 (M1 (K1 p)))) = Product p
+
+instance Generic1 Product where
+    type Rep1 Product = D1 D1Product (C1 C1_0Product (S1 S1_0_0Product Par1))
+    from1 (Product p) = M1 (M1 (M1 (Par1 p)))
+    to1 (M1 (M1 (M1 (Par1 p)))) = Product p
+
+data D1Product
+data C1_0Product
+data S1_0_0Product
+
+instance Datatype D1Product where
+    datatypeName _ = "Product"
+    moduleName   _ = "Data.Monoid"
+
+instance Constructor C1_0Product where
+    conName     _ = "Product"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Product where
+    selName _ = "getProduct"
+
+-----
+
+instance Generic (Sum a) where
+    type Rep (Sum a) = D1 D1Sum (C1 C1_0Sum (S1 S1_0_0Sum (Rec0 a)))
+    from (Sum s) = M1 (M1 (M1 (K1 s)))
+    to (M1 (M1 (M1 (K1 s)))) = Sum s
+
+instance Generic1 Sum where
+    type Rep1 Sum = D1 D1Sum (C1 C1_0Sum (S1 S1_0_0Sum Par1))
+    from1 (Sum s) = M1 (M1 (M1 (Par1 s)))
+    to1 (M1 (M1 (M1 (Par1 s)))) = Sum s
+
+data D1Sum
+data C1_0Sum
+data S1_0_0Sum
+
+instance Datatype D1Sum where
+    datatypeName _ = "Sum"
+    moduleName   _ = "Data.Monoid"
+
+instance Constructor C1_0Sum where
+    conName     _ = "Sum"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Sum where
+    selName _ = "getSum"
+
+-----
+
+instance Generic (WrappedArrow a b c) where
+    type Rep (WrappedArrow a b c)
+      = D1 D1WrappedArrow (C1 C1_0WrappedArrow (S1 S1_0_0WrappedArrow (Rec0 (a b c))))
+    from (WrapArrow a) = M1 (M1 (M1 (K1 a)))
+    to (M1 (M1 (M1 (K1 a)))) = WrapArrow a
+
+instance Generic1 (WrappedArrow a b) where
+    type Rep1 (WrappedArrow a b)
+      = D1 D1WrappedArrow (C1 C1_0WrappedArrow (S1 S1_0_0WrappedArrow (Rec1 (a b))))
+    from1 (WrapArrow a) = M1 (M1 (M1 (Rec1 a)))
+    to1 (M1 (M1 (M1 (Rec1 a)))) = WrapArrow a
+
+data D1WrappedArrow
+data C1_0WrappedArrow
+data S1_0_0WrappedArrow
+
+instance Datatype D1WrappedArrow where
+  datatypeName _ = "WrappedArrow"
+  moduleName   _ = "Control.Applicative"
+
+instance Constructor C1_0WrappedArrow where
+  conName     _ = "WrapArrow"
+  conIsRecord _ = True
+
+instance Selector S1_0_0WrappedArrow where
+  selName _ = "unwrapArrow"
+
+-----
+
+instance Generic (WrappedMonad m a) where
+    type Rep (WrappedMonad m a)
+      = D1 D1WrappedMonad (C1 C1_0WrappedMonad (S1 S1_0_0WrappedMonad (Rec0 (m a))))
+    from (WrapMonad m) = M1 (M1 (M1 (K1 m)))
+    to (M1 (M1 (M1 (K1 m)))) = WrapMonad m
+
+instance Generic1 (WrappedMonad m) where
+    type Rep1 (WrappedMonad m)
+      = D1 D1WrappedMonad (C1 C1_0WrappedMonad (S1 S1_0_0WrappedMonad (Rec1 m)))
+    from1 (WrapMonad m) = M1 (M1 (M1 (Rec1 m)))
+    to1 (M1 (M1 (M1 (Rec1 m)))) = WrapMonad m
+
+data D1WrappedMonad
+data C1_0WrappedMonad
+data S1_0_0WrappedMonad
+
+instance Datatype D1WrappedMonad where
+    datatypeName _ = "WrappedMonad"
+    moduleName   _ = "Control.Applicative"
+
+instance Constructor C1_0WrappedMonad where
+    conName     _ = "WrapMonad"
+    conIsRecord _ = True
+
+instance Selector S1_0_0WrappedMonad where
+    selName _ = "unwrapMonad"
+
+-----
+
+instance Generic (ZipList a) where
+    type Rep (ZipList a) = D1 D1ZipList (C1 C1_0ZipList (S1 S1_0_0ZipList (Rec0 [a])))
+    from (ZipList z) = M1 (M1 (M1 (K1 z)))
+    to (M1 (M1 (M1 (K1 z)))) = ZipList z
+
+instance Generic1 ZipList where
+    type Rep1 ZipList = D1 D1ZipList (C1 C1_0ZipList (S1 S1_0_0ZipList (Rec1 [])))
+    from1 (ZipList z) = M1 (M1 (M1 (Rec1 z)))
+    to1 (M1 (M1 (M1 (Rec1 z)))) = ZipList z
+
+data D1ZipList
+data C1_0ZipList
+data S1_0_0ZipList
+
+instance Datatype D1ZipList where
+    datatypeName _ = "ZipList"
+    moduleName   _ = "Control.Applicative"
+
+instance Constructor C1_0ZipList where
+    conName     _ = "ZipList"
+    conIsRecord _ = True
+
+instance Selector S1_0_0ZipList where
+    selName _ = "getZipList"
+
+-----
+
+instance Generic (U1 p) where
+    type Rep (U1 p) = D1 D1U1 (C1 C1_0U1 U1)
+    from U1 = M1 (M1 U1)
+    to (M1 (M1 U1)) = U1
+
+data D1U1
+data C1_0U1
+
+instance Datatype D1U1 where
+    datatypeName _ = "U1"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0U1 where
+    conName _ = "U1"
+
+-----
+
+instance Generic (Par1 p) where
+    type Rep (Par1 p) = D1 D1Par1 (C1 C1_0Par1 (S1 S1_0_0Par1 (Rec0 p)))
+    from (Par1 p) = M1 (M1 (M1 (K1 p)))
+    to (M1 (M1 (M1 (K1 p)))) = Par1 p
+
+data D1Par1
+data C1_0Par1
+data S1_0_0Par1
+
+instance Datatype D1Par1 where
+    datatypeName _ = "Par1"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0Par1 where
+    conName     _ = "Par1"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Par1 where
+    selName _ = "unPar1"
+
+-----
+
+instance Generic (Rec1 f p) where
+    type Rep (Rec1 f p)
+      = D1 D1Rec1 (C1 C1_0Rec1 (S1 S1_0_0Rec1 (Rec0 (f p))))
+    from (Rec1 r) = M1 (M1 (M1 (K1 r)))
+    to (M1 (M1 (M1 (K1 r)))) = Rec1 r
+
+data D1Rec1
+data C1_0Rec1
+data S1_0_0Rec1
+
+instance Datatype D1Rec1 where
+    datatypeName _ = "Rec1"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0Rec1 where
+    conName     _ = "Rec1"
+    conIsRecord _ = True
+
+instance Selector S1_0_0Rec1 where
+    selName _ = "unRec1"
+
+-----
+
+instance Generic (K1 i c p) where
+    type Rep (K1 i c p) = D1 D1K1 (C1 C1_0K1 (S1 S1_0_0K1 (Rec0 c)))
+    from (K1 c) = M1 (M1 (M1 (K1 c)))
+    to (M1 (M1 (M1 (K1 c)))) = K1 c
+
+data D1K1
+data C1_0K1
+data S1_0_0K1
+
+instance Datatype D1K1 where
+    datatypeName _ = "K1"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0K1 where
+    conName     _ = "K1"
+    conIsRecord _ = True
+
+instance Selector S1_0_0K1 where
+    selName _ = "unK1"
+
+-----
+
+instance Generic (M1 i c f p) where
+    type Rep (M1 i c f p) = D1 D1M1 (C1 C1_0M1 (S1 S1_0_0M1 (Rec0 (f p))))
+    from (M1 m) = M1 (M1 (M1 (K1 m)))
+    to (M1 (M1 (M1 (K1 m)))) = M1 m
+
+data D1M1
+data C1_0M1
+data S1_0_0M1
+
+instance Datatype D1M1 where
+    datatypeName _ = "M1"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0M1 where
+    conName     _ = "M1"
+    conIsRecord _ = True
+
+instance Selector S1_0_0M1 where
+    selName _ = "unM1"
+
+-----
+
+instance Generic ((f :+: g) p) where
+    type Rep ((f :+: g) p) = D1 D1ConSum (C1 C1_0ConSum (S1 NoSelector (Rec0 (f p)))
+                                      :+: C1 C1_1ConSum (S1 NoSelector (Rec0 (g p))))
+
+    from (L1 l) = M1 (L1 (M1 (M1 (K1 l))))
+    from (R1 r) = M1 (R1 (M1 (M1 (K1 r))))
+
+    to (M1 (L1 (M1 (M1 (K1 l))))) = L1 l
+    to (M1 (R1 (M1 (M1 (K1 r))))) = R1 r
+
+data D1ConSum
+data C1_0ConSum
+data C1_1ConSum
+
+instance Datatype D1ConSum where
+    datatypeName _ = ":+:"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0ConSum where
+    conName _ = "L1"
+
+instance Constructor C1_1ConSum where
+    conName _ = "R1"
+
+-----
+
 instance Generic ((f :*: g) p) where
     type Rep ((f :*: g) p) =
-        D1 D_Product (C1 C_Product (S1 NoSelector (Rec0 (f p))
-                                :*: S1 NoSelector (Rec0 (g p))))
+        D1 D1ConProduct (C1 C1_ConProduct (S1 NoSelector (Rec0 (f p))
+                                       :*: S1 NoSelector (Rec0 (g p))))
     from (f :*: g) = M1 (M1 (M1 (K1 f) :*: M1 (K1 g)))
     to (M1 (M1 (M1 (K1 f) :*: M1 (K1 g)))) = f :*: g
 
-data D_Product
-data C_Product
+data D1ConProduct
+data C1_ConProduct
 
-instance Datatype D_Product where
+instance Datatype D1ConProduct where
     datatypeName _ = ":*:"
     moduleName   _ = "GHC.Generics"
 
-instance Constructor C_Product where
-    conName _ = ":*:"
+instance Constructor C1_ConProduct where
+    conName   _ = ":*:"
     conFixity _ = Generics.Infix RightAssociative 6
+
+-----
+
+instance Generic ((f :.: g) p) where
+    type Rep ((f :.: g) p)
+      = D1 D1ConCompose (C1 C1_0ConCompose (S1 S1_0_0ConCompose (Rec0 (f (g p)))))
+    from (Comp1 c) = M1 (M1 (M1 (K1 c)))
+    to (M1 (M1 (M1 (K1 c)))) = Comp1 c
+
+data D1ConCompose
+data C1_0ConCompose
+data S1_0_0ConCompose
+
+instance Datatype D1ConCompose where
+    datatypeName _ = ":.:"
+    moduleName   _ = "GHC.Generics"
+
+instance Constructor C1_0ConCompose where
+  conName     _ = "Comp1"
+  conIsRecord _ = True
+
+instance Selector S1_0_0ConCompose where
+  selName _ = "unComp1"
+
+-----
+
+# if !(MIN_VERSION_base(4,6,0))
+instance Generic1 [] where
+    type Rep1 [] = D1 D1List (C1 C1_0List U1 :+:
+                              C1 C1_1List (S1 NoSelector Par1
+                                       :*: S1 NoSelector (Rec1 [])))
+
+    from1 []    = M1 (L1 (M1 U1))
+    from1 (h:t) = M1 (R1 (M1 (M1 (Par1 h) :*: M1 (Rec1 t))))
+
+    to1 (M1 (L1 (M1 U1)))                            = []
+    to1 (M1 (R1 (M1 (M1 (Par1 h) :*: M1 (Rec1 t))))) = h : t
+
+data D1List
+data C1_0List
+data C1_1List
+
+instance Datatype D1List where
+    datatypeName _ = "[]"
+    moduleName   _ = "GHC.Types"
+
+instance Constructor C1_0List  where
+    conName _ = "[]"
+
+instance Constructor C1_1List where
+    conName   _ = ":"
+    conFixity _ = Generics.Infix RightAssociative 5
+
+-----
+
+instance Generic1 (Either a) where
+    type Rep1 (Either a) = D1 D1Either (C1 C1_0Either (S1 NoSelector (Rec0 a))
+                                    :+: C1 C1_1Either (S1 NoSelector Par1))
+
+    from1 (Left l) = M1 (L1 (M1 (M1 (K1 l))))
+    from1 (Right r) = M1 (R1 (M1 (M1 (Par1 r))))
+
+    to1 (M1 (L1 (M1 (M1 (K1 l))))) = Left l
+    to1 (M1 (R1 (M1 (M1 (Par1 r))))) = Right r
+
+data D1Either
+data C1_0Either
+data C1_1Either
+
+instance Datatype D1Either where
+    datatypeName _ = "Either"
+    moduleName   _ = "Data.Either"
+
+instance Constructor C1_0Either where
+    conName _ = "Left"
+
+instance Constructor C1_1Either where
+    conName _ = "Right"
+
+-----
+
+instance Generic1 Maybe where
+    type Rep1 Maybe = D1 D1Maybe (C1 C1_0Maybe U1
+                              :+: C1 C1_1Maybe (S1 NoSelector Par1))
+
+    from1 Nothing  = M1 (L1 (M1 U1))
+    from1 (Just j) = M1 (R1 (M1 (M1 (Par1 j))))
+
+    to1 (M1 (L1 (M1 U1)))            = Nothing
+    to1 (M1 (R1 (M1 (M1 (Par1 j))))) = Just j
+
+data D1Maybe
+data C1_0Maybe
+data C1_1Maybe
+
+instance Datatype D1Maybe where
+    datatypeName _ = "Maybe"
+    -- As of base-4.7.0.0, Maybe is actually located in GHC.Base. 
+    -- We don't need to worry about this for the versions of base
+    -- that this instance is defined for, however.
+    moduleName   _ = "Data.Maybe"
+
+instance Constructor C1_0Maybe where
+    conName _ = "Nothing"
+
+instance Constructor C1_1Maybe where
+    conName _ = "Just"
+
+-----
+
+instance Generic1 ((,) a) where
+    type Rep1 ((,) a) = D1 D1Tuple2 (C1 C1_0Tuple2 (S1 NoSelector (Rec0 a)
+                                                :*: S1 NoSelector Par1))
+    from1 (a, b) = M1 (M1 (M1 (K1 a) :*: M1 (Par1 b)))
+    to1 (M1 (M1 (M1 (K1 a) :*: M1 (Par1 b)))) = (a, b)
+
+data D1Tuple2
+data C1_0Tuple2
+
+instance Datatype D1Tuple2 where
+    datatypeName _ = "(,)"
+    moduleName   _ = "GHC.Tuple"
+
+instance Constructor C1_0Tuple2 where
+    conName _ = "(,)"
+
+-----
+
+instance Generic1 ((,,) a b) where
+    type Rep1 ((,,) a b) = D1 D1Tuple3 (C1 C1_0Tuple3 (S1 NoSelector (Rec0 a)
+                                                  :*: (S1 NoSelector (Rec0 b)
+                                                  :*:  S1 NoSelector Par1)))
+    from1 (a, b, c) = M1 (M1 (M1 (K1 a) :*: (M1 (K1 b) :*: M1 (Par1 c))))
+    to1 (M1 (M1 (M1 (K1 a) :*: (M1 (K1 b) :*: M1 (Par1 c))))) = (a, b, c)
+
+data D1Tuple3
+data C1_0Tuple3
+
+instance Datatype D1Tuple3 where
+    datatypeName _ = "(,,)"
+    moduleName   _ = "GHC.Tuple"
+
+instance Constructor C1_0Tuple3 where
+    conName _ = "(,,)"
+
+-----
+
+instance Generic1 ((,,,) a b c) where
+    type Rep1 ((,,,) a b c) = D1 D1Tuple4 (C1 C1_0Tuple4 ((S1 NoSelector (Rec0 a)
+                                                      :*:  S1 NoSelector (Rec0 b))
+                                                      :*: (S1 NoSelector (Rec0 c)
+                                                      :*:  S1 NoSelector Par1)))
+
+    from1 (a, b, c, d) = M1 (M1 ((M1 (K1 a) :*: M1 (K1 b))
+                             :*: (M1 (K1 c) :*: M1 (Par1 d))))
+
+    to1 (M1 (M1 ((M1 (K1 a) :*: M1 (K1 b))
+             :*: (M1 (K1 c) :*: M1 (Par1 d)))))
+      = (a, b, c, d)
+
+data D1Tuple4
+data C1_0Tuple4
+
+instance Datatype D1Tuple4 where
+    datatypeName _ = "(,,,)"
+    moduleName _ = "GHC.Tuple"
+
+instance Constructor C1_0Tuple4 where
+    conName _ = "(,,,)"
+
+-----
+
+instance Generic1 ((,,,,) a b c d) where
+    type Rep1 ((,,,,) a b c d) = D1 D1Tuple5 (C1 C1_0Tuple5 ((S1 NoSelector (Rec0 a)
+                                                         :*:  S1 NoSelector (Rec0 b))
+                                                         :*: (S1 NoSelector (Rec0 c)
+                                                         :*: (S1 NoSelector (Rec0 d)
+                                                         :*:  S1 NoSelector Par1))))
+
+    from1 (a, b, c, d, e) = M1 (M1 ((M1 (K1 a) :*: M1 (K1 b))
+                                :*: (M1 (K1 c) :*: (M1 (K1 d) :*: M1 (Par1 e)))))
+
+    to1 (M1 (M1 ((M1 (K1 a) :*: M1 (K1 b))
+                                :*: (M1 (K1 c) :*: (M1 (K1 d) :*: M1 (Par1 e))))))
+      = (a, b, c, d, e)
+
+data D1Tuple5
+data C1_0Tuple5
+
+instance Datatype D1Tuple5 where
+    datatypeName _ = "(,,,,)"
+    moduleName   _ = "GHC.Tuple"
+
+instance Constructor C1_0Tuple5 where
+    conName _ = "(,,,,)"
+
+-----
+
+instance Generic1 ((,,,,,) a b c d e) where
+    type Rep1 ((,,,,,) a b c d e)
+      = D1 D1Tuple6 (C1 C1_0Tuple6 ((S1 NoSelector (Rec0 a)
+                                :*: (S1 NoSelector (Rec0 b)
+                                :*:  S1 NoSelector (Rec0 c)))
+                                :*: (S1 NoSelector (Rec0 d)
+                                :*: (S1 NoSelector (Rec0 e)
+                                :*:  S1 NoSelector Par1))))
+
+    from1 (a, b, c, d, e, f) = M1 (M1 ((M1 (K1 a) :*: (M1 (K1 b) :*: M1 (K1 c)))
+                                   :*: (M1 (K1 d) :*: (M1 (K1 e) :*: M1 (Par1 f)))))
+
+    to1 (M1 (M1 ((M1 (K1 a) :*: (M1 (K1 b) :*: M1 (K1 c)))
+             :*: (M1 (K1 d) :*: (M1 (K1 e) :*: M1 (Par1 f))))))
+      = (a, b, c, d, e, f)
+
+data D1Tuple6
+data C1_0Tuple6
+
+instance Datatype D1Tuple6 where
+    datatypeName _ = "(,,,,,)"
+    moduleName   _ = "GHC.Tuple"
+
+instance Constructor C1_0Tuple6 where
+    conName _ = "(,,,,,)"
+
+-----
+
+instance Generic1 ((,,,,,,) a b c d e f) where
+    type Rep1 ((,,,,,,) a b c d e f)
+      = D1 D1Tuple7 (C1 C1_0Tuple7 ((S1 NoSelector (Rec0 a)
+                               :*:  (S1 NoSelector (Rec0 b)
+                               :*:   S1 NoSelector (Rec0 c)))
+                               :*: ((S1 NoSelector (Rec0 d)
+                               :*:   S1 NoSelector (Rec0 e))
+                               :*:  (S1 NoSelector (Rec0 f)
+                               :*:   S1 NoSelector Par1))))
+
+    from1 (a, b, c, d, e, f, g) = M1 (M1 ((M1 (K1 a) :*: (M1 (K1 b) :*: M1 (K1 c)))
+                      :*: ((M1 (K1 d) :*: M1 (K1 e)) :*: (M1 (K1 f) :*: M1 (Par1 g)))))
+
+    to1 (M1 (M1 ((M1 (K1 a) :*: (M1 (K1 b) :*: M1 (K1 c)))
+            :*: ((M1 (K1 d) :*: M1 (K1 e)) :*: (M1 (K1 f) :*: M1 (Par1 g))))))
+      = (a, b, c, d, e, f, g)
+
+data D1Tuple7
+data C1_0Tuple7
+
+instance Datatype D1Tuple7 where
+    datatypeName _ = "(,,,,,,)"
+    moduleName   _ = "GHC.Tuple"
+
+instance Constructor C1_0Tuple7 where
+    conName _ = "(,,,,,,)"
 # endif
+
+-----
 
 deriving instance Eq (U1 p)
 deriving instance Ord (U1 p)
@@ -513,7 +1249,7 @@ deriving instance Typeable  TimeoutKey
 #  endif
 # endif
 
-# if __GLASGOW_HASKELL__ >= 702
+# if __GLASGOW_HASKELL__ >= 701
 deriving instance Typeable  Arity
 deriving instance Typeable  Associativity
 deriving instance Typeable  C
