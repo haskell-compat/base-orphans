@@ -23,6 +23,11 @@ To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
 
+#if MIN_VERSION_base(4,4,0) && !(MIN_VERSION_base(4,7,0))
+import Data.Word (Word64)
+import Numeric (showHex)
+#endif
+
 #if !(MIN_VERSION_base(4,4,0))
 import Control.Concurrent.SampleVar
 import Control.Monad.ST as Strict
@@ -125,6 +130,16 @@ import GHC.IO.Encoding.CodePage.Table
 #endif
 
 -------------------------------------------------------------------------------
+
+#if MIN_VERSION_base(4,4,0) && !(MIN_VERSION_base(4,7,0))
+instance Show Fingerprint where
+    show (Fingerprint w1 w2) = hex16 w1 ++ hex16 w2
+      where
+        -- Formats a 64 bit number as 16 digits hex.
+        hex16 :: Word64 -> String
+        hex16 i = let hex = showHex i ""
+                   in replicate (16 - length hex) '0' ++ hex
+#endif
 
 #if !(MIN_VERSION_base(4,4,0))
 instance HasResolution a => Read (Fixed a) where

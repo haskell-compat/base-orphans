@@ -30,6 +30,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Functor` instance for `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Num` instance for `Sum` and `Product`
  * `Read` instance for `Fixed`
+ * `Show` instance for `Fingerprint`
  * `Storable` instance for `Complex` and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`
  * `Typeable` instance for most data types and typeclasses (when possible)
