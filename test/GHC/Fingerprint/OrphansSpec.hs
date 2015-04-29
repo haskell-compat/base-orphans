@@ -3,9 +3,9 @@ module GHC.Fingerprint.OrphansSpec (main, spec) where
 
 import Test.Hspec
 
+#if MIN_VERSION_base(4,4,0)
 import Data.Orphans ()
 import Data.Word (Word64)
-#if MIN_VERSION_base(4,4,0)
 import GHC.Fingerprint.Type
 #endif
 
