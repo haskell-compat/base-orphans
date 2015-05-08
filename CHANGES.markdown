@@ -1,3 +1,6 @@
+## Changes in next
+ - `Functor`, `Applicative`, and `Monad` instances for `First` and `Last`
+
 ## Changes in 0.3.0
  - `Show` instance for `Fingerprint`
  - `Data.Orphans` is now `Trustworthy`

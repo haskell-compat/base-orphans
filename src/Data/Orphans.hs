@@ -243,26 +243,18 @@ instance Foldable ((,) a) where
 instance Traversable ((,) a) where
     traverse f (x, y) = (,) x <$> f y
 
-instance Monoid a => Monoid (Const a b) where
-    mempty = Const mempty
-    mappend (Const a) (Const b) = Const (mappend a b)
-
+deriving instance Monoid a => Monoid (Const a b)
 deriving instance Eq ErrorCall
 deriving instance Ord ErrorCall
 deriving instance Num a => Num (Sum a)
 deriving instance Num a => Num (Product a)
 deriving instance Data Version
-
 -- GHC Trac #8218
-instance Monad m => Monad (WrappedMonad m) where
-    return = WrapMonad . return
-    a >>= f = WrapMonad (unwrapMonad a >>= unwrapMonad . f)
-
+deriving instance Monad m => Monad (WrappedMonad m)
 deriving instance Eq a => Eq (ZipList a)
 deriving instance Ord a => Ord (ZipList a)
 deriving instance Read a => Read (ZipList a)
 deriving instance Show a => Show (ZipList a)
-
 deriving instance Functor ArgOrder
 deriving instance Functor OptDescr
 deriving instance Functor ArgDescr
@@ -1161,6 +1153,13 @@ instance Read a => Read (Const a b) where
 instance Show a => Show (Const a b) where
     showsPrec d (Const x) = showParen (d > 10) $
                             showString "Const " . showsPrec 11 x
+
+deriving instance Functor First
+deriving instance Applicative First
+deriving instance Monad First
+deriving instance Functor Last
+deriving instance Applicative Last
+deriving instance Monad Last
 
 -- The actual constraint in base-4.8.0.0 doesn't include RealFloat a, but it
 -- is needed in previous versions of base due to Complex having lots of
