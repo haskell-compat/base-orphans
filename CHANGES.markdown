@@ -1,4 +1,4 @@
-## Changes in next
+## Changes in 0.3.1
  - `Functor`, `Applicative`, and `Monad` instances for `First` and `Last`
 
 ## Changes in 0.3.0
