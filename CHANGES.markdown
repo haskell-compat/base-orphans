@@ -1,3 +1,7 @@
+## Changes in next
+ - `Storable (Complex a)` instance no longer requires a `RealFloat a`
+   constraint if using `base-4.4` or later
+
 ## Changes in 0.3.1
  - `Functor`, `Applicative`, and `Monad` instances for `First` and `Last`
 
