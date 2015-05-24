@@ -1,4 +1,4 @@
-## Changes in next
+## Changes in 0.3.2
  - `Storable (Complex a)` instance no longer requires a `RealFloat a`
    constraint if using `base-4.4` or later
 

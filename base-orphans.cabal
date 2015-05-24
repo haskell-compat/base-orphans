@@ -3,7 +3,7 @@
 -- see: https://github.com/sol/hpack
 
 name:                base-orphans
-version:             0.3.1
+version:             0.3.2
 synopsis:            Backwards-compatible orphan instances for base
 homepage:            https://github.com/haskell-compat/base-orphans#readme
 bug-reports:         https://github.com/haskell-compat/base-orphans/issues
