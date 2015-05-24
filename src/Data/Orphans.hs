@@ -93,7 +93,7 @@ import Text.Printf
 #endif
 
 #if !(MIN_VERSION_base(4,8,0))
-import Data.Complex (Complex(..), realPart)
+import Data.Complex (Complex(..))
 import Data.Version
 import Foreign.Ptr (castPtr)
 import GHC.Real (Ratio(..), (%))
@@ -1161,12 +1161,16 @@ deriving instance Functor Last
 deriving instance Applicative Last
 deriving instance Monad Last
 
--- The actual constraint in base-4.8.0.0 doesn't include RealFloat a, but it
--- is needed in previous versions of base due to Complex having lots of
--- RealFloat constraints in its functions' type signatures.
-instance (Storable a, RealFloat a) => Storable (Complex a) where
-    sizeOf a       = 2 * sizeOf (realPart a)
-    alignment a    = alignment (realPart a)
+-- In base-4.3 and earlier, pattern matching on a Complex value invokes a
+-- RealFloat constraint due to the use of the DatatypeContexts extension.
+# if MIN_VERSION_base(4,4,0)
+instance Storable a
+# else
+instance (Storable a, RealFloat a)
+# endif
+  => Storable (Complex a) where
+    sizeOf (a :+ _)    = 2 * sizeOf a
+    alignment (a :+ _) = alignment a
     peek p           = do
                         q <- return $ castPtr p
                         r <- peek q
