@@ -34,7 +34,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Show` instance for `Fingerprint`
  * `Storable` instance for `Complex` and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`
- * `Typeable` instance for most data types and typeclasses (when possible)
+ * `Typeable` instance for most data types, typeclasses, and promoted data constructors (when possible)
 
 ## Supported versions of GHC/`base`
 

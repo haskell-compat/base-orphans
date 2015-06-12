@@ -17,6 +17,11 @@
 {-# LANGUAGE PolyKinds #-}
 #endif
 
+#if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE NullaryTypeClasses #-}
+#endif
+
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-|
@@ -64,6 +69,7 @@ import Data.Ord
 import GHC.ForeignPtr
 import GHC.GHCi
 import GHC.TypeLits
+import System.Posix.Internals
 #endif
 
 #if !(MIN_VERSION_base(4,6,0))
@@ -85,11 +91,21 @@ import Control.Monad.Zip
 import Data.Ix
 import Data.Type.Coercion
 import Data.Type.Equality
-import GHC.Exts
+import Data.Typeable.Internal
+import GHC.Exts as Exts
 import GHC.IO.BufferedIO
 import GHC.IO.Device (IODevice, RawIO)
+import GHC.IO.Handle
+import GHC.IO.Handle.Types hiding (BufferList, HandleType)
 import GHC.IP
 import Text.Printf
+
+# if defined(mingw32_HOST_OS)
+import GHC.ConsoleHandler as Console
+#  if !defined(__GHCJS__)
+import GHC.Conc.Windows
+#  endif
+# endif
 #endif
 
 #if !(MIN_VERSION_base(4,8,0))
@@ -101,7 +117,7 @@ import GHC.Real (Ratio(..), (%))
 
 #if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
-import Control.Exception
+import Control.Exception as Exception
 import Control.Monad.ST.Lazy as Lazy
 import Data.Char
 import Data.Data as Data
@@ -112,19 +128,20 @@ import Foreign.C.Error
 import Foreign.C.Types
 import Foreign.Marshal.Pool
 import Foreign.Storable
+import GHC.Base
 import GHC.Conc
 import GHC.Desugar
 import GHC.IO.Buffer
-import GHC.IO.Device (IODeviceType)
+import GHC.IO.Device (IODeviceType(..))
 import GHC.IO.Encoding
+import GHC.IO.Exception as Exception
 import GHC.IO.Handle.Types (BufferList, HandleType)
 import GHC.ST
 import System.Console.GetOpt
 import System.IO
-import System.IO.Error
 import Text.ParserCombinators.ReadP
 import Text.ParserCombinators.ReadPrec as ReadPrec
-import Text.Read
+import Text.Read as Read
 
 # if defined(mingw32_HOST_OS)
 import GHC.IO.Encoding.CodePage.Table
@@ -913,7 +930,7 @@ data C1_1Maybe
 
 instance Datatype D1Maybe where
     datatypeName _ = "Maybe"
-    -- As of base-4.7.0.0, Maybe is actually located in GHC.Base. 
+    -- As of base-4.7.0.0, Maybe is actually located in GHC.Base.
     -- We don't need to worry about this for the versions of base
     -- that this instance is defined for, however.
     moduleName   _ = "Data.Maybe"
@@ -1198,9 +1215,9 @@ instance (Storable a, Integral a) => Storable (Ratio a) where
 #if __GLASGOW_HASKELL__ < 710
 deriving instance Typeable  All
 deriving instance Typeable  AnnotationWrapper
+deriving instance Typeable  Monoid.Any
 deriving instance Typeable1 ArgDescr
 deriving instance Typeable1 ArgOrder
-deriving instance Typeable  Monoid.Any
 deriving instance Typeable  BlockReason
 deriving instance Typeable1 Buffer
 deriving instance Typeable3 BufferCodec
@@ -1222,7 +1239,7 @@ deriving instance Typeable1 First
 deriving instance Typeable  Data.Fixity
 deriving instance Typeable  GeneralCategory
 deriving instance Typeable  HandlePosn
-deriving instance Typeable1 Handler
+deriving instance Typeable1 Exception.Handler
 deriving instance Typeable  HandleType
 deriving instance Typeable  IODeviceType
 deriving instance Typeable  IOErrorType
@@ -1231,6 +1248,7 @@ deriving instance Typeable1 Last
 deriving instance Typeable  Lexeme
 deriving instance Typeable  Newline
 deriving instance Typeable  NewlineMode
+deriving instance Typeable  Opaque
 deriving instance Typeable1 OptDescr
 deriving instance Typeable  Pool
 deriving instance Typeable1 Product
@@ -1248,6 +1266,7 @@ deriving instance Typeable1 ZipList
 deriving instance Typeable  CodePageArrays
 deriving instance Typeable2 CompactArray
 deriving instance Typeable1 ConvArray
+deriving instance Typeable  Console.Handler
 # endif
 
 # if MIN_VERSION_base(4,3,0)
@@ -1290,11 +1309,16 @@ deriving instance Typeable  GCStats
 # endif
 
 # if MIN_VERSION_base(4,6,0)
+deriving instance Typeable  CSigset
 deriving instance Typeable1 Down
 deriving instance Typeable  ForeignPtrContents
 deriving instance Typeable  Nat
 deriving instance Typeable1 NoIO
 deriving instance Typeable  Symbol
+# endif
+
+# if MIN_VERSION_ghc_prim(0,3,1)
+deriving instance Typeable  SPEC
 # endif
 
 # if MIN_VERSION_base(4,7,0)
@@ -1372,6 +1396,7 @@ deriving instance Typeable (,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 deriving instance Typeable (:+:)
 deriving instance Typeable (:*:)
 deriving instance Typeable (:.:)
+deriving instance Typeable Exts.Any
 deriving instance Typeable ArrowMonad
 deriving instance Typeable Kleisli
 deriving instance Typeable M1
@@ -1435,6 +1460,243 @@ deriving instance Typeable TestCoercion
 deriving instance Typeable TestEquality
 deriving instance Typeable Traversable
 deriving instance Typeable Typeable
+
+-- Constraints
+deriving instance Typeable (~)
+deriving instance Typeable Constraint
+
+-- Promoted data constructors
+deriving instance Typeable '()
+deriving instance Typeable '(,)
+deriving instance Typeable '(,,)
+deriving instance Typeable '(,,,)
+deriving instance Typeable '(,,,,)
+deriving instance Typeable '(,,,,,)
+deriving instance Typeable '(,,,,,,)
+deriving instance Typeable '(,,,,,,,)
+deriving instance Typeable '(,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '(,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
+deriving instance Typeable '[]
+deriving instance Typeable '(:)
+deriving instance Typeable '(:%)
+deriving instance Typeable '(:+)
+deriving instance Typeable 'AbsoluteSeek
+deriving instance Typeable 'All
+deriving instance Typeable 'AlreadyExists
+deriving instance Typeable 'Any
+deriving instance Typeable 'AppendHandle
+deriving instance Typeable 'AppendMode
+deriving instance Typeable 'BlockedIndefinitelyOnMVar
+deriving instance Typeable 'BlockedIndefinitelyOnSTM
+deriving instance Typeable 'BlockedOnBlackHole
+deriving instance Typeable 'BlockedOnException
+deriving instance Typeable 'BlockedOnForeignCall
+deriving instance Typeable 'BlockedOnMVar
+deriving instance Typeable 'BlockedOnOther
+deriving instance Typeable 'BlockedOnSTM
+deriving instance Typeable 'ClosedHandle
+deriving instance Typeable 'ClosePunctuation
+deriving instance Typeable 'ConnectorPunctuation
+deriving instance Typeable 'Const
+deriving instance Typeable 'Control
+deriving instance Typeable 'CRLF
+deriving instance Typeable 'CurrencySymbol
+deriving instance Typeable 'DashPunctuation
+deriving instance Typeable 'Deadlock
+deriving instance Typeable 'DecimalNumber
+deriving instance Typeable 'Denormal
+deriving instance Typeable 'Directory
+deriving instance Typeable 'DivideByZero
+deriving instance Typeable 'Down
+deriving instance Typeable 'Dual
+deriving instance Typeable 'EnclosingMark
+deriving instance Typeable 'Endo
+deriving instance Typeable 'Exception.EOF
+deriving instance Typeable 'EQ
+deriving instance Typeable 'ErrorOnCodingFailure
+deriving instance Typeable 'False
+deriving instance Typeable 'FinalQuote
+deriving instance Typeable 'First
+deriving instance Typeable 'ForceSpecConstr
+deriving instance Typeable 'Format
+deriving instance Typeable 'GT
+deriving instance Typeable 'HardwareFault
+deriving instance Typeable 'HeapOverflow
+deriving instance Typeable 'IgnoreCodingFailure
+deriving instance Typeable 'IllegalOperation
+deriving instance Typeable 'InappropriateType
+deriving instance Typeable 'Data.Infix
+deriving instance Typeable 'InitialQuote
+deriving instance Typeable 'InputUnderflow
+deriving instance Typeable 'Interrupted
+deriving instance Typeable 'InvalidArgument
+deriving instance Typeable 'InvalidSequence
+deriving instance Typeable 'Just
+deriving instance Typeable 'K1
+deriving instance Typeable 'KProxy
+deriving instance Typeable 'Last
+deriving instance Typeable 'Left
+deriving instance Typeable 'LeftAdjust
+deriving instance Typeable 'LeftAssociative
+deriving instance Typeable 'LetterNumber
+deriving instance Typeable 'LF
+deriving instance Typeable 'LineSeparator
+deriving instance Typeable 'LossOfPrecision
+deriving instance Typeable 'LowercaseLetter
+deriving instance Typeable 'LT
+deriving instance Typeable 'MaskedInterruptible
+deriving instance Typeable 'MaskedUninterruptible
+deriving instance Typeable 'MathSymbol
+deriving instance Typeable 'ModifierLetter
+deriving instance Typeable 'ModifierSymbol
+deriving instance Typeable 'NestedAtomically
+deriving instance Typeable 'NewlineMode
+deriving instance Typeable 'NonSpacingMark
+deriving instance Typeable 'NonTermination
+deriving instance Typeable 'NoSpecConstr
+deriving instance Typeable 'NoSuchThing
+deriving instance Typeable 'NotAssigned
+deriving instance Typeable 'NotAssociative
+deriving instance Typeable 'Nothing
+deriving instance Typeable 'O
+deriving instance Typeable 'OpenPunctuation
+deriving instance Typeable 'OtherError
+deriving instance Typeable 'OtherLetter
+deriving instance Typeable 'OtherNumber
+deriving instance Typeable 'OtherPunctuation
+deriving instance Typeable 'OtherSymbol
+deriving instance Typeable 'OutputUnderflow
+deriving instance Typeable 'Overflow
+deriving instance Typeable 'Par1
+deriving instance Typeable 'ParagraphSeparator
+deriving instance Typeable 'PermissionDenied
+deriving instance Typeable 'Data.Prefix
+deriving instance Typeable 'PrivateUse
+deriving instance Typeable 'Product
+deriving instance Typeable 'ProtocolError
+deriving instance Typeable 'RatioZeroDenominator
+deriving instance Typeable 'RawDevice
+deriving instance Typeable 'ReadBuffer
+deriving instance Typeable 'ReadHandle
+deriving instance Typeable 'ReadMode
+deriving instance Typeable 'ReadWriteHandle
+deriving instance Typeable 'ReadWriteMode
+deriving instance Typeable 'RegularFile
+deriving instance Typeable 'RelativeSeek
+deriving instance Typeable 'ResourceBusy
+deriving instance Typeable 'ResourceExhausted
+deriving instance Typeable 'ResourceVanished
+deriving instance Typeable 'Right
+deriving instance Typeable 'RightAssociative
+deriving instance Typeable 'RoundtripFailure
+deriving instance Typeable 'SeekFromEnd
+deriving instance Typeable 'SemiClosedHandle
+deriving instance Typeable 'SignPlus
+deriving instance Typeable 'SignSpace
+deriving instance Typeable 'Space
+deriving instance Typeable 'SpacingCombiningMark
+deriving instance Typeable 'SPEC
+deriving instance Typeable 'SPEC2
+deriving instance Typeable 'StackOverflow
+deriving instance Typeable 'Stream
+deriving instance Typeable 'Sum
+deriving instance Typeable 'Surrogate
+deriving instance Typeable 'SystemError
+deriving instance Typeable 'ThreadBlocked
+deriving instance Typeable 'ThreadDied
+deriving instance Typeable 'ThreadFinished
+deriving instance Typeable 'ThreadKilled
+deriving instance Typeable 'ThreadRunning
+deriving instance Typeable 'TimeExpired
+deriving instance Typeable 'TitlecaseLetter
+deriving instance Typeable 'TransliterateCodingFailure
+deriving instance Typeable 'True
+deriving instance Typeable 'U1
+deriving instance Typeable 'Underflow
+deriving instance Typeable 'Unmasked
+deriving instance Typeable 'UnsatisfiedConstraints
+deriving instance Typeable 'UnsupportedOperation
+deriving instance Typeable 'UppercaseLetter
+deriving instance Typeable 'UserError
+deriving instance Typeable 'UserInterrupt
+deriving instance Typeable 'WriteBuffer
+deriving instance Typeable 'WriteHandle
+deriving instance Typeable 'WriteMode
+deriving instance Typeable 'ZeroPad
+deriving instance Typeable 'ZipList
+
+#  if defined(mingw32_HOST_OS)
+deriving instance Typeable 'Break
+deriving instance Typeable 'Catch
+deriving instance Typeable 'Close
+deriving instance Typeable 'CompactArray
+deriving instance Typeable 'ControlC
+deriving instance Typeable 'ConvArray
+deriving instance Typeable 'Default
+deriving instance Typeable 'Ignore
+deriving instance Typeable 'Logoff
+deriving instance Typeable 'Shutdown
+deriving instance Typeable 'SingleByteCP
+#   if !defined(__GHCJS__)
+deriving instance Typeable 'Break
+deriving instance Typeable 'Close
+deriving instance Typeable 'ControlC
+deriving instance Typeable 'Logoff
+deriving instance Typeable 'Shutdown
+#   endif
+#  endif
 # endif
 
 #endif
