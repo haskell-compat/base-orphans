@@ -307,8 +307,8 @@ instance Selector S1_0_0All where
 
 -----
 
-instance Generic Any where
-    type Rep Any = D1 D1Any (C1 C1_0Any (S1 S1_0_0Any (Rec0 Bool)))
+instance Generic Monoid.Any where
+    type Rep Monoid.Any = D1 D1Any (C1 C1_0Any (S1 S1_0_0Any (Rec0 Bool)))
     from (Any a) = M1 (M1 (M1 (K1 a)))
     to (M1 (M1 (M1 (K1 a)))) = Any a
 
