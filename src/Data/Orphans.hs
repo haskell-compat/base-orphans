@@ -102,9 +102,6 @@ import Text.Printf
 
 # if defined(mingw32_HOST_OS)
 import GHC.ConsoleHandler as Console
-#  if !defined(__GHCJS__)
-import GHC.Conc.Windows
-#  endif
 # endif
 #endif
 
@@ -1679,23 +1676,10 @@ deriving instance Typeable 'ZipList
 
 #  if defined(mingw32_HOST_OS)
 deriving instance Typeable 'Break
-deriving instance Typeable 'Catch
-deriving instance Typeable 'Close
-deriving instance Typeable 'CompactArray
-deriving instance Typeable 'ControlC
-deriving instance Typeable 'ConvArray
-deriving instance Typeable 'Default
-deriving instance Typeable 'Ignore
-deriving instance Typeable 'Logoff
-deriving instance Typeable 'Shutdown
-deriving instance Typeable 'SingleByteCP
-#   if !defined(__GHCJS__)
-deriving instance Typeable 'Break
 deriving instance Typeable 'Close
 deriving instance Typeable 'ControlC
 deriving instance Typeable 'Logoff
 deriving instance Typeable 'Shutdown
-#   endif
 #  endif
 # endif
 
