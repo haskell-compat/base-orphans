@@ -1,3 +1,7 @@
+## Changes in next
+ - `Typeable` instances for `(~)`, `Any`, `Constraint`, `CSigset`, `Handler`,
+   `Opaque`, `SPEC`, and every promotable data constructor in `base`
+
 ## Changes in 0.3.2
  - `Storable (Complex a)` instance no longer requires a `RealFloat a`
    constraint if using `base-4.4` or later
