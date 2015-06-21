@@ -1,4 +1,4 @@
-## Changes in next
+## Changes in 0.3.3
  - `Typeable` instances for `(~)`, `Any`, `Constraint`, `CSigset`, `Handler`,
    `Opaque`, `SPEC`, and every promotable data constructor in `base`
 

@@ -1,9 +1,9 @@
--- This file has been generated from package.yaml by hpack version 0.3.0.
+-- This file has been generated from package.yaml by hpack version 0.3.2.
 --
 -- see: https://github.com/sol/hpack
 
 name:                base-orphans
-version:             0.3.2
+version:             0.3.3
 synopsis:            Backwards-compatible orphan instances for base
 homepage:            https://github.com/haskell-compat/base-orphans#readme
 bug-reports:         https://github.com/haskell-compat/base-orphans/issues
