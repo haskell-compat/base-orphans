@@ -251,7 +251,7 @@ deriving instance Traversable (Either a)
 
 instance Foldable ((,) a) where
     foldMap f (_, y) = f y
-    
+
     foldr f z (_, y) = f y z
 
 instance Traversable ((,) a) where
@@ -1140,6 +1140,13 @@ deriving instance Eq (f (g p)) => Eq ((f :.: g) p)
 deriving instance Ord (f (g p)) => Ord ((f :.: g) p)
 deriving instance Read (f (g p)) => Read ((f :.: g) p)
 deriving instance Show (f (g p)) => Show ((f :.: g) p)
+#endif
+
+#if !(MIN_VERSION_base(4,8,1))
+-- see: #10190 https://git.haskell.org/ghc.git/commitdiff/9db005a444722e31aca1956b058e069bcf3cacbd
+instance Monoid a => Monad ((,) a) where
+    return x = (mempty, x)
+    (u, a) >>= k = case k a of (v, b) -> (u `mappend` v, b)
 #endif
 
 #if MIN_VERSION_base(4,7,0) && !(MIN_VERSION_base(4,8,0))
