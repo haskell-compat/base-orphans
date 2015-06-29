@@ -1,4 +1,4 @@
-## Changes in next
+## Changes in 0.4.0
  - Removed all `Generic` and `Generic1` instances. These have been moved to the
    `generic-deriving` library.
 

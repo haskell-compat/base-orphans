@@ -1,5 +1,5 @@
 name: base-orphans
-version: 0.3.3
+version: 0.4.0
 synopsis: Backwards-compatible orphan instances for base
 license: MIT
 author:
@@ -23,7 +23,10 @@ description: >
   base-compat>@.
 
   See the README for what instances are covered:
-  <https://github.com/haskell-compat/base-orphans#readme>
+  <https://github.com/haskell-compat/base-orphans#readme>.
+  See also the
+  <https://github.com/haskell-compat/base-orphans#what-is-not-covered what is not covered>
+  section.
 
 extra-source-files:
   - CHANGES.markdown

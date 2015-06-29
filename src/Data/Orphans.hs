@@ -422,7 +422,7 @@ deriving instance Typeable1 Dual
 deriving instance Typeable1 Endo
 deriving instance Typeable  Errno
 deriving instance Typeable1 First
-deriving instance Typeable  Fixity
+deriving instance Typeable  Data.Fixity
 deriving instance Typeable  GeneralCategory
 deriving instance Typeable  HandlePosn
 deriving instance Typeable1 Exception.Handler
