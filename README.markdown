@@ -7,6 +7,9 @@ versions of `base` to a wider (older) range of compilers. `base-orphans` does
 not export anything except the orphan instances themselves and complements
 [base-compat](http://hackage.haskell.org/package/base-compat).
 
+Note that `base-orphans` doesn't cover every possible instance. See the
+[What is not covered](#what-is-not-covered) section for exceptions.
+
 ## Usage
 
 To use `base-orphans`, simply `import Data.Orphans ()`.
@@ -24,9 +27,6 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * Added `Data` and `IsList` instances for `Version`
  * `Applicative` instance for strict and lazy `ST`
  * `Bits` instance for `Bool`
- * `Generic` instances for the data types in `GHC.Generics`
- * `Generic` instance for `All`, `Any`, `Const`, `Dual`, `Endo`, `First`, `Last`, `Product`, `Sum`, `WrappedArrow`, `WrappedMonad`, and `ZipList`
- * `Generic1` instance for `Const`, `Dual`, `First`, `Last`, `Product`, `Sum`, `WrappedArrow`, `WrappedMonad`, and `ZipList`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Functor` instance for `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Num` instance for `Sum` and `Product`
@@ -35,6 +35,14 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Storable` instance for `Complex` and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`
  * `Typeable` instance for most data types, typeclasses, and promoted data constructors (when possible)
+
+## What is not covered
+`base-orphans` does not define the following instances:
+
+* `Generic` or `Generic1` instances. These can be found in the
+  [`Generics.Deriving.Instances`](https://hackage.haskell.org/package/generic-deriving-1.8.0/docs/Generics-Deriving-Instances.html)
+  module of the [`generic-deriving`](https://hackage.haskell.org/package/generic-deriving)
+  library.
 
 ## Supported versions of GHC/`base`
 

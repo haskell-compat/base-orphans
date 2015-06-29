@@ -23,7 +23,9 @@ build-type:          Simple
 cabal-version:       >= 1.10
 description:         @base-orphans@ defines orphan instances that mimic instances available in later versions of @base@ to a wider (older) range of compilers. @base-orphans@ does not export anything except the orphan instances themselves and complements @<http://hackage.haskell.org/package/base-compat base-compat>@.
                      .
-                     See the README for what instances are covered: <https://github.com/haskell-compat/base-orphans#readme>
+                     See the README for what instances are covered: <https://github.com/haskell-compat/base-orphans#readme>.
+                     See also the <https://github.com/haskell-compat/base-orphans#what-is-not-covered what is not covered>
+                     section.
 
 extra-source-files:
   CHANGES.markdown
