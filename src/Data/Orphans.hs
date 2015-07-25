@@ -72,8 +72,12 @@ import GHC.TypeLits
 import System.Posix.Internals
 #endif
 
+#if !(MIN_VERSION_base(4,6,0)) || (__GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710)
+import Control.Arrow
+#endif
+
 #if !(MIN_VERSION_base(4,6,0))
-import Control.Monad (ap, mplus, mzero)
+import Control.Monad (MonadPlus(..), ap)
 #endif
 
 #if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
@@ -83,7 +87,6 @@ import Text.Read.Lex (Number)
 # endif
 
 #if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
-import Control.Arrow
 import Control.Category hiding ((.))
 import Control.Monad
 import Control.Monad.Fix
@@ -127,7 +130,7 @@ import Foreign.Marshal.Pool
 import Foreign.Storable
 import GHC.Base
 import GHC.Conc
-import GHC.Desugar
+import GHC.Desugar (AnnotationWrapper)
 import GHC.IO.Buffer
 import GHC.IO.Device (IODeviceType(..))
 import GHC.IO.Encoding
@@ -241,6 +244,42 @@ instance Applicative ReadPrec where
 instance Alternative ReadPrec where
     empty = mzero
     (<|>) = mplus
+
+instance Functor Handler where
+     fmap f (Handler h) = Handler (fmap f . h)
+
+instance
+# if MIN_VERSION_base(4,4,0)
+  Arrow a
+# else
+  ArrowApply a
+# endif
+  => Functor (ArrowMonad a) where
+    fmap f (ArrowMonad m) = ArrowMonad $ m >>> arr f
+
+instance
+# if MIN_VERSION_base(4,4,0)
+  Arrow a
+# else
+  ArrowApply a
+# endif
+  => Applicative (ArrowMonad a) where
+   pure x = ArrowMonad (arr (const x))
+   ArrowMonad f <*> ArrowMonad x = ArrowMonad (f &&& x >>> arr (uncurry id))
+
+instance
+# if MIN_VERSION_base(4,4,0)
+  ArrowPlus a
+# else
+  (ArrowApply a, ArrowPlus a)
+# endif
+  => Alternative (ArrowMonad a) where
+   empty = ArrowMonad zeroArrow
+   ArrowMonad x <|> ArrowMonad y = ArrowMonad (x <+> y)
+
+instance (ArrowApply a, ArrowPlus a) => MonadPlus (ArrowMonad a) where
+   mzero = ArrowMonad zeroArrow
+   ArrowMonad x `mplus` ArrowMonad y = ArrowMonad (x <+> y)
 #endif
 
 #if !(MIN_VERSION_base(4,7,0))
