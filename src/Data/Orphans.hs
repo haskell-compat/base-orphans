@@ -99,10 +99,6 @@ import GHC.IO.Handle
 import GHC.IO.Handle.Types hiding (BufferList, HandleType)
 import GHC.IP
 import Text.Printf
-
-# if defined(mingw32_HOST_OS)
-import GHC.ConsoleHandler as Console
-# endif
 #endif
 
 #if !(MIN_VERSION_base(4,8,0))
@@ -141,6 +137,7 @@ import Text.ParserCombinators.ReadPrec as ReadPrec
 import Text.Read as Read
 
 # if defined(mingw32_HOST_OS)
+import GHC.ConsoleHandler as Console
 import GHC.IO.Encoding.CodePage.Table
 # endif
 #endif
