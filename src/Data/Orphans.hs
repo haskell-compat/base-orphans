@@ -245,8 +245,8 @@ instance Alternative ReadPrec where
     empty = mzero
     (<|>) = mplus
 
-instance Functor Handler where
-     fmap f (Handler h) = Handler (fmap f . h)
+instance Functor Exception.Handler where
+     fmap f (Exception.Handler h) = Exception.Handler (fmap f . h)
 
 instance
 # if MIN_VERSION_base(4,4,0)
