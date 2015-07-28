@@ -19,6 +19,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * Added `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
  * Added `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * Added `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
+ * Added `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
  * Added `Functor`, `Applicative`, and `Monad` instances for `First` and `Last`
  * Added `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
  * Added `Read` and `Show` instances for `Down`
@@ -28,7 +29,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Applicative` instance for strict and lazy `ST`
  * `Bits` instance for `Bool`
  * `Foldable` instance for `Either`, `(,)` and `Const`
- * `Functor` instance for `ArgOrder`, `OptDescr`, and `ArgDescr`
+ * `Functor` instance for `Handler`, `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Num` instance for `Sum` and `Product`
  * `Read` instance for `Fixed`
  * `Show` instance for `Fingerprint`
