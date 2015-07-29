@@ -46,6 +46,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-7.10.2` / `base-4.8.1.0`
  * `ghc-7.10.1` / `base-4.8.0.0`
  * `ghc-7.8.4`  / `base-4.7.0.2`
  * `ghc-7.8.3`  / `base-4.7.0.1`
