@@ -1,3 +1,8 @@
+## Changes in next
+ - `Functor` instances for `Handler`
+ - `Functor`. `Applicative`, `Alternative`, and `MonadPlus` instances for
+   `ArrowMonad`
+
 ## Changes in 0.4.1
  - Fixed imports on GHC < 7.8 on Windows
 
