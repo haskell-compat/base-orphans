@@ -65,7 +65,6 @@ import GHC.Stats
 
 #if MIN_VERSION_base(4,6,0) && __GLASGOW_HASKELL__ < 710
 import Data.Bits
-import Data.Ord
 import GHC.ForeignPtr
 import GHC.GHCi
 import GHC.TypeLits
@@ -84,7 +83,7 @@ import Control.Monad (MonadPlus(..), ap)
 import Control.Concurrent.QSem
 import Data.Proxy
 import Text.Read.Lex (Number)
-# endif
+#endif
 
 #if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
 import Control.Category hiding ((.))
@@ -95,7 +94,6 @@ import Data.Ix
 import Data.Type.Coercion
 import Data.Type.Equality
 import Data.Typeable.Internal
-import GHC.Exts as Exts
 import GHC.IO.BufferedIO
 import GHC.IO.Device (IODevice, RawIO)
 import GHC.IO.Handle
@@ -127,6 +125,7 @@ import Foreign.Storable
 import GHC.Base
 import GHC.Conc
 import GHC.Desugar (AnnotationWrapper)
+import GHC.Exts as Exts
 import GHC.IO.Buffer
 import GHC.IO.Device (IODeviceType(..))
 import GHC.IO.Encoding
@@ -220,9 +219,6 @@ instance Bits Bool where
 
     popCount False = 0
     popCount True  = 1
-
-deriving instance Read a => Read (Down a)
-deriving instance Show a => Show (Down a)
 #endif
 
 #if !(MIN_VERSION_base(4,6,0))
@@ -287,13 +283,15 @@ deriving instance Traversable (Either a)
 
 instance Foldable ((,) a) where
     foldMap f (_, y) = f y
-    
+
     foldr f z (_, y) = f y z
 
 instance Traversable ((,) a) where
     traverse f (x, y) = (,) x <$> f y
 
 deriving instance Monoid a => Monoid (Const a b)
+deriving instance Read a => Read (Down a)
+deriving instance Show a => Show (Down a)
 deriving instance Eq ErrorCall
 deriving instance Ord ErrorCall
 deriving instance Num a => Num (Sum a)
