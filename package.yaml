@@ -51,3 +51,4 @@ tests:
     dependencies:
       - base-orphans
       - hspec == 2.*
+      - QuickCheck
