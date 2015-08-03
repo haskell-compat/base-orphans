@@ -62,6 +62,10 @@ import GHC.Stack
 import GHC.Stats
 #endif
 
+#if !(MIN_VERSION_base(4,5,0))
+import Unsafe.Coerce (unsafeCoerce)
+#endif
+
 #if MIN_VERSION_base(4,6,0) && __GLASGOW_HASKELL__ < 710
 import GHC.ForeignPtr
 import GHC.GHCi
@@ -233,39 +237,35 @@ deriving instance Bits CDev
 deriving instance Bounded CDev
 deriving instance Integral CDev
 # else
-toCDev :: HTYPE_DEV_T -> CDev
-toCDev = fromIntegral
-
-fromCDev :: CDev -> HTYPE_DEV_T
-fromCDev = fromIntegral . fromEnum
+type HDev = HTYPE_DEV_T
 
 instance Bits CDev where
-    x .&.         y   = toCDev $ fromCDev x .&.   fromCDev y
-    x .|.         y   = toCDev $ fromCDev x .|.   fromCDev y
-    x `xor`       y   = toCDev $ fromCDev x `xor` fromCDev y
-    shift         x n = toCDev $ shift         (fromCDev x) n
-    rotate        x n = toCDev $ rotate        (fromCDev x) n
-    setBit        x n = toCDev $ setBit        (fromCDev x) n
-    clearBit      x n = toCDev $ clearBit      (fromCDev x) n
-    complementBit x n = toCDev $ complementBit (fromCDev x) n
-    testBit       x n = testBit (fromCDev x) n
-    complement        = toCDev . complement . fromCDev
-    bit               = toCDev . bit
-    bitSize           = bitSize  . fromCDev
-    isSigned          = isSigned . fromCDev
+    (.&.)         = unsafeCoerce ((.&.)         :: HDev -> HDev -> HDev)
+    (.|.)         = unsafeCoerce ((.|.)         :: HDev -> HDev -> HDev)
+    xor           = unsafeCoerce (xor           :: HDev -> HDev -> HDev)
+    shift         = unsafeCoerce (shift         :: HDev -> Int  -> HDev)
+    rotate        = unsafeCoerce (rotate        :: HDev -> Int  -> HDev)
+    setBit        = unsafeCoerce (setBit        :: HDev -> Int  -> HDev)
+    clearBit      = unsafeCoerce (clearBit      :: HDev -> Int  -> HDev)
+    complementBit = unsafeCoerce (complementBit :: HDev -> Int  -> HDev)
+    testBit       = unsafeCoerce (testBit       :: HDev -> Int  -> Bool)
+    complement    = unsafeCoerce (complement    :: HDev -> HDev)
+    bit           = unsafeCoerce (bit           :: Int  -> HDev)
+    bitSize       = unsafeCoerce (bitSize       :: HDev -> Int)
+    isSigned      = unsafeCoerce (isSigned      :: HDev -> Bool)
 
 instance Bounded CDev where
-    minBound = toCDev minBound
-    maxBound = toCDev maxBound
+    minBound = unsafeCoerce (minBound :: HDev)
+    maxBound = unsafeCoerce (maxBound :: HDev)
 
 instance Integral CDev where
-    x `quot`    y = toCDev $ fromCDev x `quot` fromCDev y
-    x `rem`     y = toCDev $ fromCDev x `rem`  fromCDev y
-    x `div`     y = toCDev $ fromCDev x `div`  fromCDev y
-    x `mod`     y = toCDev $ fromCDev x `mod`  fromCDev y
-    x `quotRem` y = let (q,r) = fromCDev x `quotRem` fromCDev y in (toCDev q, toCDev r)
-    x `divMod`  y = let (d,m) = fromCDev x `divMod`  fromCDev y in (toCDev d, toCDev m)
-    toInteger     = fromIntegral . fromCDev
+    quot      = unsafeCoerce (quot      :: HDev -> HDev -> HDev)
+    rem       = unsafeCoerce (rem       :: HDev -> HDev -> HDev)
+    div       = unsafeCoerce (div       :: HDev -> HDev -> HDev)
+    mod       = unsafeCoerce (mod       :: HDev -> HDev -> HDev)
+    quotRem   = unsafeCoerce (quotRem   :: HDev -> HDev -> (HDev, HDev))
+    divMod    = unsafeCoerce (divMod    :: HDev -> HDev -> (HDev, HDev))
+    toInteger = unsafeCoerce (toInteger :: HDev -> Integer)
 # endif
 
 instance Applicative ReadP where
