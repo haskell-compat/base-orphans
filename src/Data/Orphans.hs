@@ -64,7 +64,6 @@ import GHC.Stats
 #endif
 
 #if MIN_VERSION_base(4,6,0) && __GLASGOW_HASKELL__ < 710
-import Data.Bits
 import GHC.ForeignPtr
 import GHC.GHCi
 import GHC.TypeLits
@@ -77,6 +76,7 @@ import Control.Arrow
 
 #if !(MIN_VERSION_base(4,6,0))
 import Control.Monad (MonadPlus(..), ap)
+import System.Posix.Types
 #endif
 
 #if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
@@ -113,6 +113,7 @@ import GHC.Real (Ratio(..), (%))
 import Control.Applicative
 import Control.Exception as Exception
 import Control.Monad.ST.Lazy as Lazy
+import Data.Bits
 import Data.Char
 import Data.Data as Data
 import Data.Foldable
@@ -143,6 +144,8 @@ import GHC.ConsoleHandler as Console
 import GHC.IO.Encoding.CodePage.Table
 # endif
 #endif
+
+#include "HsBaseConfig.h"
 
 -------------------------------------------------------------------------------
 
@@ -222,6 +225,46 @@ instance Bits Bool where
 #endif
 
 #if !(MIN_VERSION_base(4,6,0))
+# if MIN_VERSION_base(4,5,0)
+deriving instance Bits CDev
+deriving instance Bounded CDev
+deriving instance Integral CDev
+# else
+toCDev :: HTYPE_DEV_T -> CDev
+toCDev = fromIntegral
+
+fromCDev :: CDev -> HTYPE_DEV_T
+fromCDev = fromIntegral . fromEnum
+
+instance Bits CDev where
+    x .&.         y   = toCDev $ fromCDev x .&.   fromCDev y
+    x .|.         y   = toCDev $ fromCDev x .|.   fromCDev y
+    x `xor`       y   = toCDev $ fromCDev x `xor` fromCDev y
+    shift         x n = toCDev $ shift         (fromCDev x) n
+    rotate        x n = toCDev $ rotate        (fromCDev x) n
+    setBit        x n = toCDev $ setBit        (fromCDev x) n
+    clearBit      x n = toCDev $ clearBit      (fromCDev x) n
+    complementBit x n = toCDev $ complementBit (fromCDev x) n
+    testBit       x n = testBit (fromCDev x) n
+    complement        = toCDev . complement . fromCDev
+    bit               = toCDev . bit
+    bitSize           = bitSize  . fromCDev
+    isSigned          = isSigned . fromCDev
+
+instance Bounded CDev where
+    minBound = toCDev minBound
+    maxBound = toCDev maxBound
+
+instance Integral CDev where
+    x `quot`    y = toCDev $ fromCDev x `quot` fromCDev y
+    x `rem`     y = toCDev $ fromCDev x `rem`  fromCDev y
+    x `div`     y = toCDev $ fromCDev x `div`  fromCDev y
+    x `mod`     y = toCDev $ fromCDev x `mod`  fromCDev y
+    x `quotRem` y = let (q,r) = fromCDev x `quotRem` fromCDev y in (toCDev q, toCDev r)
+    x `divMod`  y = let (d,m) = fromCDev x `divMod`  fromCDev y in (toCDev d, toCDev m)
+    toInteger     = fromIntegral . fromCDev
+# endif
+
 instance Applicative ReadP where
     pure  = return
     (<*>) = ap
