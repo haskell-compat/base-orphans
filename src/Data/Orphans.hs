@@ -31,7 +31,6 @@ To use them, simply @import Data.Orphans ()@.
 module Data.Orphans () where
 
 #if MIN_VERSION_base(4,4,0) && !(MIN_VERSION_base(4,7,0))
-import Data.Word (Word64)
 import Numeric (showHex)
 #endif
 
@@ -83,6 +82,10 @@ import System.Posix.Types
 import Control.Concurrent.QSem
 import Data.Proxy
 import Text.Read.Lex (Number)
+#endif
+
+#if !(MIN_VERSION_base(4,7,0))
+import Data.Word
 #endif
 
 #if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
