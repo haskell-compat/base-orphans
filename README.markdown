@@ -17,6 +17,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 ## What is covered
 
  * Added `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
+ * Added `Bits`, `Bounded`, and `Integral` instances for `CDev`
  * Added `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * Added `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
  * Added `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`

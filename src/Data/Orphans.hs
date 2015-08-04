@@ -31,7 +31,6 @@ To use them, simply @import Data.Orphans ()@.
 module Data.Orphans () where
 
 #if MIN_VERSION_base(4,4,0) && !(MIN_VERSION_base(4,7,0))
-import Data.Word (Word64)
 import Numeric (showHex)
 #endif
 
@@ -63,8 +62,11 @@ import GHC.Stack
 import GHC.Stats
 #endif
 
+#if !(MIN_VERSION_base(4,5,0))
+import Unsafe.Coerce (unsafeCoerce)
+#endif
+
 #if MIN_VERSION_base(4,6,0) && __GLASGOW_HASKELL__ < 710
-import Data.Bits
 import GHC.ForeignPtr
 import GHC.GHCi
 import GHC.TypeLits
@@ -77,12 +79,17 @@ import Control.Arrow
 
 #if !(MIN_VERSION_base(4,6,0))
 import Control.Monad (MonadPlus(..), ap)
+import System.Posix.Types
 #endif
 
 #if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
 import Control.Concurrent.QSem
 import Data.Proxy
 import Text.Read.Lex (Number)
+#endif
+
+#if !(MIN_VERSION_base(4,7,0))
+import Data.Word
 #endif
 
 #if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
@@ -113,6 +120,7 @@ import GHC.Real (Ratio(..), (%))
 import Control.Applicative
 import Control.Exception as Exception
 import Control.Monad.ST.Lazy as Lazy
+import Data.Bits
 import Data.Char
 import Data.Data as Data
 import Data.Foldable
@@ -143,6 +151,8 @@ import GHC.ConsoleHandler as Console
 import GHC.IO.Encoding.CodePage.Table
 # endif
 #endif
+
+#include "HsBaseConfig.h"
 
 -------------------------------------------------------------------------------
 
@@ -222,6 +232,42 @@ instance Bits Bool where
 #endif
 
 #if !(MIN_VERSION_base(4,6,0))
+# if MIN_VERSION_base(4,5,0)
+deriving instance Bits CDev
+deriving instance Bounded CDev
+deriving instance Integral CDev
+# else
+type HDev = HTYPE_DEV_T
+
+instance Bits CDev where
+    (.&.)         = unsafeCoerce ((.&.)         :: HDev -> HDev -> HDev)
+    (.|.)         = unsafeCoerce ((.|.)         :: HDev -> HDev -> HDev)
+    xor           = unsafeCoerce (xor           :: HDev -> HDev -> HDev)
+    shift         = unsafeCoerce (shift         :: HDev -> Int  -> HDev)
+    rotate        = unsafeCoerce (rotate        :: HDev -> Int  -> HDev)
+    setBit        = unsafeCoerce (setBit        :: HDev -> Int  -> HDev)
+    clearBit      = unsafeCoerce (clearBit      :: HDev -> Int  -> HDev)
+    complementBit = unsafeCoerce (complementBit :: HDev -> Int  -> HDev)
+    testBit       = unsafeCoerce (testBit       :: HDev -> Int  -> Bool)
+    complement    = unsafeCoerce (complement    :: HDev -> HDev)
+    bit           = unsafeCoerce (bit           :: Int  -> HDev)
+    bitSize       = unsafeCoerce (bitSize       :: HDev -> Int)
+    isSigned      = unsafeCoerce (isSigned      :: HDev -> Bool)
+
+instance Bounded CDev where
+    minBound = unsafeCoerce (minBound :: HDev)
+    maxBound = unsafeCoerce (maxBound :: HDev)
+
+instance Integral CDev where
+    quot      = unsafeCoerce (quot      :: HDev -> HDev -> HDev)
+    rem       = unsafeCoerce (rem       :: HDev -> HDev -> HDev)
+    div       = unsafeCoerce (div       :: HDev -> HDev -> HDev)
+    mod       = unsafeCoerce (mod       :: HDev -> HDev -> HDev)
+    quotRem   = unsafeCoerce (quotRem   :: HDev -> HDev -> (HDev, HDev))
+    divMod    = unsafeCoerce (divMod    :: HDev -> HDev -> (HDev, HDev))
+    toInteger = unsafeCoerce (toInteger :: HDev -> Integer)
+# endif
+
 instance Applicative ReadP where
     pure  = return
     (<*>) = ap

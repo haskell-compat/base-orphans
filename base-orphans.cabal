@@ -53,6 +53,7 @@ test-suite spec
       base >= 4.3 && < 5
     , base-orphans
     , hspec == 2.*
+    , QuickCheck
   other-modules:
       Control.Applicative.OrphansSpec
       Control.Exception.OrphansSpec
@@ -63,4 +64,5 @@ test-suite spec
       Data.Version.OrphansSpec
       Foreign.Storable.OrphansSpec
       GHC.Fingerprint.OrphansSpec
+      System.Posix.Types.OrphansSpec
   default-language: Haskell2010
