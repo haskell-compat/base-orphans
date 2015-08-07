@@ -1,3 +1,6 @@
+## Changes in next
+ - `Fix` build on OSes where `HTYPE_DEV_T = Int32`
+
 ## Changes in 0.4.2
  - `Functor` instances for `Handler`
  - `Functor`. `Applicative`, `Alternative`, and `MonadPlus` instances for

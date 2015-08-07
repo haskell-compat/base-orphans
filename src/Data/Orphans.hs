@@ -30,125 +30,31 @@ To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
 
-#if MIN_VERSION_base(4,4,0) && !(MIN_VERSION_base(4,7,0))
-import Numeric (showHex)
-#endif
-
 #if !(MIN_VERSION_base(4,4,0))
-import Control.Concurrent.SampleVar
 import Control.Monad.ST as Strict
-import Data.List
-#endif
-
-#if !(MIN_VERSION_base(4,4,0)) || (__GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710)
-import Data.Fixed
-#endif
-
-#if MIN_VERSION_base(4,4,0) && __GLASGOW_HASKELL__ < 710
-import GHC.Fingerprint
-import GHC.IO.Encoding.Failure
-
-# if !defined(mingw32_HOST_OS) && !defined(__GHCJS__)
-import GHC.Event
-# endif
 #endif
 
 #if __GLASGOW_HASKELL__ >= 701 && __GLASGOW_HASKELL__ < 710
 import GHC.Generics as Generics
 #endif
 
-#if MIN_VERSION_base(4,5,0) && __GLASGOW_HASKELL__ < 710
-import GHC.Stack
-import GHC.Stats
-#endif
-
-#if !(MIN_VERSION_base(4,5,0))
-import Unsafe.Coerce (unsafeCoerce)
-#endif
-
-#if MIN_VERSION_base(4,6,0) && __GLASGOW_HASKELL__ < 710
-import GHC.ForeignPtr
-import GHC.GHCi
-import GHC.TypeLits
-import System.Posix.Internals
-#endif
-
-#if !(MIN_VERSION_base(4,6,0)) || (__GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710)
-import Control.Arrow
-#endif
-
-#if !(MIN_VERSION_base(4,6,0))
-import Control.Monad (MonadPlus(..), ap)
-import System.Posix.Types
-#endif
-
-#if MIN_VERSION_base(4,7,0) && __GLASGOW_HASKELL__ < 710
-import Control.Concurrent.QSem
-import Data.Proxy
-import Text.Read.Lex (Number)
-#endif
-
-#if !(MIN_VERSION_base(4,7,0))
-import Data.Word
-#endif
-
-#if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
-import Control.Category hiding ((.))
-import Control.Monad
-import Control.Monad.Fix
-import Control.Monad.Zip
-import Data.Ix
-import Data.Type.Coercion
-import Data.Type.Equality
-import Data.Typeable.Internal
-import GHC.IO.BufferedIO
-import GHC.IO.Device (IODevice, RawIO)
-import GHC.IO.Handle
-import GHC.IO.Handle.Types hiding (BufferList, HandleType)
-import GHC.IP
-import Text.Printf
-#endif
-
-#if !(MIN_VERSION_base(4,8,0))
-import Data.Complex (Complex(..))
-import Data.Version
-import Foreign.Ptr (castPtr)
-import GHC.Real (Ratio(..), (%))
-#endif
+-- #if !(MIN_VERSION_base(4,8,0))
+import Data.Orphans.Prelude
+-- #endif
 
 #if __GLASGOW_HASKELL__ < 710
-import Control.Applicative
 import Control.Exception as Exception
 import Control.Monad.ST.Lazy as Lazy
-import Data.Bits
-import Data.Char
 import Data.Data as Data
-import Data.Foldable
 import Data.Monoid as Monoid
-import Data.Traversable
-import Foreign.C.Error
-import Foreign.C.Types
-import Foreign.Marshal.Pool
-import Foreign.Storable
-import GHC.Base
-import GHC.Conc
-import GHC.Desugar (AnnotationWrapper)
 import GHC.Exts as Exts
-import GHC.IO.Buffer
-import GHC.IO.Device (IODeviceType(..))
-import GHC.IO.Encoding
 import GHC.IO.Exception as Exception
-import GHC.IO.Handle.Types (BufferList, HandleType)
-import GHC.ST
-import System.Console.GetOpt
-import System.IO
-import Text.ParserCombinators.ReadP
+import Text.ParserCombinators.ReadP as ReadP
 import Text.ParserCombinators.ReadPrec as ReadPrec
 import Text.Read as Read
 
 # if defined(mingw32_HOST_OS)
 import GHC.ConsoleHandler as Console
-import GHC.IO.Encoding.CodePage.Table
 # endif
 #endif
 
@@ -232,11 +138,12 @@ instance Bits Bool where
 #endif
 
 #if !(MIN_VERSION_base(4,6,0))
-# if MIN_VERSION_base(4,5,0)
+# if defined(HTYPE_DEV_T)
+#  if MIN_VERSION_base(4,5,0)
 deriving instance Bits CDev
 deriving instance Bounded CDev
 deriving instance Integral CDev
-# else
+#  else
 type HDev = HTYPE_DEV_T
 
 instance Bits CDev where
@@ -266,6 +173,7 @@ instance Integral CDev where
     quotRem   = unsafeCoerce (quotRem   :: HDev -> HDev -> (HDev, HDev))
     divMod    = unsafeCoerce (divMod    :: HDev -> HDev -> (HDev, HDev))
     toInteger = unsafeCoerce (toInteger :: HDev -> Integer)
+#  endif
 # endif
 
 instance Applicative ReadP where
@@ -392,9 +300,9 @@ deriving instance (Ord (f p), Ord (g p)) => Ord ((f :*: g) p)
 -- precedence (prior to GHC 7.10).
 -- We'll manually derive Read :*: and Show :*: instances to avoid this.
 instance (Read (f p), Read (g p)) => Read ((f :*: g) p) where
-    readPrec = parens . ReadPrec.prec 6 $ do
+    readPrec = ReadP.parens . ReadPrec.prec 6 $ do
         fp <- ReadPrec.step readPrec
-        Symbol ":*:" <- lexP
+        Symbol ":*:" <- ReadP.lexP
         gp <- ReadPrec.step readPrec
         return $ fp :*: gp
     readListPrec = readListPrecDefault
