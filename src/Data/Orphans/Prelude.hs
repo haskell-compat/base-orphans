@@ -24,7 +24,7 @@ import Data.Complex as OrphansPrelude (Complex(..))
 import Data.Fixed as OrphansPrelude
 import Data.Int as OrphansPrelude
 import Data.Ix as OrphansPrelude
-import Data.List as OrphansPrelude
+import Data.List as OrphansPrelude (genericLength)
 import Data.Version as OrphansPrelude
 import Data.Word as OrphansPrelude
 
