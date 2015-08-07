@@ -41,6 +41,8 @@ library
     , ghc-prim
   exposed-modules:
       Data.Orphans
+  other-modules:
+      Data.Orphans.Prelude
   default-language: Haskell2010
 
 test-suite spec

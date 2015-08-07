@@ -31,31 +31,33 @@ To use them, simply @import Data.Orphans ()@.
 module Data.Orphans () where
 
 #if !(MIN_VERSION_base(4,4,0))
-import Control.Monad.ST as Strict
+import           Control.Monad.ST as Strict
 #endif
 
 #if __GLASGOW_HASKELL__ >= 701 && __GLASGOW_HASKELL__ < 710
-import GHC.Generics as Generics
+import           GHC.Generics as Generics
 #endif
 
--- #if !(MIN_VERSION_base(4,8,0))
-import Data.Orphans.Prelude
--- #endif
-
 #if __GLASGOW_HASKELL__ < 710
-import Control.Exception as Exception
-import Control.Monad.ST.Lazy as Lazy
-import Data.Data as Data
-import Data.Monoid as Monoid
-import GHC.Exts as Exts
-import GHC.IO.Exception as Exception
-import Text.ParserCombinators.ReadP as ReadP
-import Text.ParserCombinators.ReadPrec as ReadPrec
-import Text.Read as Read
+import           Control.Exception as Exception
+import           Control.Monad.ST.Lazy as Lazy
+import           Data.Data as Data
+import qualified Data.Foldable as F (Foldable(..))
+import           Data.Monoid as Monoid
+import qualified Data.Traversable as T (Traversable(..))
+import           GHC.Exts as Exts
+import           GHC.IO.Exception as Exception
+import           Text.ParserCombinators.ReadP as ReadP
+import           Text.ParserCombinators.ReadPrec as ReadPrec
+import           Text.Read as Read
 
 # if defined(mingw32_HOST_OS)
-import GHC.ConsoleHandler as Console
+import           GHC.ConsoleHandler as Console
 # endif
+#endif
+
+#if !(MIN_VERSION_base(4,8,0))
+import           Data.Orphans.Prelude
 #endif
 
 #include "HsBaseConfig.h"
@@ -230,17 +232,17 @@ instance (ArrowApply a, ArrowPlus a) => MonadPlus (ArrowMonad a) where
 #endif
 
 #if !(MIN_VERSION_base(4,7,0))
-deriving instance Foldable (Const m)
-deriving instance Foldable (Either a)
-deriving instance Traversable (Const m)
-deriving instance Traversable (Either a)
+deriving instance F.Foldable (Const m)
+deriving instance F.Foldable (Either a)
+deriving instance T.Traversable (Const m)
+deriving instance T.Traversable (Either a)
 
-instance Foldable ((,) a) where
+instance F.Foldable ((,) a) where
     foldMap f (_, y) = f y
 
     foldr f z (_, y) = f y z
 
-instance Traversable ((,) a) where
+instance T.Traversable ((,) a) where
     traverse f (x, y) = (,) x <$> f y
 
 deriving instance Monoid a => Monoid (Const a b)
@@ -300,9 +302,9 @@ deriving instance (Ord (f p), Ord (g p)) => Ord ((f :*: g) p)
 -- precedence (prior to GHC 7.10).
 -- We'll manually derive Read :*: and Show :*: instances to avoid this.
 instance (Read (f p), Read (g p)) => Read ((f :*: g) p) where
-    readPrec = ReadP.parens . ReadPrec.prec 6 $ do
+    readPrec = parens . ReadPrec.prec 6 $ do
         fp <- ReadPrec.step readPrec
-        Symbol ":*:" <- ReadP.lexP
+        Symbol ":*:" <- lexP
         gp <- ReadPrec.step readPrec
         return $ fp :*: gp
     readListPrec = readListPrecDefault
@@ -597,7 +599,7 @@ deriving instance Typeable Exception
 deriving instance Typeable Eq
 deriving instance Typeable FiniteBits
 deriving instance Typeable Floating
-deriving instance Typeable Foldable
+deriving instance Typeable F.Foldable
 deriving instance Typeable Fractional
 deriving instance Typeable Functor
 deriving instance Typeable Generic
@@ -632,7 +634,7 @@ deriving instance Typeable Show
 deriving instance Typeable Storable
 deriving instance Typeable TestCoercion
 deriving instance Typeable TestEquality
-deriving instance Typeable Traversable
+deriving instance Typeable T.Traversable
 deriving instance Typeable Typeable
 
 -- Constraints

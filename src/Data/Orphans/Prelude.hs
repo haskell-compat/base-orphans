@@ -12,21 +12,19 @@ Note that this module does not export any modules that could introduce name clas
 module Data.Orphans.Prelude (module OrphansPrelude) where
 
 import Control.Applicative as OrphansPrelude
-import Control.Arrow as OrphansPrelude
+import Control.Arrow as OrphansPrelude hiding (loop)
 import Control.Category as OrphansPrelude hiding ((.), id)
 import Control.Concurrent.QSem as OrphansPrelude
-import Control.Monad as OrphansPrelude
+import Control.Monad as OrphansPrelude hiding (mapM, sequence)
 import Control.Monad.Fix as OrphansPrelude
 
 import Data.Bits as OrphansPrelude
 import Data.Char as OrphansPrelude
 import Data.Complex as OrphansPrelude (Complex(..))
 import Data.Fixed as OrphansPrelude
-import Data.Foldable as OrphansPrelude
 import Data.Int as OrphansPrelude
 import Data.Ix as OrphansPrelude
 import Data.List as OrphansPrelude
-import Data.Traversable as OrphansPrelude
 import Data.Version as OrphansPrelude
 import Data.Word as OrphansPrelude
 
@@ -36,8 +34,7 @@ import Foreign.Marshal.Pool as OrphansPrelude
 import Foreign.Ptr as OrphansPrelude (castPtr)
 import Foreign.Storable as OrphansPrelude
 
-import GHC.Base as OrphansPrelude hiding
-    (foldr, mapM, sequence)
+import GHC.Base as OrphansPrelude
 import GHC.Conc as OrphansPrelude
 import GHC.Desugar as OrphansPrelude (AnnotationWrapper)
 import GHC.ForeignPtr as OrphansPrelude
@@ -46,7 +43,7 @@ import GHC.IO.BufferedIO as OrphansPrelude (BufferedIO)
 import GHC.IO.Device as OrphansPrelude (IODevice, IODeviceType(..), RawIO)
 import GHC.IO.Encoding as OrphansPrelude
 import GHC.IO.Handle as OrphansPrelude
-import GHC.IO.Handle.Types as OrphansPrelude (BufferList, HandleType)
+import GHC.IO.Handle.Types as OrphansPrelude
 import GHC.Real as OrphansPrelude (Ratio(..), (%))
 import GHC.ST as OrphansPrelude
 
@@ -89,8 +86,8 @@ import GHC.TypeLits as OrphansPrelude
 
 #if MIN_VERSION_base(4,7,0)
 import Data.Proxy as OrphansPrelude
-import Data.Type.Coercion as OrphansPrelude (Coercion)
-import Data.Type.Equality as OrphansPrelude ((:~:))
+import Data.Type.Coercion as OrphansPrelude (Coercion, TestCoercion)
+import Data.Type.Equality as OrphansPrelude ((:~:), TestEquality)
 import Text.Read.Lex as OrphansPrelude (Number)
 #else
 import Control.Concurrent.SampleVar as OrphansPrelude

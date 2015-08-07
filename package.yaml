@@ -43,6 +43,7 @@ library:
   source-dirs: src
   dependencies: ghc-prim
   exposed-modules: Data.Orphans
+  other-modules: Data.Orphans.Prelude
 
 tests:
   spec:
