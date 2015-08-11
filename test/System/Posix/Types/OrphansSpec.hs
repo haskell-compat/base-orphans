@@ -6,8 +6,8 @@ import           Control.Applicative (liftA2)
 
 import           Data.Bits (Bits(..))
 import           Data.Orphans ()
-import           Data.Word
 
+import           System.Posix.Types.IntWord
 import           System.Posix.Types
 
 import           Test.Hspec
