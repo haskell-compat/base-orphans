@@ -2,6 +2,11 @@
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
 module System.Posix.Types.OrphansSpec (main, spec) where
 
+#include "HsBaseConfig.h"
+
+import           Test.Hspec
+
+#if defined(HTYPE_DEV_T)
 import           Control.Applicative (liftA2)
 
 import           Data.Bits (Bits(..))
@@ -10,16 +15,15 @@ import           Data.Orphans ()
 import           System.Posix.Types.IntWord
 import           System.Posix.Types
 
-import           Test.Hspec
 import           Test.Hspec.QuickCheck (prop)
 import           Test.QuickCheck (NonZero(..))
-
-#include "HsBaseConfig.h"
-
-type HDev = HTYPE_DEV_T
+#endif
 
 main :: IO ()
 main = hspec spec
+
+#if defined(HTYPE_DEV_T)
+type HDev = HTYPE_DEV_T
 
 spec :: Spec
 spec = describe "CDev" $ do
@@ -139,3 +143,7 @@ pred2IntEq :: Eq a
            -> (HDev -> Int -> a)
            -> HDev -> Int -> Bool
 pred2IntEq = pred2Int (==)
+#else
+spec :: Spec
+spec = return ()
+#endif

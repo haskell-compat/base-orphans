@@ -1,5 +1,5 @@
-## Changes in next
- - `Fix` build on OSes where `HTYPE_DEV_T = Int32`
+## Changes in 0.4.3
+ - Fix build on OSes where `HTYPE_DEV_T = Int32` (e.g., OS X)
 
 ## Changes in 0.4.2
  - `Functor` instances for `Handler`
