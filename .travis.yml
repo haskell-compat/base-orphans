@@ -32,7 +32,11 @@ install:
   - cabal --version
   - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
   - travis_retry cabal update
-  - cabal install --only-dependencies --enable-tests
 
 script:
-  - cabal configure --enable-tests --ghc-options=-Werror && cabal build && cabal test
+  - cabal configure --ghc-options=-Werror
+  - cabal build
+  - cabal install --only-dependencies --enable-tests
+  - cabal configure --enable-tests --ghc-options=-Werror
+  - cabal build
+  - cabal test
