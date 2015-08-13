@@ -1,3 +1,6 @@
+## Changes in 0.4.4
+ - Fix build on GHC HEAD
+
 ## Changes in 0.4.3
  - Fix build on OSes where `HTYPE_DEV_T = Int32` (e.g., OS X)
 
