@@ -1,4 +1,19 @@
-# `base-orphans` [![Hackage version](https://img.shields.io/hackage/v/base-orphans.svg?style=flat)](http://hackage.haskell.org/package/base-orphans) [![Build Status](https://img.shields.io/travis/haskell-compat/base-orphans.svg?style=flat)](https://travis-ci.org/haskell-compat/base-orphans)
+# `base-orphans`
+[![Hackage](https://img.shields.io/hackage/v/base-orphans.svg)][Hackage: base-orphans]
+[![Hackage Dependencies](https://img.shields.io/hackage-deps/v/base-orphans.svg)](http://packdeps.haskellers.com/reverse/base-orphans)
+[![Haskell Programming Language](https://img.shields.io/badge/language-Haskell-blue.svg)][Haskell.org]
+[![BSD3 License](http://img.shields.io/badge/license-MIT-brightgreen.svg)][tl;dr Legal: MIT]
+[![Build](https://img.shields.io/travis/haskell-compat/base-orphans.svg)](https://travis-ci.org/haskell-compat/base-orphans)
+
+[Hackage: base-orphans]:
+  http://hackage.haskell.org/package/base-orphans
+  "base-orphans package on Hackage"
+[Haskell.org]:
+  http://www.haskell.org
+  "The Haskell Programming Language"
+[tl;dr Legal: MIT]:
+  https://tldrlegal.com/license/mit-license
+  "MIT License"
 
 ## Scope
 
