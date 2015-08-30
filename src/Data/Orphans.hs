@@ -38,6 +38,10 @@ import           Control.Monad.ST as Strict
 import           GHC.Generics as Generics
 #endif
 
+#if !(MIN_VERSION_base(4,6,0))
+import           Control.Monad.Instances ()
+#endif
+
 #if __GLASGOW_HASKELL__ < 710
 import           Control.Exception as Exception
 import           Control.Monad.ST.Lazy as Lazy

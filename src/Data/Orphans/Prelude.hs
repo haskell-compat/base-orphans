@@ -80,9 +80,6 @@ import GHC.Stats as OrphansPrelude
 
 #if MIN_VERSION_base(4,6,0)
 import GHC.GHCi as OrphansPrelude
-#if !(MIN_VERSION_base(4,8,2))
-import GHC.IP as OrphansPrelude
-#endif
 import GHC.TypeLits as OrphansPrelude
 #endif
 
@@ -93,4 +90,8 @@ import Data.Type.Equality as OrphansPrelude ((:~:), TestEquality)
 import Text.Read.Lex as OrphansPrelude (Number)
 #else
 import Control.Concurrent.SampleVar as OrphansPrelude
+#endif
+
+#if !(MIN_VERSION_base(4,8,2))
+import GHC.IP as OrphansPrelude
 #endif
