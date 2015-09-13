@@ -9,7 +9,11 @@ This makes it much easier to be -Wall-compliant.
 
 Note that this module does not export any modules that could introduce name clashes.
 -}
-module Data.Orphans.Prelude (module OrphansPrelude) where
+module Data.Orphans.Prelude
+#if MIN_VERSION_base(4,8,0)
+    () where
+#else
+    (module OrphansPrelude) where
 
 import Control.Applicative as OrphansPrelude
 import Control.Arrow as OrphansPrelude hiding (loop)
@@ -58,40 +62,42 @@ import Text.Printf as OrphansPrelude
 
 import Unsafe.Coerce as OrphansPrelude (unsafeCoerce)
 
-#if defined(mingw32_HOST_OS)
+# if defined(mingw32_HOST_OS)
 import GHC.IO.Encoding.CodePage.Table as OrphansPrelude
-#endif
+# endif
 
-#if MIN_VERSION_base(4,4,0)
+# if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip as OrphansPrelude
 import Data.Typeable.Internal as OrphansPrelude
 import GHC.Fingerprint as OrphansPrelude
 import GHC.IO.Encoding.Failure as OrphansPrelude
 
-# if !defined(mingw32_HOST_OS) && !defined(__GHCJS__)
+#  if !defined(mingw32_HOST_OS) && !defined(__GHCJS__)
 import GHC.Event as OrphansPrelude
+#  endif
 # endif
-#endif
 
-#if MIN_VERSION_base(4,5,0)
+# if MIN_VERSION_base(4,5,0)
 import GHC.Stack as OrphansPrelude
 import GHC.Stats as OrphansPrelude
-#endif
+# endif
 
-#if MIN_VERSION_base(4,6,0)
+# if MIN_VERSION_base(4,6,0)
 import GHC.GHCi as OrphansPrelude
 import GHC.TypeLits as OrphansPrelude
-#endif
+# endif
 
-#if MIN_VERSION_base(4,6,0) && !(MIN_VERSION_base(4,8,2))
+# if MIN_VERSION_base(4,6,0) && !(MIN_VERSION_base(4,8,2))
 import GHC.IP as OrphansPrelude
-#endif
+# endif
 
-#if MIN_VERSION_base(4,7,0)
+# if MIN_VERSION_base(4,7,0)
 import Data.Proxy as OrphansPrelude
 import Data.Type.Coercion as OrphansPrelude (Coercion, TestCoercion)
 import Data.Type.Equality as OrphansPrelude ((:~:), TestEquality)
 import Text.Read.Lex as OrphansPrelude (Number)
-#else
+# else
 import Control.Concurrent.SampleVar as OrphansPrelude
+# endif
+
 #endif
