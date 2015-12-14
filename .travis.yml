@@ -102,7 +102,6 @@ install:
      echo "cabal build-cache MISS";
      rm -rf $HOME/.cabsnap;
      mkdir -p $HOME/.ghc $HOME/.cabal/lib $HOME/.cabal/share $HOME/.cabal/bin;
-     cabal install -j --only-dependencies --enable-tests --enable-benchmarks;
    fi
 
 # snapshot package-db on cache miss
@@ -118,9 +117,12 @@ install:
 # any command which exits with a non-zero exit code causes the build to fail.
 script:
  - if [ -f configure.ac ]; then autoreconf -i; fi
- - cabal configure --enable-tests --enable-benchmarks -v2  # -v2 provides useful information for debugging
- - cabal build -j1 --ghc-option=-Werror # this builds all libraries and executables (including tests/benchmarks)
- - cabal test -j1 --show-details=always
+ - cabal configure --ghc-options=-Werror -v2  # -v2 provides useful information for debugging
+ - cabal build -j1 # this builds all libraries and executables (including tests/benchmarks)
+ - cabal install -j --only-dependencies --enable-tests --enable-benchmarks;
+ - cabal configure --enable-tests --enable-benchmarks --ghc-options=-Werror
+ - cabal build -j1
+ - cabal test --show-details=always
  - cabal check
  - cabal sdist   # tests that a source-distribution can be generated
 
