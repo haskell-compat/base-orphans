@@ -1,9 +1,10 @@
-## Changes in next
+## Changes in 0.4.5
  - Import `Control.Monad.Instances` (which exports `Functor` and `Monad`
    instances for `(->) r`, and `Functor` instances for `(,) a` and `Either a`)
    on GHCs before 7.6. This ensures that these instances will always be in
    scope, and you won't have to import a module which is deprecated on recent
    GHC releases.
+ - Fix build on GHC HEAD (again)
 
 ## Changes in 0.4.4
  - Fix build on GHC HEAD
