@@ -31,23 +31,24 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## What is covered
 
- * Added `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
- * Added `Bits`, `Bounded`, and `Integral` instances for `CDev`
- * Added `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
- * Added `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
- * Added `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
- * Added `Functor`, `Applicative`, and `Monad` instances for `First` and `Last`
- * Added `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
- * Added `Read` and `Show` instances for `Down`
- * Added `Eq`, `Ord`, `Read`, and `Show` instances for `ZipList`
- * Added `Monad` instance for `WrappedMonad`
- * Added `Data` and `IsList` instances for `Version`
+ * `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
  * `Applicative` instance for strict and lazy `ST`
  * `Bits` instance for `Bool`
+ * `Bits`, `Bounded`, and `Integral` instances for `CDev`
+ * `Data` and `IsList` instances for `Version`
+ * `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
+ * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
+ * `Eq`, `Ord`, `Read`, and `Show` instances for `ZipList`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Functor` instance for `Handler`, `ArgOrder`, `OptDescr`, and `ArgDescr`
+ * `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
+ * `Functor`, `Applicative`, and `Monad` instances for `First` and `Last`
+ * `Monad` instance for `(,)`
+ * `Monad` instance for `WrappedMonad`
+ * `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
  * `Num` instance for `Sum` and `Product`
  * `Read` instance for `Fixed`
+ * `Read` and `Show` instances for `Down`
  * `Show` instance for `Fingerprint`
  * `Storable` instance for `Complex` and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`

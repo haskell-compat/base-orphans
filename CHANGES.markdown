@@ -1,3 +1,8 @@
+## next
+ - GHC 8.0 compatibility
+ - Backported instances introduced in GHC 8.0/`base-4.9`
+   (see https://github.com/haskell-compat/base-orphans/issues/32)
+
 ## Changes in 0.4.5
  - Import `Control.Monad.Instances` (which exports `Functor` and `Monad`
    instances for `(->) r`, and `Functor` instances for `(,) a` and `Either a`)

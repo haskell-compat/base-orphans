@@ -392,6 +392,13 @@ instance (Storable a, Integral a) => Storable (Ratio a) where
                         pokeElemOff q 1 i
 #endif
 
+#if !(MIN_VERSION_base(4,9,0))
+-- see: #10190 https://git.haskell.org/ghc.git/commitdiff/9db005a444722e31aca1956b058e069bcf3cacbd
+instance Monoid a => Monad ((,) a) where
+    return x = (mempty, x)
+    (u, a) >>= k = case k a of (v, b) -> (u `mappend` v, b)
+#endif
+
 #if __GLASGOW_HASKELL__ < 710
 deriving instance Typeable  All
 deriving instance Typeable  AnnotationWrapper
