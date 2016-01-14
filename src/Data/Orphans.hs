@@ -325,13 +325,6 @@ deriving instance Read (f (g p)) => Read ((f :.: g) p)
 deriving instance Show (f (g p)) => Show ((f :.: g) p)
 #endif
 
-#if !(MIN_VERSION_base(4,8,1))
--- see: #10190 https://git.haskell.org/ghc.git/commitdiff/9db005a444722e31aca1956b058e069bcf3cacbd
-instance Monoid a => Monad ((,) a) where
-    return x = (mempty, x)
-    (u, a) >>= k = case k a of (v, b) -> (u `mappend` v, b)
-#endif
-
 #if MIN_VERSION_base(4,7,0) && !(MIN_VERSION_base(4,8,0))
 -- | Construct tag-less 'Version'
 --
@@ -397,6 +390,13 @@ instance (Storable a, Integral a) => Storable (Ratio a) where
                         q <-return $  (castPtr p)
                         poke q r
                         pokeElemOff q 1 i
+#endif
+
+#if !(MIN_VERSION_base(4,9,0))
+-- see: #10190 https://git.haskell.org/ghc.git/commitdiff/9db005a444722e31aca1956b058e069bcf3cacbd
+instance Monoid a => Monad ((,) a) where
+    return x = (mempty, x)
+    (u, a) >>= k = case k a of (v, b) -> (u `mappend` v, b)
 #endif
 
 #if __GLASGOW_HASKELL__ < 710
