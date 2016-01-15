@@ -1,4 +1,4 @@
-## next
+## Changes in 0.5.0
  - GHC 8.0 compatibility
  - Backported instances introduced in GHC 8.0/`base-4.9`
    (see https://github.com/haskell-compat/base-orphans/issues/32)
