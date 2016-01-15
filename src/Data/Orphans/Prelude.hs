@@ -10,7 +10,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,8,0)
+#if MIN_VERSION_base(4,9,0)
     () where
 #else
     (module OrphansPrelude) where
@@ -98,6 +98,10 @@ import Data.Type.Equality as OrphansPrelude ((:~:), TestEquality)
 import Text.Read.Lex as OrphansPrelude (Number)
 # else
 import Control.Concurrent.SampleVar as OrphansPrelude
+# endif
+
+# if MIN_VERSION_base(4,8,0)
+import Data.Functor.Identity as OrphansPrelude
 # endif
 
 #endif

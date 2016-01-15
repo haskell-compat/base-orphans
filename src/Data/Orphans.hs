@@ -5,6 +5,7 @@
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
@@ -42,13 +43,16 @@ import           GHC.Generics as Generics
 import           Control.Monad.Instances ()
 #endif
 
-#if __GLASGOW_HASKELL__ < 710
-import           Control.Exception as Exception
-import           Control.Monad.ST.Lazy as Lazy
+#if !(MIN_VERSION_base(4,9,0))
 import           Data.Data as Data
 import qualified Data.Foldable as F (Foldable(..))
 import           Data.Monoid as Monoid
 import qualified Data.Traversable as T (Traversable(..))
+#endif
+
+#if __GLASGOW_HASKELL__ < 710
+import           Control.Exception as Exception
+import           Control.Monad.ST.Lazy as Lazy
 import           GHC.Exts as Exts
 import           GHC.IO.Exception as Exception
 import           Text.ParserCombinators.ReadP as ReadP
@@ -60,7 +64,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,8,0))
+#if !(MIN_VERSION_base(4,9,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -393,10 +397,239 @@ instance (Storable a, Integral a) => Storable (Ratio a) where
 #endif
 
 #if !(MIN_VERSION_base(4,9,0))
+instance Storable () where
+  sizeOf _ = 0
+  alignment _ = 1
+  peek _ = return ()
+  poke _ _ = return ()
+
+deriving instance Bounded a  => Bounded (Const a b)
+deriving instance Enum a     => Enum (Const a b)
+deriving instance Ix a       => Ix (Const a b)
+deriving instance Storable a => Storable (Const a b)
+
+deriving instance           Data All
+deriving instance           Data Monoid.Any
+deriving instance Data a => Data (Dual a)
+deriving instance Data a => Data (First a)
+deriving instance Data a => Data (Last a)
+deriving instance Data a => Data (Product a)
+deriving instance Data a => Data (Sum a)
+
+instance F.Foldable Dual where
+    foldMap            = coerce
+
+    foldl              = coerce
+    foldl1 _           = getDual
+    foldr f z (Dual x) = f x z
+    foldr1 _           = getDual
+# if MIN_VERSION_base(4,6,0)
+    foldl'             = coerce
+    foldr'             = F.foldr
+# endif
+# if MIN_VERSION_base(4,8,0)
+    elem               = (. getDual) #. (==)
+    length _           = 1
+    maximum            = getDual
+    minimum            = getDual
+    null _             = False
+    product            = getDual
+    sum                = getDual
+    toList (Dual x)    = [x]
+# endif
+
+instance F.Foldable Sum where
+    foldMap            = coerce
+
+    foldl              = coerce
+    foldl1 _           = getSum
+    foldr f z (Sum x)  = f x z
+    foldr1 _           = getSum
+# if MIN_VERSION_base(4,6,0)
+    foldl'                = coerce
+    foldr'                = F.foldr
+# endif
+# if MIN_VERSION_base(4,8,0)
+    elem               = (. getSum) #. (==)
+    length _           = 1
+    maximum            = getSum
+    minimum            = getSum
+    null _             = False
+    product            = getSum
+    sum                = getSum
+    toList (Sum x)     = [x]
+# endif
+
+instance F.Foldable Product where
+    foldMap               = coerce
+
+    foldl                 = coerce
+    foldl1 _              = getProduct
+    foldr f z (Product x) = f x z
+    foldr1 _              = getProduct
+# if MIN_VERSION_base(4,6,0)
+    foldl'                = coerce
+    foldr'                = F.foldr
+# endif
+# if MIN_VERSION_base(4,8,0)
+    elem                  = (. getProduct) #. (==)
+    length _              = 1
+    maximum               = getProduct
+    minimum               = getProduct
+    null _                = False
+    product               = getProduct
+    sum                   = getProduct
+    toList (Product x)    = [x]
+# endif
+
+# if MIN_VERSION_base(4,8,0)
+(#.)   :: Coercible b c => (b -> c) -> (a -> b) -> (a -> c)
+(#.) _f = coerce
+# endif
+
+# if !(MIN_VERSION_base(4,7,0))
+coerce ::                  a -> b
+coerce = unsafeCoerce
+# endif
+
+instance Functor Dual where
+    fmap     = coerce
+
+instance Applicative Dual where
+    pure     = Dual
+    (<*>)    = coerce
+
+instance Monad Dual where
+    return   = Dual
+    m >>= k  = k (getDual m)
+
+instance Functor Sum where
+    fmap     = coerce
+
+instance Applicative Sum where
+    pure     = Sum
+    (<*>)    = coerce
+
+instance Monad Sum where
+    return   = Sum
+    m >>= k  = k (getSum m)
+
+instance Functor Product where
+    fmap     = coerce
+
+instance Applicative Product where
+    pure     = Product
+    (<*>)    = coerce
+
+instance Monad Product where
+    return   = Product
+    m >>= k  = k (getProduct m)
+
+instance F.Foldable First where
+    foldMap f = F.foldMap f . getFirst
+
+instance F.Foldable Last where
+    foldMap f = F.foldMap f . getLast
+
+instance Monoid a => Monoid (IO a) where
+    mempty = pure mempty
+    mappend = liftA2 mappend
+
 -- see: #10190 https://git.haskell.org/ghc.git/commitdiff/9db005a444722e31aca1956b058e069bcf3cacbd
 instance Monoid a => Monad ((,) a) where
     return x = (mempty, x)
     (u, a) >>= k = case k a of (v, b) -> (u `mappend` v, b)
+
+instance MonadFix Dual where
+    mfix f   = Dual (fix (getDual . f))
+
+instance MonadFix Sum where
+    mfix f   = Sum (fix (getSum . f))
+
+instance MonadFix Product where
+    mfix f   = Product (fix (getProduct . f))
+
+instance MonadFix First where
+    mfix f   = First (mfix (getFirst . f))
+
+instance MonadFix Last where
+    mfix f   = Last (mfix (getLast . f))
+
+instance T.Traversable Dual where
+    traverse f (Dual x) = Dual <$> f x
+
+instance T.Traversable Sum where
+    traverse f (Sum x) = Sum <$> f x
+
+instance T.Traversable Product where
+    traverse f (Product x) = Product <$> f x
+
+instance T.Traversable First where
+    traverse f (First x) = First <$> T.traverse f x
+
+instance T.Traversable Last where
+    traverse f (Last x) = Last <$> T.traverse f x
+
+deriving instance F.Foldable    ZipList
+deriving instance T.Traversable ZipList
+
+# if MIN_VERSION_base(4,4,0)
+deriving instance Functor     Complex
+deriving instance F.Foldable    Complex
+deriving instance T.Traversable Complex
+
+instance Applicative Complex where
+  pure a = a :+ a
+  f :+ g <*> a :+ b = f a :+ g b
+
+instance Monad Complex where
+  return a = a :+ a
+  a :+ b >>= f = realPart (f a) :+ imagPart (f b)
+
+-- | Extracts the real part of a complex number.
+realPart :: Complex a -> a
+realPart (x :+ _) =  x
+
+-- | Extracts the imaginary part of a complex number.
+imagPart :: Complex a -> a
+imagPart (_ :+ y) =  y
+
+instance MonadZip Dual where
+    -- Cannot use coerce, it's unsafe
+    mzipWith = liftM2
+
+instance MonadZip Sum where
+    mzipWith = liftM2
+
+instance MonadZip Product where
+    mzipWith = liftM2
+
+instance MonadZip Maybe where
+    mzipWith = liftM2
+
+instance MonadZip First where
+    mzipWith = liftM2
+
+instance MonadZip Last where
+    mzipWith = liftM2
+# endif
+
+# if MIN_VERSION_base(4,8,0)
+deriving instance (Data (f a), Typeable f, Typeable a)
+    => Data (Alt (f :: * -> *) (a :: *))
+
+instance MonadFix f => MonadFix (Alt f) where
+    mfix f   = Alt (mfix (getAlt . f))
+
+instance MonadZip f => MonadZip (Alt f) where
+    mzipWith f (Alt ma) (Alt mb) = Alt (mzipWith f ma mb)
+
+deriving instance Bounded a  => Bounded (Identity a)
+deriving instance Enum a     => Enum (Identity a)
+deriving instance Ix a       => Ix (Identity a)
+deriving instance Monoid a   => Monoid (Identity a)
+deriving instance Storable a => Storable (Identity a)
+# endif
 #endif
 
 #if __GLASGOW_HASKELL__ < 710
