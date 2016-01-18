@@ -22,55 +22,14 @@ versions of `base` to a wider (older) range of compilers. `base-orphans` does
 not export anything except the orphan instances themselves and complements
 [base-compat](http://hackage.haskell.org/package/base-compat).
 
-Note that `base-orphans` doesn't cover every possible instance. See the
-[What is not covered](#what-is-not-covered) section for exceptions.
+## About `base-orphans-0`
 
-## Usage
-
-To use `base-orphans`, simply `import Data.Orphans ()`.
-
-## What is covered
-
- * `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
- * `Applicative` instance for strict and lazy `ST`
- * `Applicative`, `Foldable`, `Functor`, `Monad`, and `Traversable` instances for `Complex`,
-   `Dual`, `First`, `Last`, `Product`, and `Sum`
- * `Bits` instance for `Bool`
- * `Bits`, `Bounded`, and `Integral` instances for `CDev`
- * `Bounded`, `Enum`, `Ix`, and `Storable` instances for `Const` and `Identity`
- * `Data` instances for `All` and `Any`
- * `Data`, `MonadFix` and `MonadZip` instances for `Alt`, `Dual`, `First`, `Last`,
-   `Product`, and `Sum`
- * `Data` and `IsList` instances for `Version`
- * `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
- * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
- * `Eq`, `Ord`, `Read`, `Show`, `Foldable`, and `Traversable` instances for `ZipList`
- * `Foldable` instance for `Either`, `(,)` and `Const`
- * `Functor` instance for `Handler`, `ArgOrder`, `OptDescr`, and `ArgDescr`
- * `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
- * `Monad` instance for `(,)`
- * `Monad` instance for `WrappedMonad`
- * `MonadZip` instance for `Maybe`
- * `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
- * `Monoid` instances for `Identity` and `IO`
- * `Num` instance for `Sum` and `Product`
- * `Read` instance for `Fixed`
- * `Read` and `Show` instances for `Down`
- * `Show` instance for `Fingerprint`
- * `Storable` instance for `()`, `Complex`, and `Ratio`
- * `Traversable` instance for `Either`, `(,)` and `Const`
- * `Typeable` instance for most data types, typeclasses, and promoted data constructors (when possible)
-
-## What is not covered
-`base-orphans` does not define the following instances:
-
-* `Generic` or `Generic1` instances. These can be found in the
-  [`Generics.Deriving.Instances`](https://hackage.haskell.org/package/generic-deriving-1.8.0/docs/Generics-Deriving-Instances.html)
-  module of the [`generic-deriving`](https://hackage.haskell.org/package/generic-deriving)
-  library.
-* The `Alternative IO` and `MonadPlus IO` instances. These can be found in the
-  [`Control.Monad.Trans.Error`](http://hackage.haskell.org/package/transformers-0.4.3.0/docs/src/Control-Monad-Trans-Error.html#line-69)
-  module of the [`transformers`](http://hackage.haskell.org/package/transformers) library.
+`base-orphans-0` is a special release that intentionally does not export any
+modules. `base-orphans-0` is used when retroactively adding `base-orphans`
+dependencies to older Hackage libraries to ensure that they cannot be built in
+combination with more recent versions of `base-orphans` that would cause them
+to break. (For example, if a package defines an orphan instance which clashes
+with one in `base-orphans`.)
 
 ## Supported versions of GHC/`base`
 

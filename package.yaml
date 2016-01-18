@@ -22,35 +22,17 @@ description: >
   themselves and complements @<http://hackage.haskell.org/package/base-compat
   base-compat>@.
 
-  See the README for what instances are covered:
-  <https://github.com/haskell-compat/base-orphans#readme>.
-  See also the
-  <https://github.com/haskell-compat/base-orphans#what-is-not-covered what is not covered>
-  section.
+  `base-orphans-0` is an intentional empty release. For an explanation as to
+  why is exists, see the
+  <https://github.com/haskell-compat/base-orphans/tree/base-orphans-0#readme README>.
 
 extra-source-files:
   - CHANGES.markdown
   - README.markdown
 
 github: haskell-compat/base-orphans
-
 ghc-options: -Wall
-
 dependencies:
-  - base >= 4.3 && < 5
-
 library:
-  source-dirs: src
-  dependencies: ghc-prim
-  exposed-modules: Data.Orphans
-  other-modules: Data.Orphans.Prelude
-
+  exposed-modules:
 tests:
-  spec:
-    main: Spec.hs
-    source-dirs:
-      - test
-    dependencies:
-      - base-orphans
-      - hspec == 2.*
-      - QuickCheck
