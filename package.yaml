@@ -23,7 +23,7 @@ description: >
   base-compat>@.
 
   `base-orphans-0` is an intentional empty release. For an explanation as to
-  why is exists, see the
+  why it exists, see the
   <https://github.com/haskell-compat/base-orphans/tree/base-orphans-0#readme README>.
 
 extra-source-files:
