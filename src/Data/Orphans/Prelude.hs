@@ -13,7 +13,7 @@ module Data.Orphans.Prelude
 #if MIN_VERSION_base(4,9,0)
     () where
 #else
-    (module OrphansPrelude) where
+    (module OrphansPrelude, realPart, imagPart) where
 
 import Control.Applicative as OrphansPrelude
 import Control.Arrow as OrphansPrelude hiding (loop)
@@ -103,5 +103,13 @@ import Control.Concurrent.SampleVar as OrphansPrelude
 # if MIN_VERSION_base(4,8,0)
 import Data.Functor.Identity as OrphansPrelude
 # endif
+
+# if MIN_VERSION_base(4,4,0)
+realPart, imagPart :: Complex a -> a
+#else
+realPart, imagPart :: RealFloat a => Complex a -> a
+#endif
+realPart (x :+ _) = x
+imagPart (_ :+ y) = y
 
 #endif

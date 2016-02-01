@@ -6,6 +6,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
@@ -370,8 +371,8 @@ instance Storable a
 instance (Storable a, RealFloat a)
 # endif
   => Storable (Complex a) where
-    sizeOf (a :+ _)    = 2 * sizeOf a
-    alignment (a :+ _) = alignment a
+    sizeOf a       = 2 * sizeOf (realPart a)
+    alignment a    = alignment (realPart a)
     peek p           = do
                         q <- return $ castPtr p
                         r <- peek q
@@ -383,8 +384,8 @@ instance (Storable a, RealFloat a)
                         pokeElemOff q 1 i
 
 instance (Storable a, Integral a) => Storable (Ratio a) where
-    sizeOf (n :% _)    = 2 * sizeOf n
-    alignment (n :% _) = alignment n
+    sizeOf _    = 2 * sizeOf (undefined :: a)
+    alignment _ = alignment (undefined :: a )
     peek p           = do
                         q <- return $ castPtr p
                         r <- peek q
@@ -585,14 +586,6 @@ instance Applicative Complex where
 instance Monad Complex where
   return a = a :+ a
   a :+ b >>= f = realPart (f a) :+ imagPart (f b)
-
--- | Extracts the real part of a complex number.
-realPart :: Complex a -> a
-realPart (x :+ _) =  x
-
--- | Extracts the imaginary part of a complex number.
-imagPart :: Complex a -> a
-imagPart (_ :+ y) =  y
 
 instance MonadZip Dual where
     -- Cannot use coerce, it's unsafe

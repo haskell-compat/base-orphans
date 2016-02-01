@@ -1,3 +1,8 @@
+## Changes in 0.5.1
+ - The `Storable` instances for `Complex` and `Ratio` are now exactly as lazy
+   as their counterparts in `base` (see issue
+   [#36](https://github.com/haskell-compat/base-orphans/issues/36))
+
 ## Changes in 0.5.0
  - GHC 8.0 compatibility
  - Backported instances introduced in GHC 8.0/`base-4.9`
