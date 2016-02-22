@@ -16,7 +16,7 @@ module Data.Orphans.Prelude
     (module OrphansPrelude, realPart, imagPart) where
 
 import Control.Applicative as OrphansPrelude
-import Control.Arrow as OrphansPrelude hiding (loop)
+import Control.Arrow as OrphansPrelude hiding (first, loop, second)
 import Control.Category as OrphansPrelude hiding ((.), id)
 import Control.Concurrent.QSem as OrphansPrelude
 import Control.Monad as OrphansPrelude hiding (mapM, sequence)
@@ -101,6 +101,7 @@ import Control.Concurrent.SampleVar as OrphansPrelude
 # endif
 
 # if MIN_VERSION_base(4,8,0)
+import Data.Bifunctor as OrphansPrelude
 import Data.Functor.Identity as OrphansPrelude
 # endif
 

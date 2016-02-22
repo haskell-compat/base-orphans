@@ -36,7 +36,7 @@ module Data.Orphans () where
 import           Control.Monad.ST as Strict
 #endif
 
-#if __GLASGOW_HASKELL__ >= 701 && __GLASGOW_HASKELL__ < 710
+#if __GLASGOW_HASKELL__ >= 701 && !(MIN_VERSION_base(4,9,0))
 import           GHC.Generics as Generics
 #endif
 
@@ -49,6 +49,8 @@ import           Data.Data as Data
 import qualified Data.Foldable as F (Foldable(..))
 import           Data.Monoid as Monoid
 import qualified Data.Traversable as T (Traversable(..))
+import           Text.ParserCombinators.ReadPrec as ReadPrec
+import           Text.Read as Read
 #endif
 
 #if __GLASGOW_HASKELL__ < 710
@@ -57,8 +59,6 @@ import           Control.Monad.ST.Lazy as Lazy
 import           GHC.Exts as Exts
 import           GHC.IO.Exception as Exception
 import           Text.ParserCombinators.ReadP as ReadP
-import           Text.ParserCombinators.ReadPrec as ReadPrec
-import           Text.Read as Read
 
 # if defined(mingw32_HOST_OS)
 import           GHC.ConsoleHandler as Console
@@ -622,6 +622,198 @@ deriving instance Enum a     => Enum (Identity a)
 deriving instance Ix a       => Ix (Identity a)
 deriving instance Monoid a   => Monoid (Identity a)
 deriving instance Storable a => Storable (Identity a)
+# endif
+
+# if __GLASGOW_HASKELL__ >= 701
+deriving instance Data p => Data (V1 p)
+deriving instance Data p => Data (U1 p)
+deriving instance Data p => Data (Par1 p)
+deriving instance (Typeable i, Data p, Data c) => Data (K1 i c p)
+deriving instance Data Generics.Fixity
+deriving instance Data Associativity
+
+deriving instance                                 F.Foldable V1
+deriving instance                                 F.Foldable U1
+deriving instance                                 F.Foldable Par1
+deriving instance F.Foldable f                 => F.Foldable (Rec1 f)
+deriving instance                                 F.Foldable (K1 i c)
+deriving instance F.Foldable f                 => F.Foldable (M1 i c f)
+deriving instance (F.Foldable f, F.Foldable g) => F.Foldable (f :+: g)
+deriving instance (F.Foldable f, F.Foldable g) => F.Foldable (f :*: g)
+deriving instance (F.Foldable f, F.Foldable g) => F.Foldable (f :.: g)
+
+deriving instance                           Functor V1
+deriving instance                           Functor U1
+deriving instance                           Functor Par1
+deriving instance Functor f              => Functor (Rec1 f)
+deriving instance                           Functor (K1 i c)
+deriving instance Functor f              => Functor (M1 i c f)
+deriving instance (Functor f, Functor g) => Functor (f :+: g)
+deriving instance (Functor f, Functor g) => Functor (f :*: g)
+deriving instance (Functor f, Functor g) => Functor (f :.: g)
+
+instance MonadFix Par1 where
+    mfix f = Par1 (fix (unPar1 . f))
+
+instance MonadFix f => MonadFix (Rec1 f) where
+    mfix f = Rec1 (mfix (unRec1 . f))
+
+instance MonadFix f => MonadFix (M1 i c f) where
+    mfix f = M1 (mfix (unM1. f))
+
+instance (MonadFix f, MonadFix g) => MonadFix (f :*: g) where
+    mfix f = (mfix (fstP . f)) :*: (mfix (sndP . f))
+      where
+        fstP (a :*: _) = a
+        sndP (_ :*: b) = b
+
+instance MonadZip Par1 where
+    mzipWith = liftM2
+
+instance MonadZip f => MonadZip (Rec1 f) where
+    mzipWith f (Rec1 fa) (Rec1 fb) = Rec1 (mzipWith f fa fb)
+
+instance MonadZip f => MonadZip (M1 i c f) where
+    mzipWith f (M1 fa) (M1 fb) = M1 (mzipWith f fa fb)
+
+instance (MonadZip f, MonadZip g) => MonadZip (f :*: g) where
+    mzipWith f (x1 :*: y1) (x2 :*: y2) = mzipWith f x1 x2 :*: mzipWith f y1 y2
+
+deriving instance                                       T.Traversable V1
+deriving instance                                       T.Traversable U1
+deriving instance                                       T.Traversable Par1
+deriving instance T.Traversable f                    => T.Traversable (Rec1 f)
+deriving instance                                       T.Traversable (K1 i c)
+deriving instance T.Traversable f                    => T.Traversable (M1 i c f)
+deriving instance (T.Traversable f, T.Traversable g) => T.Traversable (f :+: g)
+deriving instance (T.Traversable f, T.Traversable g) => T.Traversable (f :*: g)
+deriving instance (T.Traversable f, T.Traversable g) => T.Traversable (f :.: g)
+
+deriving instance Bounded Associativity
+deriving instance Enum    Associativity
+deriving instance Ix      Associativity
+
+deriving instance Eq   (V1 p)
+deriving instance Ord  (V1 p)
+-- Implement Read instance manually to get around an old GHC bug
+-- (Trac #7931)
+instance Read (V1 p) where
+    readPrec     = parens ReadPrec.pfail
+    readList     = readListDefault
+    readListPrec = readListPrecDefault
+deriving instance Show (V1 p)
+
+instance Applicative U1 where
+  pure _ = U1
+  U1 <*> U1 = U1
+
+instance Alternative U1 where
+  empty = U1
+  U1 <|> U1 = U1
+
+instance Monad U1 where
+#  if !(MIN_VERSION_base(4,8,0))
+  return _ = U1
+#  endif
+  U1 >>= _ = U1
+
+instance Applicative Par1 where
+  pure a = Par1 a
+  Par1 f <*> Par1 x = Par1 (f x)
+
+instance Monad Par1 where
+#  if !(MIN_VERSION_base(4,8,0))
+  return a = Par1 a
+#  endif
+  Par1 x >>= f = f x
+
+instance Applicative f => Applicative (Rec1 f) where
+  pure a = Rec1 (pure a)
+  Rec1 f <*> Rec1 x = Rec1 (f <*> x)
+
+instance Alternative f => Alternative (Rec1 f) where
+  empty = Rec1 empty
+  Rec1 l <|> Rec1 r = Rec1 (l <|> r)
+
+instance Monad f => Monad (Rec1 f) where
+#  if !(MIN_VERSION_base(4,8,0))
+  return a = Rec1 (return a)
+#  endif
+  Rec1 x >>= f = Rec1 (x >>= \a -> unRec1 (f a))
+
+instance MonadPlus f => MonadPlus (Rec1 f) where
+#  if !(MIN_VERSION_base(4,8,0))
+  mzero = Rec1 mzero
+  mplus (Rec1 a) (Rec1 b) = Rec1 (mplus a b)
+#  endif
+
+instance Applicative f => Applicative (M1 i c f) where
+  pure a = M1 (pure a)
+  M1 f <*> M1 x = M1 (f <*> x)
+
+instance Alternative f => Alternative (M1 i c f) where
+  empty = M1 empty
+  M1 l <|> M1 r = M1 (l <|> r)
+
+instance Monad f => Monad (M1 i c f) where
+#  if !(MIN_VERSION_base(4,8,0))
+  return a = M1 (return a)
+#  endif
+  M1 x >>= f = M1 (x >>= \a -> unM1 (f a))
+
+instance MonadPlus f => MonadPlus (M1 i c f) where
+#  if !(MIN_VERSION_base(4,8,0))
+  mzero = M1 mzero
+  mplus (M1 a) (M1 b) = M1 (mplus a b)
+#  endif
+
+instance (Applicative f, Applicative g) => Applicative (f :*: g) where
+  pure a = pure a :*: pure a
+  (f :*: g) <*> (x :*: y) = (f <*> x) :*: (g <*> y)
+
+instance (Alternative f, Alternative g) => Alternative (f :*: g) where
+  empty = empty :*: empty
+  (x1 :*: y1) <|> (x2 :*: y2) = (x1 <|> x2) :*: (y1 <|> y2)
+
+instance (Monad f, Monad g) => Monad (f :*: g) where
+#  if !(MIN_VERSION_base(4,8,0))
+  return a = return a :*: return a
+#  endif
+  (m :*: n) >>= f = (m >>= \a -> fstP (f a)) :*: (n >>= \a -> sndP (f a))
+    where
+      fstP (a :*: _) = a
+      sndP (_ :*: b) = b
+
+instance (MonadPlus f, MonadPlus g) => MonadPlus (f :*: g) where
+#  if !(MIN_VERSION_base(4,8,0))
+  mzero = mzero :*: mzero
+  (x1 :*: y1) `mplus` (x2 :*: y2) =  (x1 `mplus` x2) :*: (y1 `mplus` y2)
+#  endif
+
+instance (Applicative f, Applicative g) => Applicative (f :.: g) where
+  pure x = Comp1 (pure (pure x))
+  Comp1 f <*> Comp1 x = Comp1 (fmap (<*>) f <*> x)
+
+instance (Alternative f, Applicative g) => Alternative (f :.: g) where
+  empty = Comp1 empty
+  Comp1 x <|> Comp1 y = Comp1 (x <|> y)
+
+#  if MIN_VERSION_base(4,7,0)
+deriving instance (Data (f p), Typeable f, Data p) => Data (Rec1 f p)
+deriving instance (Data p, Data (f p), Typeable c, Typeable i, Typeable f)
+  => Data (M1 i c f p)
+deriving instance (Typeable f, Typeable g, Data p, Data (f p), Data (g p))
+  => Data ((f :+: g) p)
+deriving instance (Typeable f, Typeable g, Data p, Data (f p), Data (g p))
+  => Data ((f :*: g) p)
+deriving instance (Typeable f, Typeable g, Data p, Data (f (g p)))
+  => Data ((f :.: g) p)
+#  endif
+
+#  if MIN_VERSION_base(4,8,0)
+instance Bifunctor (K1 i) where
+    bimap f _ (K1 c) = K1 (f c)
+#  endif
 # endif
 #endif
 

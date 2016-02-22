@@ -1,3 +1,9 @@
+## Changes in 0.5.2
+ - Backported `Enum`, `Bounded`, `Ix`, `Functor`, `Applicative`, `Monad`,
+   `MonadFix`, `MonadPlus`, `MonadZip`, `Foldable`, `Traversable`, and
+   `Data` instances for datatypes in the `GHC.Generics` module (introduced in
+   `base-4.9`)
+
 ## Changes in 0.5.1
  - The `Storable` instances for `Complex` and `Ratio` are now exactly as lazy
    as their counterparts in `base` (see issue
