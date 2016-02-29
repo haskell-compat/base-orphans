@@ -607,6 +607,26 @@ instance MonadZip Last where
     mzipWith = liftM2
 # endif
 
+# if MIN_VERSION_base(4,7,0)
+instance Alternative Proxy where
+    empty = Proxy
+    {-# INLINE empty #-}
+    _ <|> _ = Proxy
+    {-# INLINE (<|>) #-}
+
+instance MonadPlus Proxy where
+#  if !(MIN_VERSION_base(4,8,0))
+    mzero = Proxy
+    {-# INLINE mzero #-}
+    mplus _ _ = Proxy
+    {-# INLINE mplus #-}
+#  endif
+
+instance MonadZip Proxy where
+    mzipWith _ _ _ = Proxy
+    {-# INLINE mzipWith #-}
+# endif
+
 # if MIN_VERSION_base(4,8,0)
 deriving instance (Data (f a), Typeable f, Typeable a)
     => Data (Alt (f :: * -> *) (a :: *))
@@ -633,7 +653,6 @@ deriving instance Data Generics.Fixity
 deriving instance Data Associativity
 
 deriving instance                                 F.Foldable V1
-deriving instance                                 F.Foldable U1
 deriving instance                                 F.Foldable Par1
 deriving instance F.Foldable f                 => F.Foldable (Rec1 f)
 deriving instance                                 F.Foldable (K1 i c)
@@ -643,7 +662,6 @@ deriving instance (F.Foldable f, F.Foldable g) => F.Foldable (f :*: g)
 deriving instance (F.Foldable f, F.Foldable g) => F.Foldable (f :.: g)
 
 deriving instance                           Functor V1
-deriving instance                           Functor U1
 deriving instance                           Functor Par1
 deriving instance Functor f              => Functor (Rec1 f)
 deriving instance                           Functor (K1 i c)
@@ -667,6 +685,9 @@ instance (MonadFix f, MonadFix g) => MonadFix (f :*: g) where
         fstP (a :*: _) = a
         sndP (_ :*: b) = b
 
+instance MonadZip U1 where
+    mzipWith _ _ _ = U1
+
 instance MonadZip Par1 where
     mzipWith = liftM2
 
@@ -680,7 +701,6 @@ instance (MonadZip f, MonadZip g) => MonadZip (f :*: g) where
     mzipWith f (x1 :*: y1) (x2 :*: y2) = mzipWith f x1 x2 :*: mzipWith f y1 y2
 
 deriving instance                                       T.Traversable V1
-deriving instance                                       T.Traversable U1
 deriving instance                                       T.Traversable Par1
 deriving instance T.Traversable f                    => T.Traversable (Rec1 f)
 deriving instance                                       T.Traversable (K1 i c)
@@ -703,19 +723,57 @@ instance Read (V1 p) where
     readListPrec = readListPrecDefault
 deriving instance Show (V1 p)
 
+instance Functor U1 where
+  fmap _ _ = U1
+
 instance Applicative U1 where
   pure _ = U1
-  U1 <*> U1 = U1
+  _ <*> _ = U1
 
 instance Alternative U1 where
   empty = U1
-  U1 <|> U1 = U1
+  _ <|> _ = U1
 
 instance Monad U1 where
 #  if !(MIN_VERSION_base(4,8,0))
   return _ = U1
 #  endif
-  U1 >>= _ = U1
+  _ >>= _ = U1
+
+instance MonadPlus U1 where
+#  if !(MIN_VERSION_base(4,8,0))
+  mzero = U1
+  mplus _ _ = U1
+#  endif
+
+instance F.Foldable U1 where
+    foldMap _ _ = mempty
+    {-# INLINE foldMap #-}
+    fold _ = mempty
+    {-# INLINE fold #-}
+    foldr _ z _ = z
+    {-# INLINE foldr #-}
+    foldl _ z _ = z
+    {-# INLINE foldl #-}
+    foldl1 _ _ = error "foldl1: U1"
+    foldr1 _ _ = error "foldr1: U1"
+#  if MIN_VERSION_base(4,8,0)
+    length _   = 0
+    null _     = True
+    elem _ _   = False
+    sum _      = 0
+    product _  = 1
+#  endif
+
+instance T.Traversable U1 where
+    traverse _ _ = pure U1
+    {-# INLINE traverse #-}
+    sequenceA _ = pure U1
+    {-# INLINE sequenceA #-}
+    mapM _ _ = return U1
+    {-# INLINE mapM #-}
+    sequence _ = return U1
+    {-# INLINE sequence #-}
 
 instance Applicative Par1 where
   pure a = Par1 a
