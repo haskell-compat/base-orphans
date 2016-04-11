@@ -404,10 +404,19 @@ instance Storable () where
   peek _ = return ()
   poke _ _ = return ()
 
-deriving instance Bounded a  => Bounded (Const a b)
-deriving instance Enum a     => Enum (Const a b)
-deriving instance Ix a       => Ix (Const a b)
-deriving instance Storable a => Storable (Const a b)
+deriving instance Bits a       => Bits (Const a b)
+deriving instance Bounded a    => Bounded (Const a b)
+deriving instance Enum a       => Enum (Const a b)
+deriving instance Floating a   => Floating (Const a b)
+deriving instance Fractional a => Fractional (Const a b)
+deriving instance Integral a   => Integral (Const a b)
+deriving instance IsString a   => IsString (Const a b)
+deriving instance Ix a         => Ix (Const a b)
+deriving instance Num a        => Num (Const a b)
+deriving instance Real a       => Real (Const a b)
+deriving instance RealFloat a  => RealFloat (Const a b)
+deriving instance RealFrac a   => RealFrac (Const a b)
+deriving instance Storable a   => Storable (Const a b)
 
 deriving instance           Data All
 deriving instance           Data Monoid.Any
@@ -625,6 +634,8 @@ instance MonadPlus Proxy where
 instance MonadZip Proxy where
     mzipWith _ _ _ = Proxy
     {-# INLINE mzipWith #-}
+
+deriving instance FiniteBits a => FiniteBits (Const a b)
 # endif
 
 # if MIN_VERSION_base(4,8,0)
@@ -637,11 +648,21 @@ instance MonadFix f => MonadFix (Alt f) where
 instance MonadZip f => MonadZip (Alt f) where
     mzipWith f (Alt ma) (Alt mb) = Alt (mzipWith f ma mb)
 
-deriving instance Bounded a  => Bounded (Identity a)
-deriving instance Enum a     => Enum (Identity a)
-deriving instance Ix a       => Ix (Identity a)
-deriving instance Monoid a   => Monoid (Identity a)
-deriving instance Storable a => Storable (Identity a)
+deriving instance Bits a       => Bits (Identity a)
+deriving instance Bounded a    => Bounded (Identity a)
+deriving instance Enum a       => Enum (Identity a)
+deriving instance FiniteBits a => FiniteBits (Identity a)
+deriving instance Floating a   => Floating (Identity a)
+deriving instance Fractional a => Fractional (Identity a)
+deriving instance Integral a   => Integral (Identity a)
+deriving instance IsString a   => IsString (Identity a)
+deriving instance Ix a         => Ix (Identity a)
+deriving instance Monoid a     => Monoid (Identity a)
+deriving instance Num a        => Num (Identity a)
+deriving instance Real a       => Real (Identity a)
+deriving instance RealFloat a  => RealFloat (Identity a)
+deriving instance RealFrac a   => RealFrac (Identity a)
+deriving instance Storable a   => Storable (Identity a)
 # endif
 
 # if __GLASGOW_HASKELL__ >= 701

@@ -1,3 +1,8 @@
+## Changes in 0.5.4
+ - Backported `Bits`, `FiniteBits`, `Floating`, `Fractional`, `Integral`,
+   `IsString`, `Num`, `Real`, `RealFloat`, and `RealFrac` instances for
+   `Identity` and `Const` (introduced in `base-4.9`)
+
 ## Changes in 0.5.3
  - Backported `Alternative`, `MonadPlus` and `MonadZip` instances for `U1` and
    `Proxy`, and made the `Functor`, `Foldable`, `Traversable`, `Alternative`,

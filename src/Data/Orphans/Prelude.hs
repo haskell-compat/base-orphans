@@ -29,6 +29,7 @@ import Data.Fixed as OrphansPrelude
 import Data.Int as OrphansPrelude
 import Data.Ix as OrphansPrelude
 import Data.List as OrphansPrelude (genericLength)
+import Data.String as OrphansPrelude (IsString)
 import Data.Version as OrphansPrelude
 import Data.Word as OrphansPrelude
 
