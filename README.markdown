@@ -31,13 +31,15 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## What is covered
 
+ * `Alternative`, `MonadPlus`, and `MonadZip` instances for `Proxy`
+ * `Alternative`, `Applicative`, `Bounded`, `Data`, `Enum`, `Foldable`, `Functor`, `Ix`, `Monad`, `MonadFix`, `MonadPlus`, `MonadZip`, and `Traversable` instances for data types in `GHC.Generics`
  * `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
  * `Applicative` instance for strict and lazy `ST`
  * `Applicative`, `Foldable`, `Functor`, `Monad`, and `Traversable` instances for `Complex`,
    `Dual`, `First`, `Last`, `Product`, and `Sum`
  * `Bits` instance for `Bool`
  * `Bits`, `Bounded`, and `Integral` instances for `CDev`
- * `Bounded`, `Enum`, `Ix`, and `Storable` instances for `Const` and `Identity`
+ * `Bits`, `Bounded`, `Enum`, `FiniteBits`, `Floating`, `Fractional`, `Integral`, `IsString`, `Ix`, `Num`, `Real`, `RealFloat`, `RealFrac`, and `Storable` instances for `Const` and `Identity`
  * `Data` instances for `All` and `Any`
  * `Data`, `MonadFix` and `MonadZip` instances for `Alt`, `Dual`, `First`, `Last`,
    `Product`, and `Sum`
