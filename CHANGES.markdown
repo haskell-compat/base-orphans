@@ -1,3 +1,10 @@
+## Changes in next [YYYY.MM.DD]
+ - Backported `Typeable` instances for `(:+:)`, `(:*:)`, `(:.:)`, `M1`, `Rec1`,
+   `ArrowMonad`, `Kleisli`, `WrappedArrow`, `WrappedMonad`, and `Any` on GHC
+   7.6 and earlier
+ - Backported `Data` instances for `(:+:)`, `(:*:)`, `(:.:)`, `M1`, and `Rec1`
+   on GHC 7.6 and earlier
+
 ## Changes in 0.5.4
  - Backported `Bits`, `FiniteBits`, `Floating`, `Fractional`, `Integral`,
    `IsString`, `Num`, `Real`, `RealFloat`, and `RealFrac` instances for

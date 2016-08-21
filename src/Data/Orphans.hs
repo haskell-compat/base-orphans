@@ -877,17 +877,15 @@ instance (Alternative f, Applicative g) => Alternative (f :.: g) where
   empty = Comp1 empty
   Comp1 x <|> Comp1 y = Comp1 (x <|> y)
 
-#  if MIN_VERSION_base(4,7,0)
-deriving instance (Data (f p), Typeable f, Data p) => Data (Rec1 f p)
-deriving instance (Data p, Data (f p), Typeable c, Typeable i, Typeable f)
+deriving instance (Data (f p), Typeable1 f, Data p) => Data (Rec1 f p)
+deriving instance (Data p, Data (f p), Typeable c, Typeable i, Typeable1 f)
   => Data (M1 i c f p)
-deriving instance (Typeable f, Typeable g, Data p, Data (f p), Data (g p))
+deriving instance (Typeable1 f, Typeable1 g, Data p, Data (f p), Data (g p))
   => Data ((f :+: g) p)
-deriving instance (Typeable f, Typeable g, Data p, Data (f p), Data (g p))
+deriving instance (Typeable1 f, Typeable1 g, Data p, Data (f p), Data (g p))
   => Data ((f :*: g) p)
-deriving instance (Typeable f, Typeable g, Data p, Data (f (g p)))
+deriving instance (Typeable1 f, Typeable1 g, Data p, Data (f (g p)))
   => Data ((f :.: g) p)
-#  endif
 
 #  if MIN_VERSION_base(4,8,0)
 instance Bifunctor (K1 i) where
@@ -984,6 +982,83 @@ deriving instance Typeable  R
 deriving instance Typeable  S
 deriving instance Typeable1 U1
 deriving instance Typeable1 V1
+
+#  if __GLASGOW_HASKELL__ >= 708
+-- Data types which use poly-kinded Typeable...
+deriving instance Typeable (:+:)
+deriving instance Typeable (:*:)
+deriving instance Typeable (:.:)
+deriving instance Typeable M1
+deriving instance Typeable Rec1
+#  else
+-- ...but we can hack around that if need be.
+instance (Typeable1 f, Typeable1 g) => Typeable1 (f :+: g) where
+  typeOf1 t = mkTyConApp conSumTyCon [typeOf1 (f t), typeOf1 (g t)]
+    where
+      f :: (f :+: g) p -> f p
+      f = undefined
+
+      g :: (f :+: g) p -> g p
+      g = undefined
+
+conSumTyCon :: TyCon
+conSumTyCon = mkTyCon3 ghcGenericsPackage "GHC.Generics" ":+:"
+
+instance (Typeable1 f, Typeable1 g) => Typeable1 (f :*: g) where
+  typeOf1 t = mkTyConApp conProductTyCon [typeOf1 (f t), typeOf1 (g t)]
+    where
+      f :: (f :*: g) p -> f p
+      f = undefined
+
+      g :: (f :*: g) p -> g p
+      g = undefined
+
+conProductTyCon :: TyCon
+conProductTyCon = mkTyCon3 ghcGenericsPackage "GHC.Generics" ":*:"
+
+instance (Typeable1 f, Typeable1 g) => Typeable1 (f :.: g) where
+  typeOf1 t = mkTyConApp conComposeTyCon [typeOf1 (f t), typeOf1 (g t)]
+    where
+      f :: (f :.: g) p -> f p
+      f = undefined
+
+      g :: (f :.: g) p -> g p
+      g = undefined
+
+conComposeTyCon :: TyCon
+conComposeTyCon = mkTyCon3 ghcGenericsPackage "GHC.Generics" ":.:"
+
+instance (Typeable i, Typeable c, Typeable1 f) => Typeable1 (M1 i c f) where
+  typeOf1 t = mkTyConApp m1TyCon [typeOf (i t), typeOf (c t), typeOf1 (f t)]
+    where
+      i :: M1 i c f p -> i
+      i = undefined
+
+      c :: M1 i c f p -> c
+      c = undefined
+
+      f :: M1 i c f p -> f p
+      f = undefined
+
+m1TyCon :: TyCon
+m1TyCon = mkTyCon3 ghcGenericsPackage "GHC.Generics" "M1"
+
+instance Typeable1 f => Typeable1 (Rec1 f) where
+  typeOf1 t = mkTyConApp rec1TyCon [typeOf1 (f t)]
+    where
+      f :: Rec1 f a -> f a
+      f = undefined
+
+rec1TyCon :: TyCon
+rec1TyCon = mkTyCon3 ghcGenericsPackage "GHC.Generics" "Rec1"
+
+ghcGenericsPackage :: String
+#   if MIN_VERSION_base(4,6,0)
+ghcGenericsPackage = "base"
+#   else
+ghcGenericsPackage = "ghc-prim"
+#   endif
+#  endif
 # endif
 
 # if MIN_VERSION_base(4,5,0)
@@ -1016,6 +1091,80 @@ deriving instance Typeable SomeNat
 deriving instance Typeable SomeSymbol
 deriving instance Typeable QSem -- This instance seems to have been removed
                                 -- (accidentally?) in base-4.7.0.0
+# endif
+
+# if __GLASGOW_HASKELL__ >= 708
+-- Data types which use poly-kinded Typeable...
+deriving instance Typeable ArrowMonad
+deriving instance Typeable Kleisli
+deriving instance Typeable WrappedArrow
+deriving instance Typeable WrappedMonad
+deriving instance Typeable Exts.Any
+# else
+-- ...but we can hack around that if need be.
+instance Typeable2 a => Typeable1 (ArrowMonad a) where
+  typeOf1 t = mkTyConApp arrowMonadTyCon [typeOf2 (a t)]
+    where
+      a :: ArrowMonad a b -> a () b
+      a = undefined
+
+arrowMonadTyCon :: TyCon
+#  if MIN_VERSION_base(4,4,0)
+arrowMonadTyCon = mkTyCon3 "base" "Control.Arrow" "ArrowMonad"
+#  else
+arrowMonadTyCon = mkTyCon "Control.Arrow.ArrowMonad"
+#  endif
+
+instance Typeable1 m => Typeable2 (Kleisli m) where
+  typeOf2 t = mkTyConApp kleisliTyCon [typeOf1 (m t)]
+    where
+      m :: Kleisli m a b -> m b
+      m = undefined
+
+kleisliTyCon :: TyCon
+#  if MIN_VERSION_base(4,4,0)
+kleisliTyCon = mkTyCon3 "base" "Control.Arrow" "Kleisli"
+#  else
+kleisliTyCon = mkTyCon "Control.Arrow.Kleisli"
+#  endif
+
+instance Typeable2 a => Typeable2 (WrappedArrow a) where
+  typeOf2 t = mkTyConApp wrappedArrowTyCon [typeOf2 (a t)]
+    where
+      a :: WrappedArrow a b c -> a b c
+      a = undefined
+
+wrappedArrowTyCon :: TyCon
+#  if MIN_VERSION_base(4,4,0)
+wrappedArrowTyCon = mkTyCon3 "base" "Control.Applicative" "WrappedArrow"
+#  else
+wrappedArrowTyCon = mkTyCon "Control.Applicative.WrappedArrow"
+#  endif
+
+instance Typeable1 m => Typeable1 (WrappedMonad m) where
+  typeOf1 t = mkTyConApp wrappedMonadTyCon [typeOf1 (m t)]
+    where
+      m :: WrappedMonad m a -> m a
+      m = undefined
+
+wrappedMonadTyCon :: TyCon
+#  if MIN_VERSION_base(4,4,0)
+wrappedMonadTyCon = mkTyCon3 "base" "Control.Applicative" "WrappedMonad"
+#  else
+wrappedMonadTyCon = mkTyCon "Control.Applicative.WrappedMonad"
+#  endif
+
+-- GHC will get confused if you try deriving a Typeable instance for Any
+-- prior to GHC 7.8, sadly
+instance Typeable Exts.Any where
+  typeOf _ = mkTyConApp anyTyCon []
+
+anyTyCon :: TyCon
+#  if MIN_VERSION_base(4,4,0)
+anyTyCon = mkTyCon3 "ghc-prim" "GHC.Prim" "Any"
+#  else
+anyTyCon = mkTyCon "GHC.Prim.Any"
+#  endif
 # endif
 
 # if __GLASGOW_HASKELL__ >= 708
@@ -1075,18 +1224,6 @@ deriving instance Typeable (,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 deriving instance Typeable (,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
 deriving instance Typeable (,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
 deriving instance Typeable (,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)
-
--- Data types which require PolyKinds
-deriving instance Typeable (:+:)
-deriving instance Typeable (:*:)
-deriving instance Typeable (:.:)
-deriving instance Typeable Exts.Any
-deriving instance Typeable ArrowMonad
-deriving instance Typeable Kleisli
-deriving instance Typeable M1
-deriving instance Typeable Rec1
-deriving instance Typeable WrappedArrow
-deriving instance Typeable WrappedMonad
 
 -- Typeclasses
 deriving instance Typeable Arrow
