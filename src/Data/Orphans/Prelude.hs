@@ -1,4 +1,9 @@
 {-# LANGUAGE CPP #-}
+
+#if __GLASGOW_HASKELL__ >= 706
+{-# LANGUAGE ExplicitNamespaces #-}
+#endif
+
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
 
 {-|
@@ -10,7 +15,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,9,0)
+#if MIN_VERSION_base(4,10,0)
     () where
 #else
     (module OrphansPrelude, realPart, imagPart) where
@@ -25,6 +30,7 @@ import Control.Monad.Fix as OrphansPrelude
 import Data.Bits as OrphansPrelude
 import Data.Char as OrphansPrelude
 import Data.Complex as OrphansPrelude (Complex(..))
+import Data.Data as OrphansPrelude (Data)
 import Data.Fixed as OrphansPrelude
 import Data.Int as OrphansPrelude
 import Data.Ix as OrphansPrelude
@@ -85,7 +91,7 @@ import GHC.Stats as OrphansPrelude
 
 # if MIN_VERSION_base(4,6,0)
 import GHC.GHCi as OrphansPrelude
-import GHC.TypeLits as OrphansPrelude
+import GHC.TypeLits as OrphansPrelude hiding (type (*))
 # endif
 
 # if MIN_VERSION_base(4,6,0) && !(MIN_VERSION_base(4,8,2))
@@ -104,6 +110,12 @@ import Control.Concurrent.SampleVar as OrphansPrelude
 # if MIN_VERSION_base(4,8,0)
 import Data.Bifunctor as OrphansPrelude
 import Data.Functor.Identity as OrphansPrelude
+# endif
+
+# if MIN_VERSION_base(4,9,0)
+import Data.Functor.Classes as OrphansPrelude
+import Data.List.NonEmpty as OrphansPrelude (NonEmpty(..))
+import Data.Semigroup as OrphansPrelude (Semigroup(..), stimesMonoid)
 # endif
 
 # if MIN_VERSION_base(4,4,0)

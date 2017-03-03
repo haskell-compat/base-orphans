@@ -24,6 +24,10 @@
 {-# LANGUAGE NullaryTypeClasses #-}
 #endif
 
+#if __GLASGOW_HASKELL__ >= 800
+{-# LANGUAGE TypeInType #-}
+#endif
+
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-|
@@ -65,7 +69,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,9,0))
+#if !(MIN_VERSION_base(4,10,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -890,6 +894,46 @@ deriving instance (Typeable1 f, Typeable1 g, Data p, Data (f (g p)))
 #  if MIN_VERSION_base(4,8,0)
 instance Bifunctor (K1 i) where
     bimap f _ (K1 c) = K1 (f c)
+#  endif
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,10,0))
+# if MIN_VERSION_base(4,9,0)
+deriving instance (Typeable k, Data a, Typeable (b :: k)) => Data (Const a b)
+# else
+deriving instance (Data a, Data b) => Data (Const a b)
+# endif
+
+# if MIN_VERSION_base(4,9,0)
+instance Eq1 NonEmpty where
+  liftEq eq (a :| as) (b :| bs) = eq a b && liftEq eq as bs
+
+instance Ord1 NonEmpty where
+  liftCompare cmp (a :| as) (b :| bs) = cmp a b <> liftCompare cmp as bs
+
+instance Read1 NonEmpty where
+  liftReadsPrec rdP rdL p s = readParen (p > 5) (\s' -> do
+    (a, s'') <- rdP 6 s'
+    (":|", s''') <- lex s''
+    (as, s'''') <- rdL s'''
+    return (a :| as, s'''')) s
+
+instance Show1 NonEmpty where
+  liftShowsPrec shwP shwL p (a :| as) = showParen (p > 5) $
+    shwP 6 a . showString " :| " . shwL as
+
+instance Semigroup a => Semigroup (IO a) where
+    (<>) = liftA2 (<>)
+
+#  if !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS)
+instance Semigroup Event where
+    (<>) = mappend
+    stimes = stimesMonoid
+
+instance Semigroup Lifetime where
+    (<>) = mappend
+    stimes = stimesMonoid
 #  endif
 # endif
 #endif

@@ -1,4 +1,9 @@
 ## Changes in next [YYYY.MM.DD]
+ - Backported new instances from GHC 8.2/`base-4.10`
+   (see https://github.com/haskell-compat/base-orphans/issues/39):
+   * `Data` instance for `Const`
+   * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
+   * `Semigroup` instances for `IO`, `Event`, and `Lifetime`
  - Backported `Typeable` instances for `(:+:)`, `(:*:)`, `(:.:)`, `M1`, `Rec1`,
    `ArrowMonad`, `Kleisli`, `WrappedArrow`, `WrappedMonad`, and `Any` on GHC
    7.6 and earlier
