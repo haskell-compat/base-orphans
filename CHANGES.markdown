@@ -1,4 +1,4 @@
-## Changes in next [YYYY.MM.DD]
+## Changes in 0.6 [2017.04.10]
  - Backported new instances from GHC 8.2/`base-4.10`
    (see https://github.com/haskell-compat/base-orphans/issues/39):
    * `Data` instance for `Const`
