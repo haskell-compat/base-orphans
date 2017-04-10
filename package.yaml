@@ -1,5 +1,5 @@
 name: base-orphans
-version: 0.5.4
+version: "0.6"
 synopsis: Backwards-compatible orphan instances for base
 license: MIT
 author:

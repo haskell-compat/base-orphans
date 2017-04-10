@@ -40,13 +40,14 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Bits` instance for `Bool`
  * `Bits`, `Bounded`, and `Integral` instances for `CDev`
  * `Bits`, `Bounded`, `Enum`, `FiniteBits`, `Floating`, `Fractional`, `Integral`, `IsString`, `Ix`, `Num`, `Real`, `RealFloat`, `RealFrac`, and `Storable` instances for `Const` and `Identity`
- * `Data` instances for `All` and `Any`
+ * `Data` instances for `All`, `Any`, and `Const`
  * `Data`, `MonadFix` and `MonadZip` instances for `Alt`, `Dual`, `First`, `Last`,
    `Product`, and `Sum`
  * `Data` and `IsList` instances for `Version`
  * `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
  * `Eq`, `Ord`, `Read`, `Show`, `Foldable`, and `Traversable` instances for `ZipList`
+ * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Functor` instance for `Handler`, `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
@@ -58,6 +59,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Num` instance for `Sum` and `Product`
  * `Read` instance for `Fixed`
  * `Read` and `Show` instances for `Down`
+ * `Semigroup` instances for `IO`, `Event` and `Lifetime`
  * `Show` instance for `Fingerprint`
  * `Storable` instance for `()`, `Complex`, and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`
@@ -76,6 +78,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-8.2.1`  / `base-4.10.0.0`
  * `ghc-8.0.2`  / `base-4.9.1.0`
  * `ghc-8.0.1`  / `base-4.9.0.0`
  * `ghc-7.10.3` / `base-4.8.2.0`
