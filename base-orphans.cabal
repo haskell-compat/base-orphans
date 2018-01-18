@@ -1,6 +1,8 @@
--- This file has been generated from package.yaml by hpack version 0.17.0.
+-- This file has been generated from package.yaml by hpack version 0.22.0.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: 8e167d6c4df99d26fa070aa244f80031bf57961d753804d2f9fc882482cd944c
 
 name:                base-orphans
 version:             0.6
@@ -23,19 +25,11 @@ license:             MIT
 license-file:        LICENSE
 build-type:          Simple
 cabal-version:       >= 1.10
-tested-with:         GHC == 7.0.1,  GHC == 7.0.2,  GHC == 7.0.3,  GHC == 7.0.4
-                   , GHC == 7.2.1,  GHC == 7.2.2
-                   , GHC == 7.4.1,  GHC == 7.4.2
-                   , GHC == 7.6.1,  GHC == 7.6.2,  GHC == 7.6.3
-                   , GHC == 7.8.1,  GHC == 7.8.2,  GHC == 7.8.3,  GHC == 7.8.4
-                   , GHC == 7.10.1, GHC == 7.10.2, GHC == 7.10.3
-                   , GHC == 8.0.1,  GHC == 8.0.2
-                   , GHC == 8.2.1,  GHC == 8.2.2
-                   , GHC == 8.4.1
+tested-with:         GHC == 7.0.1,  GHC == 7.0.2,  GHC == 7.0.3,  GHC == 7.0.4 , GHC == 7.2.1,  GHC == 7.2.2 , GHC == 7.4.1,  GHC == 7.4.2 , GHC == 7.6.1,  GHC == 7.6.2,  GHC == 7.6.3 , GHC == 7.8.1,  GHC == 7.8.2,  GHC == 7.8.3,  GHC == 7.8.4 , GHC == 7.10.1, GHC == 7.10.2, GHC == 7.10.3 , GHC == 8.0.1,  GHC == 8.0.2 , GHC == 8.2.1,  GHC == 8.2.2 , GHC == 8.4.1
 
 extra-source-files:
-  CHANGES.markdown
-  README.markdown
+    CHANGES.markdown
+    README.markdown
 
 source-repository head
   type: git
@@ -43,40 +37,39 @@ source-repository head
 
 library
   hs-source-dirs:
-    src
+      src
   ghc-options: -Wall
   build-depends:
-    base >= 4.3 && < 5,
-    ghc-prim
+      base >=4.3 && <5
+    , ghc-prim
   exposed-modules:
-    Data.Orphans
+      Data.Orphans
   other-modules:
-    Data.Orphans.Prelude
+      Data.Orphans.Prelude
   default-language: Haskell2010
 
 test-suite spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   hs-source-dirs:
-    test
+      test
   ghc-options: -Wall
   build-depends:
-    base >= 4.3 && < 5,
-    base-orphans,
-    hspec == 2.*,
-    QuickCheck
-  build-tool-depends:
-    hspec-discover:hspec-discover == 2.*
+      QuickCheck
+    , base >=4.3 && <5
+    , base-orphans
+    , hspec ==2.*
   other-modules:
-    Control.Applicative.OrphansSpec
-    Control.Exception.OrphansSpec
-    Data.Bits.OrphansSpec
-    Data.Foldable.OrphansSpec
-    Data.Monoid.OrphansSpec
-    Data.Traversable.OrphansSpec
-    Data.Version.OrphansSpec
-    Foreign.Storable.OrphansSpec
-    GHC.Fingerprint.OrphansSpec
-    System.Posix.Types.IntWord
-    System.Posix.Types.OrphansSpec
+      Control.Applicative.OrphansSpec
+      Control.Exception.OrphansSpec
+      Data.Bits.OrphansSpec
+      Data.Foldable.OrphansSpec
+      Data.Monoid.OrphansSpec
+      Data.Traversable.OrphansSpec
+      Data.Version.OrphansSpec
+      Foreign.Storable.OrphansSpec
+      GHC.Fingerprint.OrphansSpec
+      System.Posix.Types.IntWord
+      System.Posix.Types.OrphansSpec
+      Paths_base_orphans
   default-language: Haskell2010
