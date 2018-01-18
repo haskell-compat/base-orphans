@@ -59,6 +59,8 @@ test-suite spec
     , base >=4.3 && <5
     , base-orphans
     , hspec ==2.*
+  build-tool-depends:
+      hspec-discover:hspec-discover == 2.*
   other-modules:
       Control.Applicative.OrphansSpec
       Control.Exception.OrphansSpec

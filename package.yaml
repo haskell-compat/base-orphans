@@ -63,3 +63,5 @@ tests:
       - base-orphans
       - hspec == 2.*
       - QuickCheck
+    build-tool-depends:
+      - hspec-discover:hspec-discover == 2.*
