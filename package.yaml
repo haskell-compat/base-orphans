@@ -56,12 +56,7 @@ library:
 
 tests:
   spec:
-    main: Spec.hs
-    source-dirs:
-      - test
+    defaults: sol/hpack-defaults@hspec-cabal-new
     dependencies:
       - base-orphans
-      - hspec == 2.*
       - QuickCheck
-    build-tool-depends:
-      - hspec-discover:hspec-discover == 2.*
