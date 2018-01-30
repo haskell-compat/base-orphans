@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveFoldable #-}
@@ -36,10 +37,6 @@ To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
 
-#if !(MIN_VERSION_base(4,4,0))
-import           Control.Monad.ST as Strict
-#endif
-
 #if __GLASGOW_HASKELL__ >= 701 && !(MIN_VERSION_base(4,9,0))
 import           GHC.Generics as Generics
 #endif
@@ -49,12 +46,23 @@ import           Control.Monad.Instances ()
 #endif
 
 #if !(MIN_VERSION_base(4,9,0))
-import           Data.Data as Data
 import qualified Data.Foldable as F (Foldable(..))
 import           Data.Monoid as Monoid
 import qualified Data.Traversable as T (Traversable(..))
 import           Text.ParserCombinators.ReadPrec as ReadPrec
 import           Text.Read as Read
+#endif
+
+#if MIN_VERSION_base(4,9,0) && !(MIN_VERSION_base(4,11,0))
+import qualified Control.Monad.Fail as Fail (MonadFail(..))
+#endif
+
+#if !(MIN_VERSION_base(4,10,0))
+import           Data.Data as Data
+#endif
+
+#if !(MIN_VERSION_base(4,11,0))
+import           Control.Monad.ST as Strict
 #endif
 
 #if __GLASGOW_HASKELL__ < 710
@@ -69,7 +77,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,10,0))
+#if !(MIN_VERSION_base(4,11,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -935,6 +943,83 @@ instance Semigroup Lifetime where
     (<>) = mappend
     stimes = stimesMonoid
 #  endif
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,11,0))
+instance Alternative ZipList where
+  empty = ZipList []
+  ZipList xs <|> ZipList ys = ZipList (xs ++ drop (length xs) ys)
+
+deriving instance Monoid a => Monoid (Down a)
+deriving instance Num a => Num (Down a)
+
+instance Functor Down where
+    fmap = coerce
+
+instance Applicative Down where
+    pure = Down
+    (<*>) = coerce
+
+instance Monad Down where
+    return = Down
+    Down a >>= k = k a
+
+instance Monoid a => Monoid (Strict.ST s a) where
+    mempty = pure mempty
+    mappend = liftA2 mappend
+
+# if MIN_VERSION_base(4,9,0)
+instance Fail.MonadFail (Strict.ST s) where
+    fail s = errorWithoutStackTrace s
+
+deriving instance Semigroup a => Semigroup (Down a)
+
+instance Semigroup a => Semigroup (Strict.ST s a) where
+    (<>) = liftA2 (<>)
+# endif
+
+# if MIN_VERSION_base(4,10,0)
+deriving instance Data IntPtr
+deriving instance Data WordPtr
+# else
+-- The constructors for IntPtr and WordPtr aren't exposed on older versions
+-- of base, so we're forced to hand-roll the Data instances here
+instance Data IntPtr where
+  gfoldl k z iptr = z intPtr `k` unIntPtr iptr
+  gunfold k z _ = k (z intPtr)
+  toConstr !_ = cIntPtr
+  dataTypeOf _ = tIntPtr
+
+intPtr :: Int -> IntPtr
+intPtr = unsafeCoerce
+
+unIntPtr :: IntPtr -> Int
+unIntPtr = unsafeCoerce
+
+tIntPtr :: DataType
+tIntPtr = mkDataType "IntPtr" [cIntPtr]
+
+cIntPtr :: Constr
+cIntPtr = mkConstr tIntPtr "IntPtr" [] Data.Prefix
+
+instance Data WordPtr where
+  gfoldl k z wptr = z wordPtr `k` unWordPtr wptr
+  gunfold k z _ = k (z wordPtr)
+  toConstr !_ = cWordPtr
+  dataTypeOf _ = tWordPtr
+
+wordPtr :: Word -> WordPtr
+wordPtr = unsafeCoerce
+
+unWordPtr :: WordPtr -> Word
+unWordPtr = unsafeCoerce
+
+tWordPtr :: DataType
+tWordPtr = mkDataType "WordPtr" [cWordPtr]
+
+cWordPtr :: Constr
+cWordPtr = mkConstr tWordPtr "WordPtr" [] Data.Prefix
 # endif
 #endif
 

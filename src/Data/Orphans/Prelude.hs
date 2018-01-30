@@ -15,7 +15,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,10,0)
+#if MIN_VERSION_base(4,11,0)
     () where
 #else
     (module OrphansPrelude, realPart, imagPart) where
@@ -30,7 +30,7 @@ import Control.Monad.Fix as OrphansPrelude
 import Data.Bits as OrphansPrelude
 import Data.Char as OrphansPrelude
 import Data.Complex as OrphansPrelude (Complex(..))
-import Data.Data as OrphansPrelude (Data)
+import Data.Data as OrphansPrelude (Data(..), Constr, DataType, mkConstr, mkDataType)
 import Data.Fixed as OrphansPrelude
 import Data.Int as OrphansPrelude
 import Data.Ix as OrphansPrelude
@@ -42,7 +42,7 @@ import Data.Word as OrphansPrelude
 import Foreign.C.Error as OrphansPrelude
 import Foreign.C.Types as OrphansPrelude
 import Foreign.Marshal.Pool as OrphansPrelude
-import Foreign.Ptr as OrphansPrelude (castPtr)
+import Foreign.Ptr as OrphansPrelude
 import Foreign.Storable as OrphansPrelude
 
 import GHC.Base as OrphansPrelude
@@ -75,13 +75,16 @@ import GHC.IO.Encoding.CodePage.Table as OrphansPrelude
 
 # if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip as OrphansPrelude
-import Data.Typeable.Internal as OrphansPrelude
 import GHC.Fingerprint as OrphansPrelude
 import GHC.IO.Encoding.Failure as OrphansPrelude
 
 #  if !defined(mingw32_HOST_OS) && !defined(__GHCJS__)
 import GHC.Event as OrphansPrelude
 #  endif
+
+# if !(MIN_VERSION_base(4,10,0))
+import Data.Typeable.Internal as OrphansPrelude
+# endif
 # endif
 
 # if MIN_VERSION_base(4,5,0)
@@ -90,8 +93,11 @@ import GHC.Stats as OrphansPrelude
 # endif
 
 # if MIN_VERSION_base(4,6,0)
+import Data.Ord as OrphansPrelude (Down(..))
 import GHC.GHCi as OrphansPrelude
 import GHC.TypeLits as OrphansPrelude hiding (type (*))
+# else
+import GHC.Exts as OrphansPrelude (Down(..))
 # endif
 
 # if MIN_VERSION_base(4,6,0) && !(MIN_VERSION_base(4,8,2))
