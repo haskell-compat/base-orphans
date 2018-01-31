@@ -1,3 +1,11 @@
+## Changes in next [????.??.??]
+ - Backported new instances from GHC 8.4/`base-4.11`
+   * `Alternative` instance for `ZipList`
+   * `Data` instance for `IntPtr` and `WordPtr`
+   * `Num`, `Functor`, `Applicative`, `Monad`, `Semigroup`, and `Monoid`
+     instances for `Data.Ord.Down`
+   * `MonadFail`, `Semigroup`, and `Monoid` instances for strict `ST`
+
 ## Changes in 0.6 [2017.04.10]
  - Backported new instances from GHC 8.2/`base-4.10`
    (see https://github.com/haskell-compat/base-orphans/issues/39):
