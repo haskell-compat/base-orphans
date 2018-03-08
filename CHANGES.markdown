@@ -1,4 +1,4 @@
-## Changes in next [????.??.??]
+## Changes in 0.7 [2018.03.08]
  - Backported new instances from GHC 8.4/`base-4.11`
    * `Alternative` instance for `ZipList`
    * `Data` instance for `IntPtr` and `WordPtr`

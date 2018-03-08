@@ -1,11 +1,11 @@
--- This file has been generated from package.yaml by hpack version 0.22.0.
+-- This file has been generated from package.yaml by hpack version 0.27.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8cf5bb1ad0b62fa0aa0712cdf76c9dcbaa56e2460426d686c5a6080fbc7c05ce
+-- hash: 41c092a82fb1cbacf3f1eb99d4bdfbdae043e7a56b2a03706c9ea6ece36fda6f
 
 name:                base-orphans
-version:             0.6
+version:             0.7
 synopsis:            Backwards-compatible orphan instances for base
 description:         @base-orphans@ defines orphan instances that mimic instances available in later versions of @base@ to a wider (older) range of compilers. @base-orphans@ does not export anything except the orphan instances themselves and complements @<http://hackage.haskell.org/package/base-compat base-compat>@.
                      See the README for what instances are covered: <https://github.com/haskell-compat/base-orphans#readme>. See also the <https://github.com/haskell-compat/base-orphans#what-is-not-covered what is not covered> section.
@@ -59,8 +59,7 @@ test-suite spec
     , base >=4.3 && <5
     , base-orphans
     , hspec ==2.*
-  build-tool-depends:
-      hspec-discover:hspec-discover == 2.*
+  build-tool-depends: hspec-discover:hspec-discover == 2.*
   other-modules:
       Control.Applicative.OrphansSpec
       Control.Exception.OrphansSpec
