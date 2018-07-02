@@ -92,7 +92,7 @@ matrix:
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
       addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.2,ghc-7.2.2], sources: [hvr-ghc]}}
     - compiler: "ghc-7.2.1"
-    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      env: TEST=--disable-tests # Safe Haskell issue
       addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.2,ghc-7.2.1], sources: [hvr-ghc]}}
     - compiler: "ghc-7.0.4"
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
@@ -104,7 +104,7 @@ matrix:
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
       addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.2,ghc-7.0.2], sources: [hvr-ghc]}}
     - compiler: "ghc-7.0.1"
-    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      env: TEST=--disable-tests # https://github.com/lpsmith/bytestring-builder/pull/12
       addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.2,ghc-7.0.1], sources: [hvr-ghc]}}
     - compiler: "ghc-head"
       env: GHCHEAD=true
