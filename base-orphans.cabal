@@ -2,10 +2,10 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3d922d088ce7444a048f779ee0214acb9be2091c4917ef5f0c232cb41047e0d3
+-- hash: f7b54386bbe16442a11779267f4a728967659e625e63acc7a4a4a9d07cfd302f
 
 name:                base-orphans
-version:             0.7
+version:             0.8
 synopsis:            Backwards-compatible orphan instances for base
 description:         @base-orphans@ defines orphan instances that mimic instances available in later versions of @base@ to a wider (older) range of compilers. @base-orphans@ does not export anything except the orphan instances themselves and complements @<http://hackage.haskell.org/package/base-compat base-compat>@.
                      See the README for what instances are covered: <https://github.com/haskell-compat/base-orphans#readme>. See also the <https://github.com/haskell-compat/base-orphans#what-is-not-covered what is not covered> section.

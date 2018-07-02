@@ -1,4 +1,4 @@
-## Changes in next [????.??.??]
+## Changes in 0.8 [2018.07.02]
  - Backported new instance from GHC 8.6/`base-4.12`
    * Data types in `GHC.Generics`:
      - `Applicative` instance for `K1`
