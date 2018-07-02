@@ -34,6 +34,10 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Alternative`, `MonadPlus`, and `MonadZip` instances for `Proxy`
  * `Alternative`, `Applicative`, `Bounded`, `Data`, `Enum`, `Foldable`, `Functor`, `Ix`, `Monad`, `MonadFix`, `MonadPlus`, `MonadZip`, and `Traversable` instances for data types in `GHC.Generics`
  * `Alternative`, `Eq`, `Ord`, `Read`, `Show`, `Foldable`, and `Traversable` instances for `ZipList`
+ * `Applicative` instance for `K1` from `GHC.Generics`
+ * `Applicative`, `Data`, `Eq1`, `Foldable`, `Functor`, `Ord1`, `Monad`,
+   `MonadFix`, `MonadZip`, `Monoid`, `Num`, `Read`, `Read1`, `Semigroup`,
+   `Show`, `Show1`, and `Traversable` instances for `Down`
  * `Applicative` and `Alternative` instances for `ReadP` and `ReadPrec`
  * `Applicative` instance for strict and lazy `ST`
  * `Applicative`, `Foldable`, `Functor`, `Monad`, and `Traversable` instances for `Complex`,
@@ -49,6 +53,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
  * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
  * `Foldable` instance for `Either`, `(,)` and `Const`
+ * `Foldable` and `Traversable` instances for `Alt` from `Data.Monoid`
  * `Functor` instance for `Handler`, `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
  * `Monad` instance for `(,)`
@@ -59,8 +64,9 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Monoid` instances for `Identity` and `IO`
  * `Num` instance for `Sum` and `Product`
  * `Read` instance for `Fixed`
- * `Applicative`, `Functor`, `Monad`, `Monoid`, `Num`, `Read`, `Semigroup`, and `Show` instances for `Down`
  * `Semigroup` instances for `IO`, `Event` and `Lifetime`
+ * `Semigroup` instances for `V1`, `U1`, `Par1`, `Rec1`, `K1`, `M1`, `(:*:)`, and `(:.:)` from `GHC.Generics`.
+   `Monoid` instances for the same types (except `V1`).
  * `Show` instance for `Fingerprint`
  * `Storable` instance for `()`, `Complex`, and `Ratio`
  * `Traversable` instance for `Either`, `(,)` and `Const`
@@ -79,6 +85,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-8.6.1`  / `base-4.12.0.0`
  * `ghc-8.4.3`  / `base-4.11.1.0`
  * `ghc-8.4.2`  / `base-4.11.1.0`
  * `ghc-8.4.1`  / `base-4.11.0.0`

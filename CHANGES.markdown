@@ -1,3 +1,13 @@
+## Changes in next [????.??.??]
+ - Backported new instance from GHC 8.6/`base-4.12`
+   * Data types in `GHC.Generics`:
+     - `Applicative` instance for `K1`
+     - `Semigroup` instances for `U1`, `Par1`, `Rec1`, `K1`, `M1`, `(:*:)`,     `(:.:)`, and `V1`
+     - `Monoid`    instances for `U1`, `Par1`, `Rec1`, `K1`, `M1`, `(:*:)`, and `(:.:)`
+   * `Foldable` and `Traversable` instances for `Data.Monoid.Alt`
+   * `MonadFix`, `MonadZip`, `Data`, `Foldable`, `Traversable`, `Eq1`, `Ord1`,
+     `Read1`, and `Show1` instances for `Data.Ord.Down`
+
 ## Changes in 0.7 [2018.03.08]
  - Backported new instances from GHC 8.4/`base-4.11`
    * `Alternative` instance for `ZipList`

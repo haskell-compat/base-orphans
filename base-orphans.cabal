@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ede83d5637dfb74223c438f0fa60624f0af59b8504ed3a3a71f3d3399a214fc7
+-- hash: 3d922d088ce7444a048f779ee0214acb9be2091c4917ef5f0c232cb41047e0d3
 
 name:                base-orphans
 version:             0.7
@@ -25,7 +25,7 @@ license:             MIT
 license-file:        LICENSE
 build-type:          Simple
 cabal-version:       >= 1.10
-tested-with:         GHC == 7.0.1,  GHC == 7.0.2,  GHC == 7.0.3,  GHC == 7.0.4 , GHC == 7.2.1,  GHC == 7.2.2 , GHC == 7.4.1,  GHC == 7.4.2 , GHC == 7.6.1,  GHC == 7.6.2,  GHC == 7.6.3 , GHC == 7.8.1,  GHC == 7.8.2,  GHC == 7.8.3,  GHC == 7.8.4 , GHC == 7.10.1, GHC == 7.10.2, GHC == 7.10.3 , GHC == 8.0.1,  GHC == 8.0.2 , GHC == 8.2.1,  GHC == 8.2.2 , GHC == 8.4.1,  GHC == 8.4.2,  GHC == 8.4.3
+tested-with:         GHC == 7.0.1,  GHC == 7.0.2,  GHC == 7.0.3,  GHC == 7.0.4 , GHC == 7.2.1,  GHC == 7.2.2 , GHC == 7.4.1,  GHC == 7.4.2 , GHC == 7.6.1,  GHC == 7.6.2,  GHC == 7.6.3 , GHC == 7.8.1,  GHC == 7.8.2,  GHC == 7.8.3,  GHC == 7.8.4 , GHC == 7.10.1, GHC == 7.10.2, GHC == 7.10.3 , GHC == 8.0.1,  GHC == 8.0.2 , GHC == 8.2.1,  GHC == 8.2.2 , GHC == 8.4.1,  GHC == 8.4.2,  GHC == 8.4.3 , GHC == 8.6.1
 extra-source-files:
     CHANGES.markdown
     README.markdown
