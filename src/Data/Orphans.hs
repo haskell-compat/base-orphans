@@ -37,7 +37,7 @@ To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
 
-#if __GLASGOW_HASKELL__ >= 701 && !(MIN_VERSION_base(4,9,0))
+#if __GLASGOW_HASKELL__ >= 701 && !(MIN_VERSION_base(4,12,0))
 import           GHC.Generics as Generics
 #endif
 
@@ -46,9 +46,7 @@ import           Control.Monad.Instances ()
 #endif
 
 #if !(MIN_VERSION_base(4,9,0))
-import qualified Data.Foldable as F (Foldable(..))
-import           Data.Monoid as Monoid
-import qualified Data.Traversable as T (Traversable(..))
+import qualified Data.Monoid as Monoid
 import           Text.ParserCombinators.ReadPrec as ReadPrec
 import           Text.Read as Read
 #endif
@@ -65,6 +63,11 @@ import           Data.Data as Data
 import           Control.Monad.ST as Strict
 #endif
 
+#if !(MIN_VERSION_base(4,12,0))
+import qualified Data.Foldable as F (Foldable(..))
+import qualified Data.Traversable as T (Traversable(..))
+#endif
+
 #if __GLASGOW_HASKELL__ < 710
 import           Control.Exception as Exception
 import           Control.Monad.ST.Lazy as Lazy
@@ -77,7 +80,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,11,0))
+#if !(MIN_VERSION_base(4,12,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -1023,6 +1026,74 @@ cWordPtr = mkConstr tWordPtr "WordPtr" [] Data.Prefix
 # endif
 #endif
 
+#if !(MIN_VERSION_base(4,12,0))
+instance MonadFix Down where
+    mfix f = Down (fix (getDown . f))
+      where getDown (Down x) = x
+deriving instance Data a => Data (Down a)
+deriving instance F.Foldable Down
+deriving instance T.Traversable Down
+# if MIN_VERSION_base(4,4,0)
+instance MonadZip Down where
+    mzipWith = liftM2
+# endif
+# if MIN_VERSION_base(4,9,0)
+instance Eq1 Down where
+    liftEq eq (Down x) (Down y) = eq x y
+instance Ord1 Down where
+    liftCompare comp (Down x) (Down y) = comp x y
+instance Read1 Down where
+    liftReadsPrec rp _ = readsData $
+         readsUnaryWith rp "Down" Down
+instance Show1 Down where
+    liftShowsPrec sp _ d (Down x) = showsUnaryWith sp "Down" d x
+# endif
+
+# if __GLASGOW_HASKELL__ >= 701
+instance Monoid c => Applicative (K1 i c) where
+  pure _ = K1 mempty
+  (<*>) = coerce (mappend :: c -> c -> c)
+#  if MIN_VERSION_base(4,10,0)
+  liftA2 = \_ -> coerce (mappend :: c -> c -> c)
+#  endif
+
+instance Monoid (U1 p) where
+  mempty = U1
+#  if !(MIN_VERSION_base(4,11,0))
+  _ `mappend` _ = U1
+#  endif
+deriving instance Monoid p => Monoid (Par1 p)
+deriving instance Monoid (f p) => Monoid (Rec1 f p)
+deriving instance Monoid c => Monoid (K1 i c p)
+deriving instance Monoid (f p) => Monoid (M1 i c f p)
+instance (Monoid (f p), Monoid (g p)) => Monoid ((f :*: g) p) where
+  mempty = mempty :*: mempty
+#  if !(MIN_VERSION_base(4,11,0))
+  (x1 :*: y1) `mappend` (x2 :*: y2) = (x1 `mappend` x2) :*: (y1 `mappend` y2)
+#  endif
+deriving instance Monoid (f (g p)) => Monoid ((f :.: g) p)
+
+#  if MIN_VERSION_base(4,9,0)
+instance Semigroup (V1 p) where
+  v <> _ = v
+instance Semigroup (U1 p) where
+  _ <> _ = U1
+deriving instance Semigroup p => Semigroup (Par1 p)
+deriving instance Semigroup (f p) => Semigroup (Rec1 f p)
+deriving instance Semigroup c => Semigroup (K1 i c p)
+deriving instance Semigroup (f p) => Semigroup (M1 i c f p)
+instance (Semigroup (f p), Semigroup (g p)) => Semigroup ((f :*: g) p) where
+  (x1 :*: y1) <> (x2 :*: y2) = (x1 <> x2) :*: (y1 <> y2)
+deriving instance Semigroup (f (g p)) => Semigroup ((f :.: g) p)
+#  endif
+# endif
+
+# if MIN_VERSION_base(4,8,0)
+deriving instance Foldable f => Foldable (Alt f)
+deriving instance Traversable f => Traversable (Alt f)
+# endif
+#endif
+
 #if __GLASGOW_HASKELL__ < 710
 deriving instance Typeable  All
 deriving instance Typeable  AnnotationWrapper
@@ -1043,6 +1114,7 @@ deriving instance Typeable  Constr
 deriving instance Typeable  ConstrRep
 deriving instance Typeable  DataRep
 deriving instance Typeable  DataType
+deriving instance Typeable1 Down
 deriving instance Typeable1 Dual
 deriving instance Typeable1 Endo
 deriving instance Typeable  Errno
@@ -1198,7 +1270,6 @@ deriving instance Typeable  GCStats
 
 # if MIN_VERSION_base(4,6,0)
 deriving instance Typeable  CSigset
-deriving instance Typeable1 Down
 deriving instance Typeable  ForeignPtrContents
 deriving instance Typeable  Nat
 deriving instance Typeable1 NoIO
@@ -1485,7 +1556,7 @@ deriving instance Typeable '(:+)
 deriving instance Typeable 'AbsoluteSeek
 deriving instance Typeable 'All
 deriving instance Typeable 'AlreadyExists
-deriving instance Typeable 'Any
+deriving instance Typeable 'Monoid.Any
 deriving instance Typeable 'AppendHandle
 deriving instance Typeable 'AppendMode
 deriving instance Typeable 'BlockedIndefinitelyOnMVar

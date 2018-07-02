@@ -15,7 +15,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,11,0)
+#if MIN_VERSION_base(4,12,0)
     () where
 #else
     (module OrphansPrelude, realPart, imagPart) where
@@ -35,6 +35,12 @@ import Data.Fixed as OrphansPrelude
 import Data.Int as OrphansPrelude
 import Data.Ix as OrphansPrelude
 import Data.List as OrphansPrelude (genericLength)
+import Data.Monoid as OrphansPrelude
+  hiding ( Any(..)
+# if MIN_VERSION_base(4,5,0)
+         , (<>)
+# endif
+         )
 import Data.String as OrphansPrelude (IsString)
 import Data.Version as OrphansPrelude
 import Data.Word as OrphansPrelude
@@ -116,7 +122,7 @@ import Control.Concurrent.SampleVar as OrphansPrelude
 # if MIN_VERSION_base(4,8,0)
 import Data.Bifunctor as OrphansPrelude
 import Data.Functor.Identity as OrphansPrelude
-# endif
+#endif
 
 # if MIN_VERSION_base(4,9,0)
 import Data.Functor.Classes as OrphansPrelude
