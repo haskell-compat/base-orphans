@@ -1,8 +1,10 @@
--- This file has been generated from package.yaml by hpack version 0.28.2.
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f7b54386bbe16442a11779267f4a728967659e625e63acc7a4a4a9d07cfd302f
+-- hash: cbcda7d66dae228545cd78a42c4c4edf8ec2a746587f3aac59ba8a8775252cc5
 
 name:                base-orphans
 version:             0.8
@@ -24,8 +26,7 @@ copyright:           (c) 2012-2017 Simon Hengel,
 license:             MIT
 license-file:        LICENSE
 build-type:          Simple
-cabal-version:       >= 1.10
-tested-with:         GHC == 7.0.1,  GHC == 7.0.2,  GHC == 7.0.3,  GHC == 7.0.4 , GHC == 7.2.1,  GHC == 7.2.2 , GHC == 7.4.1,  GHC == 7.4.2 , GHC == 7.6.1,  GHC == 7.6.2,  GHC == 7.6.3 , GHC == 7.8.1,  GHC == 7.8.2,  GHC == 7.8.3,  GHC == 7.8.4 , GHC == 7.10.1, GHC == 7.10.2, GHC == 7.10.3 , GHC == 8.0.1,  GHC == 8.0.2 , GHC == 8.2.1,  GHC == 8.2.2 , GHC == 8.4.1,  GHC == 8.4.2,  GHC == 8.4.3 , GHC == 8.6.1
+tested-with:         GHC == 7.0.* , GHC == 7.2.* , GHC == 7.4.* , GHC == 7.6.* , GHC == 7.8.* , GHC == 7.10.* , GHC == 8.0.* , GHC == 8.2.* , GHC == 8.4.* , GHC == 8.6.*
 extra-source-files:
     CHANGES.markdown
     README.markdown
