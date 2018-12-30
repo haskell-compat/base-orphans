@@ -16,7 +16,7 @@ import           System.Posix.Types.IntWord
 import           System.Posix.Types
 
 import           Test.Hspec.QuickCheck (prop)
-import           Test.QuickCheck (NonZero(..))
+import           Test.QuickCheck (NonNegative(..), NonZero(..))
 #endif
 
 main :: IO ()
@@ -96,8 +96,8 @@ pred1HDevEq = pred1HDev (==)
 pred1HDevHDev :: (CDev -> CDev) -> (HDev -> HDev) -> HDev -> Bool
 pred1HDevHDev = pred1HDev eqCDevHDev
 
-pred1IntHDev :: (Int -> CDev) -> (Int -> HDev) -> Int -> Bool
-pred1IntHDev = pred1Common eqCDevHDev
+pred1IntHDev :: (Int -> CDev) -> (Int -> HDev) -> NonNegative Int -> Bool
+pred1IntHDev f g (NonNegative x) = pred1Common eqCDevHDev f g x
 
 pred2Common :: (c -> d -> e)
             -> (a -> b -> c)
