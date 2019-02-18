@@ -39,17 +39,17 @@ spec = describe "CDev" $ do
     prop "implements rotate" $
       pred2IntHDev rotate rotate
     prop "implements setBit" $
-      pred2IntHDev setBit setBit
+      pred2NonNegIntHDev setBit setBit
     prop "implements clearBit" $
-      pred2IntHDev clearBit clearBit
+      pred2NonNegIntHDev clearBit clearBit
     prop "implements complementBit" $
-      pred2IntHDev complementBit complementBit
+      pred2NonNegIntHDev complementBit complementBit
     prop "implements testBit" $
-      pred2IntEq testBit testBit
+      pred2NonNegIntEq testBit testBit
     prop "implements complement" $
       pred1HDevHDev complement complement
     prop "implements bit" $
-      pred1IntHDev bit bit
+      pred1NonNegIntHDev bit bit
     prop "implements bitSize" $
       pred1HDevEq bitSize bitSize
     prop "implements isSigned" $
@@ -96,8 +96,8 @@ pred1HDevEq = pred1HDev (==)
 pred1HDevHDev :: (CDev -> CDev) -> (HDev -> HDev) -> HDev -> Bool
 pred1HDevHDev = pred1HDev eqCDevHDev
 
-pred1IntHDev :: (Int -> CDev) -> (Int -> HDev) -> NonNegative Int -> Bool
-pred1IntHDev f g (NonNegative x) = pred1Common eqCDevHDev f g x
+pred1NonNegIntHDev :: (Int -> CDev) -> (Int -> HDev) -> NonNegative Int -> Bool
+pred1NonNegIntHDev f g (NonNegative x) = pred1Common eqCDevHDev f g x
 
 pred2Common :: (c -> d -> e)
             -> (a -> b -> c)
@@ -138,11 +138,16 @@ pred2IntHDev :: (CDev -> Int -> CDev)
              -> HDev -> Int -> Bool
 pred2IntHDev = pred2Int eqCDevHDev
 
-pred2IntEq :: Eq a
-           => (CDev -> Int -> a)
-           -> (HDev -> Int -> a)
-           -> HDev -> Int -> Bool
-pred2IntEq = pred2Int (==)
+pred2NonNegIntHDev :: (CDev -> Int -> CDev)
+                   -> (HDev -> Int -> HDev)
+                   -> HDev -> NonNegative Int -> Bool
+pred2NonNegIntHDev f g hDev (NonNegative x) = pred2Int eqCDevHDev f g hDev x
+
+pred2NonNegIntEq :: Eq a
+                 => (CDev -> Int -> a)
+                 -> (HDev -> Int -> a)
+                 -> HDev -> NonNegative Int -> Bool
+pred2NonNegIntEq f g hDev (NonNegative x) = pred2Int (==) f g hDev x
 #else
 spec :: Spec
 spec = return ()
