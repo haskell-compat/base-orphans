@@ -1,3 +1,8 @@
+## Changes in 0.8.1 [2019.03.25]
+ - Ensure that the test suite passes non-negative numbers to `Bits` methods
+   that require them, such as `bit`, `setBit`, `clearBit`, `complementBit`,
+   and `testBit`.
+
 ## Changes in 0.8 [2018.07.02]
  - Backported new instance from GHC 8.6/`base-4.12`
    * Data types in `GHC.Generics`:
