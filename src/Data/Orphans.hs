@@ -1293,6 +1293,10 @@ deriving instance Typeable QSem -- This instance seems to have been removed
                                 -- (accidentally?) in base-4.7.0.0
 # endif
 
+#if MIN_VERSION_base(4,8,0)
+deriving instance Typeable Proxy
+#endif
+
 # if __GLASGOW_HASKELL__ >= 708
 -- Data types which use poly-kinded Typeable...
 deriving instance Typeable ArrowMonad
