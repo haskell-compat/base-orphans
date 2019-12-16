@@ -1485,6 +1485,7 @@ deriving instance Typeable Typeable
 -- Constraints
 deriving instance Typeable (~)
 deriving instance Typeable Constraint
+deriving instance Typeable (() :: Constraint)
 
 -- Promoted data constructors
 deriving instance Typeable '()

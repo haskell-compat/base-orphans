@@ -1,3 +1,7 @@
+## Changes in ?.? [????.??.??]
+ - Backport the `Typeable (() :: Constraint)` instance to be available on
+   GHC 7.8.
+
 ## Changes in 0.8.1 [2019.03.25]
  - Ensure that the test suite passes non-negative numbers to `Bits` methods
    that require them, such as `bit`, `setBit`, `clearBit`, `complementBit`,
