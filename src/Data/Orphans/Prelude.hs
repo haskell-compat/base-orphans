@@ -1,7 +1,13 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE KindSignatures #-}
 
 #if __GLASGOW_HASKELL__ >= 706
+{-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE ExplicitNamespaces #-}
+#endif
+
+#if __GLASGOW_HASKELL__ >= 806
+{-# LANGUAGE NoStarIsType #-}
 #endif
 
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
@@ -15,10 +21,20 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,12,0)
+#if MIN_VERSION_base(4,14,0)
     () where
 #else
-    (module OrphansPrelude, realPart, imagPart) where
+    ( module OrphansPrelude
+    , realPart
+    , imagPart
+    , Typeable1
+    , Typeable2
+    , Typeable3
+    , Typeable4
+    , Typeable5
+    , Typeable6
+    , Typeable7
+    ) where
 
 import Control.Applicative as OrphansPrelude
 import Control.Arrow as OrphansPrelude hiding (first, loop, second)
@@ -42,6 +58,7 @@ import Data.Monoid as OrphansPrelude
 # endif
          )
 import Data.String as OrphansPrelude (IsString)
+import Data.Typeable as OrphansPrelude (Typeable)
 import Data.Version as OrphansPrelude
 import Data.Word as OrphansPrelude
 
@@ -87,10 +104,6 @@ import GHC.IO.Encoding.Failure as OrphansPrelude
 #  if !defined(mingw32_HOST_OS) && !defined(__GHCJS__)
 import GHC.Event as OrphansPrelude
 #  endif
-
-# if !(MIN_VERSION_base(4,10,0))
-import Data.Typeable.Internal as OrphansPrelude
-# endif
 # endif
 
 # if MIN_VERSION_base(4,5,0)
@@ -113,7 +126,8 @@ import GHC.IP as OrphansPrelude
 # if MIN_VERSION_base(4,7,0)
 import Data.Proxy as OrphansPrelude
 import Data.Type.Coercion as OrphansPrelude (Coercion, TestCoercion)
-import Data.Type.Equality as OrphansPrelude ((:~:), TestEquality)
+import Data.Type.Equality as OrphansPrelude ((:~:)(..), TestEquality(..))
+import GHC.Exts as OrphansPrelude (IsList(..))
 import Text.Read.Lex as OrphansPrelude (Number)
 # else
 import Control.Concurrent.SampleVar as OrphansPrelude
@@ -126,16 +140,35 @@ import Data.Functor.Identity as OrphansPrelude
 
 # if MIN_VERSION_base(4,9,0)
 import Data.Functor.Classes as OrphansPrelude
+import Data.Functor.Compose as OrphansPrelude
+import Data.Semigroup as OrphansPrelude (stimesMonoid)
+# endif
+
+# if MIN_VERSION_base(4,9,0) && !(MIN_VERSION_base(4,12,0))
 import Data.List.NonEmpty as OrphansPrelude (NonEmpty(..))
-import Data.Semigroup as OrphansPrelude (Semigroup(..), stimesMonoid)
+import Data.Semigroup as OrphansPrelude (Semigroup(..))
+# endif
+
+# if !(MIN_VERSION_base(4,11,0))
+import Data.Typeable ( Typeable1, Typeable2, Typeable3, Typeable4
+                     , Typeable5, Typeable6, Typeable7 )
 # endif
 
 # if MIN_VERSION_base(4,4,0)
 realPart, imagPart :: Complex a -> a
-#else
+# else
 realPart, imagPart :: RealFloat a => Complex a -> a
-#endif
+# endif
 realPart (x :+ _) = x
 imagPart (_ :+ y) = y
 
+# if MIN_VERSION_base(4,11,0)
+type Typeable1 (a :: Type -> Type)                                                 = Typeable a
+type Typeable2 (a :: Type -> Type -> Type)                                         = Typeable a
+type Typeable3 (a :: Type -> Type -> Type -> Type)                                 = Typeable a
+type Typeable4 (a :: Type -> Type -> Type -> Type -> Type)                         = Typeable a
+type Typeable5 (a :: Type -> Type -> Type -> Type -> Type -> Type)                 = Typeable a
+type Typeable6 (a :: Type -> Type -> Type -> Type -> Type -> Type -> Type)         = Typeable a
+type Typeable7 (a :: Type -> Type -> Type -> Type -> Type -> Type -> Type -> Type) = Typeable a
+# endif
 #endif

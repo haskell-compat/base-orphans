@@ -1,4 +1,15 @@
 ## Changes in ?.? [????.??.??]
+ - Backport new instances from GHC 8.10/`base-4.14`
+   * `Bits`, `Bounded`, `Enum`, `FiniteBits`, `Floating`, `Fractional`,
+     `Integral`, `Ix`, `Real`, `RealFrac`, `RealFloat` and `Storable` instances
+     for `Data.Ord.Down`
+   * `Functor`, `Applicative`, `Monad`, `Alternative`, and `MonadPlus` instances
+     for `Kleisli`
+   * `Functor`, `Applicative`, and `Monad` instances for
+     `(,,) a b` and `(,,,) a b c`
+   * `Data` instances for `WrappedArrow` and `WrappedMonad`
+   * `Data` and `IsList` instances for `ZipList`
+   * `TestEquality` instance for `Compose`
  - Backport the `Typeable (() :: Constraint)` instance to be available on
    GHC 7.8.
 

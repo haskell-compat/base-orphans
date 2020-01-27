@@ -80,7 +80,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,12,0))
+#if !(MIN_VERSION_base(4,14,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -1091,6 +1091,109 @@ deriving instance Semigroup (f (g p)) => Semigroup ((f :.: g) p)
 # if MIN_VERSION_base(4,8,0)
 deriving instance Foldable f => Foldable (Alt f)
 deriving instance Traversable f => Traversable (Alt f)
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,14,0))
+instance Functor ((,,) a b) where
+    fmap f (a, b, c) = (a, b, f c)
+
+instance (Monoid a, Monoid b) => Applicative ((,,) a b) where
+    pure x = (mempty, mempty, x)
+    (a, b, f) <*> (a', b', x) = (a `mappend` a', b `mappend` b', f x)
+
+instance (Monoid a, Monoid b) => Monad ((,,) a b) where
+    (u, v, a) >>= k =
+      case k a of
+        (u', v', b) ->
+          (u `mappend` u', v `mappend` v', b)
+# if !(MIN_VERSION_base(4,8,0))
+    return x = (mempty, mempty, x)
+# endif
+
+instance Functor ((,,,) a b c) where
+    fmap f (a, b, c, d) = (a, b, c, f d)
+
+instance (Monoid a, Monoid b, Monoid c) => Applicative ((,,,) a b c) where
+    pure x = (mempty, mempty, mempty, x)
+    (a, b, c, f) <*> (a', b', c', x) =
+      (a `mappend` a', b `mappend` b', c `mappend` c', f x)
+
+instance (Monoid a, Monoid b, Monoid c) => Monad ((,,,) a b c) where
+    (u, v, w, a) >>= k =
+      case k a of
+        (u', v', w', b) ->
+          (u `mappend` u', v `mappend` v', w `mappend` w', b)
+# if !(MIN_VERSION_base(4,8,0))
+    return x = (mempty, mempty, mempty, x)
+# endif
+
+deriving instance Functor m => Functor (Kleisli m a)
+
+instance Applicative m => Applicative (Kleisli m a) where
+  pure = Kleisli . const . pure
+  {-# INLINE pure #-}
+  Kleisli f <*> Kleisli g = Kleisli $ \x -> f x <*> g x
+  {-# INLINE (<*>) #-}
+  Kleisli f *> Kleisli g = Kleisli $ \x -> f x *> g x
+  {-# INLINE (*>) #-}
+  Kleisli f <* Kleisli g = Kleisli $ \x -> f x <* g x
+  {-# INLINE (<*) #-}
+
+instance Alternative m => Alternative (Kleisli m a) where
+  empty = Kleisli $ const empty
+  {-# INLINE empty #-}
+  Kleisli f <|> Kleisli g = Kleisli $ \x -> f x <|> g x
+  {-# INLINE (<|>) #-}
+
+instance Monad m => Monad (Kleisli m a) where
+  Kleisli f >>= k = Kleisli $ \x -> f x >>= \a -> runKleisli (k a) x
+  {-# INLINE (>>=) #-}
+# if !(MIN_VERSION_base(4,8,0))
+  return = Kleisli . const . return
+  {-# INLINE return #-}
+# endif
+
+instance MonadPlus m => MonadPlus (Kleisli m a) where
+  mzero = Kleisli $ const mzero
+  {-# INLINE mzero #-}
+  Kleisli f `mplus` Kleisli g = Kleisli $ \x -> f x `mplus` g x
+  {-# INLINE mplus #-}
+
+deriving instance Bits       a => Bits       (Down a)
+deriving instance Bounded    a => Bounded    (Down a)
+deriving instance Enum       a => Enum       (Down a)
+deriving instance Floating   a => Floating   (Down a)
+deriving instance Fractional a => Fractional (Down a)
+deriving instance Integral   a => Integral   (Down a)
+deriving instance Ix         a => Ix         (Down a)
+deriving instance Real       a => Real       (Down a)
+deriving instance RealFrac   a => RealFrac   (Down a)
+deriving instance RealFloat  a => RealFloat  (Down a)
+deriving instance Storable   a => Storable   (Down a)
+# if MIN_VERSION_base(4,7,0)
+deriving instance FiniteBits a => FiniteBits (Down a)
+# endif
+
+deriving instance (Typeable2 a, Typeable b, Typeable c, Data (a b c))
+                         => Data (WrappedArrow a b c)
+deriving instance (Typeable1 m, Typeable a, Data (m a))
+                         => Data (WrappedMonad m a)
+deriving instance Data a => Data (ZipList a)
+
+# if MIN_VERSION_base(4,7,0)
+instance IsList (ZipList a) where
+  type Item (ZipList a) = a
+  fromList = ZipList
+  toList = getZipList
+# endif
+
+# if MIN_VERSION_base(4,9,0)
+instance (TestEquality f) => TestEquality (Compose f g) where
+  testEquality (Compose x) (Compose y) =
+    case testEquality x y of -- :: Maybe (g x :~: g y)
+      Just Refl -> Just Refl -- :: Maybe (x :~: y)
+      Nothing   -> Nothing
 # endif
 #endif
 
