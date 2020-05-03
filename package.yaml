@@ -15,7 +15,7 @@ copyright:
   - (c) 2014-2017 João Cristóvão
   - (c) 2015-2017 Ryan Scott
 category: Compatibility
-description: >
+description: |
   @base-orphans@ defines orphan instances that mimic instances available in
   later versions of @base@ to a wider (older) range of compilers.
   @base-orphans@ does not export anything except the orphan instances
