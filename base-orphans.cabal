@@ -4,13 +4,22 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8e1ad4db8bc8328bd878427d8d3429f702568b56d9f99c2d38f5e4d8ce3de8c9
+-- hash: e19581cecfa5ba4d99b7b0497595aef849819a892130a7f4a6073e01a240c74d
 
 name:                base-orphans
 version:             0.8.2
 synopsis:            Backwards-compatible orphan instances for base
-description:         @base-orphans@ defines orphan instances that mimic instances available in later versions of @base@ to a wider (older) range of compilers. @base-orphans@ does not export anything except the orphan instances themselves and complements @<http://hackage.haskell.org/package/base-compat base-compat>@.
-                     See the README for what instances are covered: <https://github.com/haskell-compat/base-orphans#readme>. See also the <https://github.com/haskell-compat/base-orphans#what-is-not-covered what is not covered> section.
+description:         @base-orphans@ defines orphan instances that mimic instances available in
+                     later versions of @base@ to a wider (older) range of compilers.
+                     @base-orphans@ does not export anything except the orphan instances
+                     themselves and complements @<http://hackage.haskell.org/package/base-compat
+                     base-compat>@.
+                     .
+                     See the README for what instances are covered:
+                     <https://github.com/haskell-compat/base-orphans#readme>.
+                     See also the
+                     <https://github.com/haskell-compat/base-orphans#what-is-not-covered what is not covered>
+                     section.
 category:            Compatibility
 homepage:            https://github.com/haskell-compat/base-orphans#readme
 bug-reports:         https://github.com/haskell-compat/base-orphans/issues
