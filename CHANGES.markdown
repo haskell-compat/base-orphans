@@ -1,3 +1,8 @@
+## Changes in 0.8.3 [????.??.??]
+ - Backport new instances from GHC 9.0/`base-4.15`
+   * `MonadFix` and `MonadZip` instances for `Complex`
+   * `Ix` instances for tuples of size 6 through 15
+
 ## Changes in 0.8.2 [2020.01.27]
  - Backport new instances from GHC 8.10/`base-4.14`
    * `Bits`, `Bounded`, `Enum`, `FiniteBits`, `Floating`, `Fractional`,
