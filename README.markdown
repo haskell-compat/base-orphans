@@ -63,9 +63,11 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
  * `Functor`, `Applicative`, `Monad`, `Alternative`, and `MonadPlus` instances
    for `Kleisli`
+ * `Ix` instances for tuples of size 6 through 15
  * `Monad` instance for `(,)`
  * `Monad` instance for `WrappedMonad`
  * `MonadFail`, `Monoid`, and `Semigroup` instances for strict `ST`
+ * `MonadFix` and `MonadZip` instances for `Complex`
  * `MonadZip` instance for `Maybe`
  * `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
  * `Monoid` instances for `Identity` and `IO`
@@ -93,6 +95,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-9.0.*`  / `base-4.15.*`
  * `ghc-8.10.*` / `base-4.14.*`
  * `ghc-8.8.*`  / `base-4.13.*`
  * `ghc-8.6.*`  / `base-4.12.*`
