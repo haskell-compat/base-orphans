@@ -1,4 +1,4 @@
-## Changes in 0.8.3 [????.??.??]
+## Changes in 0.8.3 [2020.09.30]
  - Backport new instances from GHC 9.0/`base-4.15`
    * `MonadFix` and `MonadZip` instances for `Complex`
    * `Ix` instances for tuples of size 6 through 15
