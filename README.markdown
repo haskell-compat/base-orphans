@@ -80,6 +80,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Storable` instance for `()`, `Complex`, and `Ratio`
  * `TestEquality` instance for `Compose`
  * `Traversable` instance for `Either`, `(,)` and `Const`
+ * `Ord` instance for `TypeRep`.
  * `Typeable` instance for most data types, typeclasses, and promoted data constructors (when possible)
 
 ## What is not covered

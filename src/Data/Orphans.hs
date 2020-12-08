@@ -2227,3 +2227,13 @@ deriving instance Typeable 'Shutdown
 # endif
 
 #endif
+
+#if !(MIN_VERSION_base(4,4,0))
+-- http://hackage.haskell.org/package/base-4.3.0.0/docs/Data-Typeable.html#t:TypeRep
+-- Notice that `TypeRep` constructor is not exported
+-- and no pure accessor to `Key` is provided.
+instance Ord TypeRep where
+  compare x y =
+    compare (tyConString (typeRepTyCon x)) (tyConString (typeRepTyCon x)) `mappend`
+    compare (typeRepArgs x) (typeRepArgs y)
+#endif
