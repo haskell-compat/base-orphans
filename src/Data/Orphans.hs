@@ -130,6 +130,17 @@ instance Applicative (Strict.ST s) where
 instance Applicative (Lazy.ST s) where
     pure  = return
     (<*>) = ap
+
+instance Ord TyCon where
+  compare x y = compare (tyConString x) (tyConString y)
+
+-- http://hackage.haskell.org/package/base-4.3.0.0/docs/Data-Typeable.html#t:TypeRep
+-- Notice that the `TypeRep` constructor is not exported
+-- and no pure accessor to its `Key` field is provided.
+instance Ord TypeRep where
+  compare x y =
+    compare (typeRepTyCon x) (typeRepTyCon x) `mappend`
+    compare (typeRepArgs x) (typeRepArgs y)
 #endif
 
 -- These instances are only valid if Bits isn't a subclass of Num (as Bool is
