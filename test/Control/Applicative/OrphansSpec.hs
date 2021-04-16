@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 module Control.Applicative.OrphansSpec (main, spec) where
 
 import Test.Hspec
@@ -17,7 +18,9 @@ instance Applicative Identity where
   Identity f <*> x = f <$> x
 
 instance Monad Identity where
+#if !(MIN_VERSION_base(4,11,0))
   return = Identity
+#endif
   m >>= k  = k (runIdentity m)
 
 main :: IO ()
