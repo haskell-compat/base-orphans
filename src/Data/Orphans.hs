@@ -38,7 +38,7 @@ To use them, simply @import Data.Orphans ()@.
 module Data.Orphans () where
 
 #if __GLASGOW_HASKELL__ >= 701 && !(MIN_VERSION_base(4,12,0))
-import           GHC.Generics as Generics
+import           GHC.Generics as Generics hiding (prec)
 #endif
 
 #if !(MIN_VERSION_base(4,6,0))
@@ -48,11 +48,18 @@ import           Control.Monad.Instances ()
 #if !(MIN_VERSION_base(4,9,0))
 import qualified Data.Monoid as Monoid
 import           Text.ParserCombinators.ReadPrec as ReadPrec
-import           Text.Read as Read
 #endif
 
 #if MIN_VERSION_base(4,9,0) && !(MIN_VERSION_base(4,11,0))
 import qualified Control.Monad.Fail as Fail (MonadFail(..))
+#endif
+
+#if MIN_VERSION_base(4,9,0) && !(MIN_VERSION_base(4,16,0))
+import qualified Data.Functor.Product as Functor
+#endif
+
+#if MIN_VERSION_base(4,10,0) && !(MIN_VERSION_base(4,16,0))
+import           GHC.Read (expectP, paren)
 #endif
 
 #if !(MIN_VERSION_base(4,10,0))
@@ -80,7 +87,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,15,0))
+#if !(MIN_VERSION_base(4,16,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -1620,6 +1627,184 @@ instance MonadZip Complex where
 
 instance MonadFix Complex where
   mfix f = (let a :+ _ = f a in a) :+ (let _ :+ a = f a in a)
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,16,0))
+# if MIN_VERSION_base(4,9,0)
+instance Eq1 Complex where
+    liftEq eq (x :+ y) (u :+ v) = eq x u && eq y v
+
+instance Read1 Complex where
+#  if MIN_VERSION_base(4,10,0)
+    liftReadPrec rp _  = parens $ prec complexPrec $ do
+        x <- step rp
+        expectP (Symbol ":+")
+        y <- step rp
+        return (x :+ y)
+      where
+        complexPrec = 6
+
+    liftReadListPrec = liftReadListPrecDefault
+    liftReadList     = liftReadListDefault
+#  else
+    liftReadsPrec rdP _ p s = readParen (p > complexPrec) (\s' -> do
+      (x, s'')     <- rdP (complexPrec+1) s'
+      (":+", s''') <- lex s''
+      (y, s'''')   <- rdP (complexPrec+1) s'''
+      return (x :+ y, s'''')) s
+      where
+        complexPrec = 6
+#  endif
+
+instance Show1 Complex where
+    liftShowsPrec sp _ d (x :+ y) = showParen (d > complexPrec) $
+        sp (complexPrec+1) x . showString " :+ " . sp (complexPrec+1) y
+      where
+        complexPrec = 6
+
+instance Eq1 Fixed where
+    liftEq _eq (MkFixed x) (MkFixed y) = x == y
+
+instance Ord1 Fixed where
+    liftCompare _cmp (MkFixed x) (MkFixed y) = compare x y
+
+instance Eq a => Eq2 ((,,) a) where
+    liftEq2 e1 e2 (u1, x1, y1) (v1, x2, y2) =
+        u1 == v1 &&
+        e1 x1 x2 && e2 y1 y2
+
+instance Ord a => Ord2 ((,,) a) where
+    liftCompare2 comp1 comp2 (u1, x1, y1) (v1, x2, y2) =
+        compare u1 v1 `mappend`
+        comp1 x1 x2 `mappend` comp2 y1 y2
+
+instance Read a => Read2 ((,,) a) where
+#  if MIN_VERSION_base(4,10,0)
+    liftReadPrec2 rp1 _ rp2 _ = parens $ paren $ do
+        x1 <- readPrec
+        expectP (Punc ",")
+        y1 <- rp1
+        expectP (Punc ",")
+        y2 <- rp2
+        return (x1,y1,y2)
+
+    liftReadListPrec2 = liftReadListPrec2Default
+    liftReadList2     = liftReadList2Default
+#  else
+    liftReadsPrec2 rp1 _ rp2 _ _ = readParen False $ \ r ->
+        [((e1,e2,e3), y) | ("(",s) <- lex r,
+                           (e1,t)  <- readsPrec 0 s,
+                           (",",u) <- lex t,
+                           (e2,v)  <- rp1 0 u,
+                           (",",w) <- lex v,
+                           (e3,x)  <- rp2 0 w,
+                           (")",y) <- lex x]
+#  endif
+
+instance Show a => Show2 ((,,) a) where
+    liftShowsPrec2 sp1 _ sp2 _ _ (x1,y1,y2)
+        = showChar '(' . showsPrec 0 x1
+        . showChar ',' . sp1 0 y1
+        . showChar ',' . sp2 0 y2
+        . showChar ')'
+
+instance (Eq a, Eq b) => Eq1 ((,,) a b) where
+    liftEq = liftEq2 (==)
+
+instance (Ord a, Ord b) => Ord1 ((,,) a b) where
+    liftCompare = liftCompare2 compare
+
+instance (Read a, Read b) => Read1 ((,,) a b) where
+#  if MIN_VERSION_base(4,10,0)
+    liftReadPrec = liftReadPrec2 readPrec readListPrec
+
+    liftReadListPrec = liftReadListPrecDefault
+    liftReadList     = liftReadListDefault
+#  else
+    liftReadsPrec = liftReadsPrec2 readsPrec readList
+#  endif
+
+instance (Show a, Show b) => Show1 ((,,) a b) where
+    liftShowsPrec = liftShowsPrec2 showsPrec showList
+
+instance (Eq a, Eq b) => Eq2 ((,,,) a b) where
+    liftEq2 e1 e2 (u1, u2, x1, y1) (v1, v2, x2, y2) =
+        u1 == v1 &&
+        u2 == v2 &&
+        e1 x1 x2 && e2 y1 y2
+
+instance (Ord a, Ord b) => Ord2 ((,,,) a b) where
+    liftCompare2 comp1 comp2 (u1, u2, x1, y1) (v1, v2, x2, y2) =
+        compare u1 v1 `mappend`
+        compare u2 v2 `mappend`
+        comp1 x1 x2 `mappend` comp2 y1 y2
+
+instance (Read a, Read b) => Read2 ((,,,) a b) where
+#  if MIN_VERSION_base(4,10,0)
+    liftReadPrec2 rp1 _ rp2 _ = parens $ paren $ do
+        x1 <- readPrec
+        expectP (Punc ",")
+        x2 <- readPrec
+        expectP (Punc ",")
+        y1 <- rp1
+        expectP (Punc ",")
+        y2 <- rp2
+        return (x1,x2,y1,y2)
+
+    liftReadListPrec2 = liftReadListPrec2Default
+    liftReadList2     = liftReadList2Default
+#  else
+    liftReadsPrec2 rp1 _ rp2 _ _ = readParen False $ \ r ->
+        [((e1,e2,e3,e4), s9) | ("(",s1) <- lex r,
+                               (e1,s2)  <- readsPrec 0 s1,
+                               (",",s3) <- lex s2,
+                               (e2,s4)  <- readsPrec 0 s3,
+                               (",",s5) <- lex s4,
+                               (e3,s6)  <- rp1 0 s5,
+                               (",",s7) <- lex s6,
+                               (e4,s8)  <- rp2 0 s7,
+                               (")",s9) <- lex s8]
+#  endif
+
+instance (Show a, Show b) => Show2 ((,,,) a b) where
+    liftShowsPrec2 sp1 _ sp2 _ _ (x1,x2,y1,y2)
+        = showChar '(' . showsPrec 0 x1
+        . showChar ',' . showsPrec 0 x2
+        . showChar ',' . sp1 0 y1
+        . showChar ',' . sp2 0 y2
+        . showChar ')'
+
+instance (Eq a, Eq b, Eq c) => Eq1 ((,,,) a b c) where
+    liftEq = liftEq2 (==)
+
+instance (Ord a, Ord b, Ord c) => Ord1 ((,,,) a b c) where
+    liftCompare = liftCompare2 compare
+
+instance (Read a, Read b, Read c) => Read1 ((,,,) a b c) where
+#  if MIN_VERSION_base(4,10,0)
+    liftReadPrec = liftReadPrec2 readPrec readListPrec
+
+    liftReadListPrec = liftReadListPrecDefault
+    liftReadList     = liftReadListDefault
+#  else
+    liftReadsPrec = liftReadsPrec2 readsPrec readList
+#  endif
+
+instance (Show a, Show b, Show c) => Show1 ((,,,) a b c) where
+    liftShowsPrec = liftShowsPrec2 showsPrec showList
+
+deriving instance Semigroup (f (g a)) => Semigroup (Compose f g a)
+deriving instance Monoid    (f (g a)) => Monoid    (Compose f g a)
+
+instance (Semigroup (f a), Semigroup (g a)) => Semigroup (Functor.Product f g a) where
+    Functor.Pair x1 y1 <> Functor.Pair x2 y2 = Functor.Pair (x1 <> x2) (y1 <> y2)
+
+instance (Monoid (f a), Monoid (g a)) => Monoid (Functor.Product f g a) where
+    mempty = Functor.Pair mempty mempty
+#  if !(MIN_VERSION_base(4,11,0))
+    Functor.Pair x1 y1 `mappend` Functor.Pair x2 y2 = Functor.Pair (x1 `mappend` x2) (y1 `mappend` y2)
+#  endif
 # endif
 #endif
 
