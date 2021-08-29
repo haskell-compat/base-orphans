@@ -1,3 +1,12 @@
+## Changes in 0.8.5 [????.??.??]
+ - Backport new instances from GHC 9.2/`base-4.16`
+   * `Eq1`, `Read1`, and `Show1` instances for `Complex`
+   * `Eq1` and `Ord1` instances for `Fixed`
+   * `Eq{1,2}`, `Ord{1,2}`, `Show{1,2}`, and `Read{1,2}` instances for `(,,)`
+      and `(,,,)`
+   * `Semigroup` and `Monoid` instances for `Data.Functor.Product` and
+     `Data.Functor.Compose`
+
 ## Changes in 0.8.4 [2020.12.09]
  - Backport the `Ord` instances for `TyCon` and `TypeRep` to be available on
    GHC 7.0.

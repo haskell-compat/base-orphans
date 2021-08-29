@@ -52,8 +52,11 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Data`, `MonadFix` and `MonadZip` instances for `Alt`, `Dual`, `First`, `Last`,
    `Product`, and `Sum`
  * `Data` and `IsList` instances for `Version` and `ZipList`
+ * `Eq{1,2}`, `Ord{1,2}`, `Show{1,2}`, and `Read{1,2}` instances for `(,,)` and `(,,,)`
  * `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
+ * `Eq1`, `Read1`, and `Show1` instances for `Complex`
+ * `Eq1` and `Ord1` instances for `Fixed`
  * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Foldable` and `Traversable` instances for `Alt` from `Data.Monoid`
@@ -76,6 +79,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Semigroup` instances for `IO`, `Event` and `Lifetime`
  * `Semigroup` instances for `V1`, `U1`, `Par1`, `Rec1`, `K1`, `M1`, `(:*:)`, and `(:.:)` from `GHC.Generics`.
    `Monoid` instances for the same types (except `V1`).
+ * `Semigroup` and `Monoid` instances for `Data.Functor.Product` and `Data.Functor.Compose`
  * `Show` instance for `Fingerprint`
  * `Storable` instance for `()`, `Complex`, and `Ratio`
  * `TestEquality` instance for `Compose`
@@ -96,6 +100,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-9.2.*`  / `base-4.16.*`
  * `ghc-9.0.*`  / `base-4.15.*`
  * `ghc-8.10.*` / `base-4.14.*`
  * `ghc-8.8.*`  / `base-4.13.*`
