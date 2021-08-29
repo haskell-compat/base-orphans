@@ -1,4 +1,4 @@
-## Changes in 0.8.5 [????.??.??]
+## Changes in 0.8.5 [2021.08.29]
  - Backport new instances from GHC 9.2/`base-4.16`
    * `Eq1`, `Read1`, and `Show1` instances for `Complex`
    * `Eq1` and `Ord1` instances for `Fixed`
