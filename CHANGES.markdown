@@ -1,3 +1,12 @@
+## Changes in next [????.??.??]
+ - Backport `Eq`, `Ord`, `Bounded`, `Enum`, and `Ix` instances for `Solo`,
+   introduced in GHC 9.2/`base-4.16`
+ - Remove the backported `Eq1` and `Ord1` instances for `Fixed` that were
+   introduced in `base-orphans-0.8.5`. While these briefly appeared in a
+   release candidate version of GHC 9.2.1, they were ultimately removed from
+   the final 9.2.1 release. This release of `base-orphans` synchronizes with
+   that change.
+
 ## Changes in 0.8.5 [2021.08.29]
  - Backport new instances from GHC 9.2/`base-4.16`
    * `Eq1`, `Read1`, and `Show1` instances for `Complex`

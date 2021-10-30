@@ -75,6 +75,10 @@ import qualified Data.Foldable as F (Foldable(..))
 import qualified Data.Traversable as T (Traversable(..))
 #endif
 
+#if MIN_VERSION_base(4,15,0) && !(MIN_VERSION_base(4,16,0))
+import           GHC.Tuple (Solo(..))
+#endif
+
 #if __GLASGOW_HASKELL__ < 710
 import           Control.Exception as Exception
 import           Control.Monad.ST.Lazy as Lazy
@@ -1663,12 +1667,6 @@ instance Show1 Complex where
       where
         complexPrec = 6
 
-instance Eq1 Fixed where
-    liftEq _eq (MkFixed x) (MkFixed y) = x == y
-
-instance Ord1 Fixed where
-    liftCompare _cmp (MkFixed x) (MkFixed y) = compare x y
-
 instance Eq a => Eq2 ((,,) a) where
     liftEq2 e1 e2 (u1, x1, y1) (v1, x2, y2) =
         u1 == v1 &&
@@ -1805,6 +1803,44 @@ instance (Monoid (f a), Monoid (g a)) => Monoid (Functor.Product f g a) where
 #  if !(MIN_VERSION_base(4,11,0))
     Functor.Pair x1 y1 `mappend` Functor.Pair x2 y2 = Functor.Pair (x1 `mappend` x2) (y1 `mappend` y2)
 #  endif
+# endif
+
+# if MIN_VERSION_base(4,15,0)
+instance Enum a => Enum (Solo a) where
+    succ (Solo a) = Solo (succ a)
+    pred (Solo a) = Solo (pred a)
+
+    toEnum x = Solo (toEnum x)
+
+    fromEnum (Solo x) = fromEnum x
+    enumFrom (Solo x) = [Solo a | a <- enumFrom x]
+    enumFromThen (Solo x) (Solo y) =
+      [Solo a | a <- enumFromThen x y]
+    enumFromTo (Solo x) (Solo y) =
+      [Solo a | a <- enumFromTo x y]
+    enumFromThenTo (Solo x) (Solo y) (Solo z) =
+      [Solo a | a <- enumFromThenTo x y z]
+
+deriving instance Eq a => Eq (Solo a)
+deriving instance Ord a => Ord (Solo a)
+deriving instance Bounded a => Bounded (Solo a)
+
+instance Ix a => Ix (Solo a) where -- as derived
+    {-# SPECIALISE instance Ix (Solo Int) #-}
+
+    {-# INLINE range #-}
+    range (Solo l, Solo u) =
+      [ Solo i | i <- range (l,u) ]
+
+    {-# INLINE unsafeIndex #-}
+    unsafeIndex (Solo l, Solo u) (Solo i) =
+      unsafeIndex (l,u) i
+
+    {-# INLINE inRange #-}
+    inRange (Solo l, Solo u) (Solo i) =
+      inRange (l, u) i
+
+    -- Default method for index
 # endif
 #endif
 

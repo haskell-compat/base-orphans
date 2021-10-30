@@ -55,8 +55,8 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Eq{1,2}`, `Ord{1,2}`, `Show{1,2}`, and `Read{1,2}` instances for `(,,)` and `(,,,)`
  * `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
+ * `Eq`, `Ord`, `Bounded`, `Enum`, and `Ix` instances for `Solo`
  * `Eq1`, `Read1`, and `Show1` instances for `Complex`
- * `Eq1` and `Ord1` instances for `Fixed`
  * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Foldable` and `Traversable` instances for `Alt` from `Data.Monoid`
