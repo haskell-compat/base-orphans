@@ -1,4 +1,4 @@
-## Changes in next [????.??.??]
+## Changes in 0.8.6 [2021.10.29]
  - Backport `Eq`, `Ord`, `Bounded`, `Enum`, and `Ix` instances for `Solo`,
    introduced in GHC 9.2/`base-4.16`
  - Remove the backported `Eq1` and `Ord1` instances for `Fixed` that were
