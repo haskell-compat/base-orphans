@@ -91,7 +91,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,16,0))
+#if !(MIN_VERSION_base(4,16,1))
 import           Data.Orphans.Prelude
 #endif
 
@@ -1844,6 +1844,122 @@ instance Ix a => Ix (Solo a) where -- as derived
       inRange (l, u) i
 
     -- Default method for index
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,16,1))
+# if MIN_VERSION_base(4,5,0)
+-- These are guarded on base-4.5.0 because that was the first version which
+-- exported their constructors, which is necessary to use
+-- GeneralizedNewtypeDeriving. See
+-- https://gitlab.haskell.org/ghc/ghc/-/issues/5529.
+deriving instance Ix CChar
+deriving instance Ix CSChar
+deriving instance Ix CUChar
+deriving instance Ix CShort
+deriving instance Ix CUShort
+deriving instance Ix CInt
+deriving instance Ix CUInt
+deriving instance Ix CLong
+deriving instance Ix CULong
+deriving instance Ix CLLong
+deriving instance Ix CULLong
+deriving instance Ix CPtrdiff
+deriving instance Ix CSize
+deriving instance Ix CWchar
+deriving instance Ix CSigAtomic
+deriving instance Ix CIntPtr
+deriving instance Ix CUIntPtr
+deriving instance Ix CIntMax
+deriving instance Ix CUIntMax
+# endif
+# if MIN_VERSION_base(4,10,0)
+deriving instance Ix CBool
+# endif
+
+# if MIN_VERSION_base(4,10,0)
+-- These are guarded on base-4.10.0 because that was the first version which
+-- exported their constructors, which is necessary to use
+-- GeneralizedNewtypeDeriving. See
+-- https://gitlab.haskell.org/ghc/ghc/-/issues/11983.
+deriving instance Ix WordPtr
+deriving instance Ix IntPtr
+# endif
+
+# if MIN_VERSION_base(4,5,0)
+-- These are guarded on base-4.5.0 because that was the first version which
+-- exported their constructors, which is necessary to use
+-- GeneralizedNewtypeDeriving. See
+-- https://gitlab.haskell.org/ghc/ghc/-/issues/5529.
+#  if defined(HTYPE_DEV_T)
+deriving instance Ix CDev
+# endif
+#  if defined(HTYPE_INO_T)
+deriving instance Ix CIno
+#  endif
+#  if defined(HTYPE_MODE_T)
+deriving instance Ix CMode
+#  endif
+#  if defined(HTYPE_OFF_T)
+deriving instance Ix COff
+#  endif
+#  if defined(HTYPE_PID_T)
+deriving instance Ix CPid
+#  endif
+#  if defined(HTYPE_SSIZE_T)
+deriving instance Ix CSsize
+#  endif
+#  if defined(HTYPE_GID_T)
+deriving instance Ix CGid
+#  endif
+#  if defined(HTYPE_NLINK_T)
+deriving instance Ix CNlink
+#  endif
+#  if defined(HTYPE_UID_T)
+deriving instance Ix CUid
+#  endif
+#  if defined(HTYPE_CC_T)
+deriving instance Ix CCc
+#  endif
+#  if defined(HTYPE_SPEED_T)
+deriving instance Ix CSpeed
+#  endif
+#  if defined(HTYPE_TCFLAG_T)
+deriving instance Ix CTcflag
+#  endif
+#  if defined(HTYPE_RLIM_T)
+deriving instance Ix CRLim
+#  endif
+deriving instance Ix Fd
+# endif
+#  if MIN_VERSION_base(4,10,0)
+#  if defined(HTYPE_BLKSIZE_T)
+deriving instance Ix CBlkSize
+#  endif
+#  if defined(HTYPE_BLKCNT_T)
+deriving instance Ix CBlkCnt
+#  endif
+#  if defined(HTYPE_CLOCKID_T)
+deriving instance Ix CClockId
+#  endif
+#  if defined(HTYPE_FSBLKCNT_T)
+deriving instance Ix CFsBlkCnt
+#  endif
+#  if defined(HTYPE_FSFILCNT_T)
+deriving instance Ix CFsFilCnt
+#  endif
+#  if defined(HTYPE_ID_T)
+deriving instance Ix CId
+#  endif
+#  if defined(HTYPE_KEY_T)
+deriving instance Ix CKey
+#  endif
+#  if defined(HTYPE_SOCKLEN_T)
+deriving instance Ix CSocklen
+#  endif
+#  if defined(HTYPE_NFDS_T)
+deriving instance Ix CNfds
+#  endif
 # endif
 #endif
 

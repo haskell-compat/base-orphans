@@ -67,6 +67,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Functor`, `Applicative`, `Monad`, `Alternative`, and `MonadPlus` instances
    for `Kleisli`
  * `Ix` instances for tuples of size 6 through 15
+ * `Ix` instances for integral types in `Foreign.C.Types`, `Foreign.Ptr`, and `System.Posix.Types`
  * `Monad` instance for `(,)`
  * `Monad` instance for `WrappedMonad`
  * `MonadFail`, `Monoid`, and `Semigroup` instances for strict `ST`
