@@ -18,7 +18,10 @@ spec = do
   describe "Data Version instance" $
     it "allows obtaining a Version constructor" $
       dataTypeName (dataTypeOf (Version [1,2,3] [])) `shouldBe`
-#if __GLASGOW_HASKELL__ >= 801
+-- Some old versions of GHC incorrectly return "Version" instead of
+-- "Data.Version.Version" due to
+-- https://gitlab.haskell.org/ghc/ghc/-/issues/20371.
+#if __GLASGOW_HASKELL__ >= 801 && __GLASGOW_HASKELL__ < 903
         "Version"
 #else
         "Data.Version.Version"
