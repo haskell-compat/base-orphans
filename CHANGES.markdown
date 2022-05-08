@@ -1,3 +1,7 @@
+## Changes in next [????.??.??]
+ - Backport a bugfix for the `Ord1 Down` instance from GHC 9.4/`base-4.17` such
+   that it now uses reverse sort order.
+
 ## Changes in 0.8.6 [2021.10.29]
  - Backport `Eq`, `Ord`, `Bounded`, `Enum`, and `Ix` instances for `Solo`,
    introduced in GHC 9.2/`base-4.16`
