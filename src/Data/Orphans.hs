@@ -1063,7 +1063,10 @@ instance MonadZip Down where
 instance Eq1 Down where
     liftEq eq (Down x) (Down y) = eq x y
 instance Ord1 Down where
-    liftCompare comp (Down x) (Down y) = comp x y
+    liftCompare comp (Down x) (Down y) = case comp x y of
+        LT -> GT
+        EQ -> EQ
+        GT -> LT
 instance Read1 Down where
     liftReadsPrec rp _ = readsData $
          readsUnaryWith rp "Down" Down
