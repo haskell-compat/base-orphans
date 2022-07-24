@@ -1,6 +1,6 @@
 ## Changes in next [????.??.??]
  - Backport new instances from GHC 9.2.2/`base-4.16.1.0`:
-   * `Ix` instances for various integral types in `Foreign.C.Types,
+   * `Ix` instances for various integral types in `Foreign.C.Types`,
      `Foreign.Ptr`, and `System.Posix.Types`. For a complete list of such types,
      see https://gitlab.haskell.org/ghc/ghc/-/merge_requests/7385.
  - Backport a bugfix for the `Ord1 Down` instance from GHC 9.4/`base-4.17` such
