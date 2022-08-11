@@ -7,7 +7,7 @@ cabal-version: 1.12
 -- hash: 72579eb12963b1336e2e979d497378f6dac77805e17a8e53f86b6b2984fcab08
 
 name:                base-orphans
-version:             0.8.6
+version:             0.8.7
 synopsis:            Backwards-compatible orphan instances for base
 description:         @base-orphans@ defines orphan instances that mimic instances available in
                      later versions of @base@ to a wider (older) range of compilers.

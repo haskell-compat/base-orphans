@@ -1,4 +1,4 @@
-## Changes in next [????.??.??]
+## Changes in 0.8.7 [2022.08.11]
  - Backport new instances from GHC 9.2.2/`base-4.16.1.0`:
    * `Ix` instances for various integral types in `Foreign.C.Types`,
      `Foreign.Ptr`, and `System.Posix.Types`. For a complete list of such types,
