@@ -11,6 +11,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 #if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -93,7 +94,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,16,1))
+#if !(MIN_VERSION_base(4,18,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -1187,12 +1188,14 @@ instance MonadPlus m => MonadPlus (Kleisli m a) where
   Kleisli f `mplus` Kleisli g = Kleisli $ \x -> f x `mplus` g x
   {-# INLINE mplus #-}
 
+-- | Swaps @'minBound'@ and @'maxBound'@ of the underlying type.
+instance Bounded a => Bounded (Down a) where
+    minBound = Down maxBound
+    maxBound = Down minBound
+
 deriving instance Bits       a => Bits       (Down a)
-deriving instance Bounded    a => Bounded    (Down a)
-deriving instance Enum       a => Enum       (Down a)
 deriving instance Floating   a => Floating   (Down a)
 deriving instance Fractional a => Fractional (Down a)
-deriving instance Integral   a => Integral   (Down a)
 deriving instance Ix         a => Ix         (Down a)
 deriving instance Real       a => Real       (Down a)
 deriving instance RealFrac   a => RealFrac   (Down a)
@@ -1962,6 +1965,44 @@ deriving instance Ix CSocklen
 #  if defined(HTYPE_NFDS_T)
 deriving instance Ix CNfds
 #  endif
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,18,0))
+instance Functor ((,,,,) a b c d) where
+    fmap f (a, b, c, d, e) = (a, b, c, d, f e)
+instance Functor ((,,,,,) a b c d e) where
+    fmap fun (a, b, c, d, e, f) = (a, b, c, d, e, fun f)
+instance Functor ((,,,,,,) a b c d e f) where
+    fmap fun (a, b, c, d, e, f, g) = (a, b, c, d, e, f, fun g)
+
+# if !(MIN_VERSION_base(4,14,0)) || MIN_VERSION_base(4,15,0)
+-- | Swaps @'succ'@ and @'pred'@ of the underlying type.
+instance (Enum a, Bounded a, Eq a) => Enum (Down a) where
+    succ = fmap pred
+    pred = fmap succ
+
+    -- Here we use the fact that 'comparing (complement @Int)' behaves
+    -- as an order-swapping `compare @Int`.
+    fromEnum (Down x) = complement $ fromEnum x
+    toEnum = Down . toEnum . complement
+
+    enumFrom (Down x)
+        | x == minBound
+        = [Down x] -- We can't rely on 'enumFromThen _ (pred @a minBound)` behaving nicely,
+                   -- since 'enumFromThen _' might be strict and 'pred minBound' might throw
+        | otherwise
+        = coerce $ enumFromThen x (pred x)
+    enumFromThen (Down x) (Down y) = coerce $ enumFromThen x y
+# endif
+
+# if MIN_VERSION_base(4,17,0)
+instance (Generic1 f, Eq (Rep1 f a)) => Eq (Generically1 f a) where
+   Generically1 x == Generically1 y = from1 x == from1 y
+   Generically1 x /= Generically1 y = from1 x /= from1 y
+
+instance (Generic1 f, Ord (Rep1 f a)) => Ord (Generically1 f a) where
+   Generically1 x `compare` Generically1 y = from1 x `compare` from1 y
 # endif
 #endif
 
