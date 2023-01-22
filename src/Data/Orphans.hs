@@ -20,12 +20,14 @@
 {-# LANGUAGE PolyKinds #-}
 #endif
 
-#if __GLASGOW_HASKELL__ >= 708 && __GLASGOW_HASKELL__ < 710
+#if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE DataKinds #-}
+# if __GLASGOW_HASKELL__ < 710
 {-# LANGUAGE NullaryTypeClasses #-}
+# endif
 #endif
 
-#if __GLASGOW_HASKELL__ >= 800
+#if __GLASGOW_HASKELL__ >= 800 && __GLASGOW_HASKELL__ < 806
 {-# LANGUAGE TypeInType #-}
 #endif
 
