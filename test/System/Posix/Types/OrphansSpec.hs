@@ -7,7 +7,7 @@ module System.Posix.Types.OrphansSpec (main, spec) where
 import           Test.Hspec
 
 #if defined(HTYPE_DEV_T)
-import           Control.Applicative (liftA2)
+import qualified Control.Applicative as App (liftA2)
 
 import           Data.Bits (Bits(..))
 import           Data.Orphans ()
@@ -82,7 +82,7 @@ pred1Common :: (b -> c -> d)
             -> (a -> b)
             -> (a -> c)
             -> a -> d
-pred1Common = liftA2
+pred1Common = App.liftA2
 
 pred1HDev :: (b -> c -> Bool)
           -> (CDev -> b)
