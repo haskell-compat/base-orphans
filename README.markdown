@@ -36,7 +36,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Alternative`, `Eq`, `Ord`, `Read`, `Show`, `Foldable`, and `Traversable` instances for `ZipList`
  * `Applicative` instance for `K1` from `GHC.Generics`
  * `Applicative`, `Bits`, `Bounded`, `Data`, `Enum`, `Eq1`, `FiniteBits`,
-   `Floating`, `Foldable`, `Fractional`, `Functor`, `Integral`, `Ix`, `Ord1`,
+   `Floating`, `Foldable`, `Fractional`, `Functor`, `Ix`, `Ord1`,
    `Monad`, `MonadFix`, `MonadZip`, `Monoid`, `Num`, `Read`, `Read1`, `Real`,
    `RealFloat`, `RealFrac`, `Semigroup`, `Show`, `Show1`, `Storable`, and
    `Traversable` instances for `Down`
@@ -56,12 +56,15 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Eq` and `Ord` instances for `Control.Exception.ErrorCall`
  * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
  * `Eq`, `Ord`, `Bounded`, `Enum`, and `Ix` instances for `Solo`
+ * `Eq` and `Ord` instances for `Generically1`
  * `Eq1`, `Read1`, and `Show1` instances for `Complex`
  * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Foldable` and `Traversable` instances for `Alt` from `Data.Monoid`
  * `Functor`, `Applicative`, and `Monad` instances for
    `(,,) a b` and `(,,,) a b c`
+ * `Functor` instances for `(,,,,) a b c d`, `(,,,,,) a b c d e`, and
+    `(,,,,,) a b c d e f`
  * `Functor` instance for `Handler`, `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
  * `Functor`, `Applicative`, `Monad`, `Alternative`, and `MonadPlus` instances
@@ -101,6 +104,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-9.6.*`  / `base-4.18.*`
  * `ghc-9.4.*`  / `base-4.17.*`
  * `ghc-9.2.*`  / `base-4.16.*`
  * `ghc-9.0.*`  / `base-4.15.*`

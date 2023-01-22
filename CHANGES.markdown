@@ -1,3 +1,22 @@
+## Changes in 0.9.0 [????.??.??]
+ - Backport new instances from GHC 9.6.1/`base-4.18.0.0`:
+   * `Functor` instances for the `(,,,,) a b c d`, `(,,,,,) a b c d e`, and
+     `(,,,,,) a b c d e f` tuple types.
+   * `Eq` and `Ord` instances for `Generically`
+ - Adapt to recent changes to `Down` instances:
+   * The `Bounded` instance for `Down` was changed in `base-4.15.0.0` to swap
+     the values of `minBound` and `maxBound` for the underlying type. This
+     change has now been propagated to `base-orphans`.
+   * The `Enum` instance for `Down` was removed in `base-4.15.0.0`, but a
+     different version of the instance was added back in `base-4.18.0.0`, where
+     `succ` and `pred` are swapped. We have changed the backported version of
+     this instance in `base-orphans` to match the behavior of the instance
+     added in `base-4.18.0.0`.
+   * The `Integral` instance for `Down` was removed from `base` entirely in
+     `base-4.15.0.0`. We have finally removed it from `base-orphans` in this
+     release, as it actively makes it more difficult to define the
+     aforementioned `Enum` instance.
+
 ## Changes in 0.8.7 [2022.08.11]
  - Backport new instances from GHC 9.2.2/`base-4.16.1.0`:
    * `Ix` instances for various integral types in `Foreign.C.Types`,

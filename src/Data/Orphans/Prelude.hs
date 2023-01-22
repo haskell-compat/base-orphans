@@ -21,7 +21,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,16,1)
+#if MIN_VERSION_base(4,18,0)
     () where
 #else
     ( module OrphansPrelude
@@ -157,6 +157,11 @@ import Data.Semigroup as OrphansPrelude (Semigroup(..))
 import Data.Typeable ( Typeable1, Typeable2, Typeable3, Typeable4
                      , Typeable5, Typeable6, Typeable7 )
 # endif
+
+# if MIN_VERSION_base(4,17,0) && !(MIN_VERSION_base(4,18,0))
+import GHC.Generics as OrphansPrelude ( Generic(..), Generic1(..)
+                                      , Generically(..), Generically1(..) )
+#endif
 
 # if MIN_VERSION_base(4,4,0)
 realPart, imagPart :: Complex a -> a

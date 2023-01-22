@@ -1,13 +1,13 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.0.
+-- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 72579eb12963b1336e2e979d497378f6dac77805e17a8e53f86b6b2984fcab08
+-- hash: 2515efda935531123f32b6f6c35f88578595053f291beecef3b862b9c8f71bf7
 
 name:                base-orphans
-version:             0.8.7
+version:             0.9.0
 synopsis:            Backwards-compatible orphan instances for base
 description:         @base-orphans@ defines orphan instances that mimic instances available in
                      later versions of @base@ to a wider (older) range of compilers.
