@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.35.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2515efda935531123f32b6f6c35f88578595053f291beecef3b862b9c8f71bf7
+-- hash: 7aa19d6f2d3a7409ee405d67a21b8edb902103b703a6f241f2b5e8e219f70a87
 
 name:                base-orphans
 version:             0.9.0
@@ -36,7 +36,7 @@ license:             MIT
 license-file:        LICENSE
 build-type:          Simple
 tested-with:
-    GHC == 7.0.4 , GHC == 7.2.2 , GHC == 7.4.2 , GHC == 7.6.3 , GHC == 7.8.4 , GHC == 7.10.3 , GHC == 8.0.2 , GHC == 8.2.2 , GHC == 8.4.4 , GHC == 8.6.5 , GHC == 8.8.4 , GHC == 8.10.7 , GHC == 9.0.2 , GHC == 9.2.2
+    GHC == 7.0.4 , GHC == 7.2.2 , GHC == 7.4.2 , GHC == 7.6.3 , GHC == 7.8.4 , GHC == 7.10.3 , GHC == 8.0.2 , GHC == 8.2.2 , GHC == 8.4.4 , GHC == 8.6.5 , GHC == 8.8.4 , GHC == 8.10.7 , GHC == 9.0.2 , GHC == 9.2.7 , GHC == 9.4.4 , GHC == 9.6.1
 extra-source-files:
     CHANGES.markdown
     README.markdown
