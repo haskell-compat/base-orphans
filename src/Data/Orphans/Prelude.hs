@@ -161,7 +161,7 @@ import Data.Typeable ( Typeable1, Typeable2, Typeable3, Typeable4
 # if MIN_VERSION_base(4,17,0) && !(MIN_VERSION_base(4,18,0))
 import GHC.Generics as OrphansPrelude ( Generic(..), Generic1(..)
                                       , Generically(..), Generically1(..) )
-#endif
+# endif
 
 # if MIN_VERSION_base(4,4,0)
 realPart, imagPart :: Complex a -> a
