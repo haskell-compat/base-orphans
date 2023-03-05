@@ -11,6 +11,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 #if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -1962,6 +1963,24 @@ deriving instance Ix CSocklen
 #  if defined(HTYPE_NFDS_T)
 deriving instance Ix CNfds
 #  endif
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,18,0))
+instance Functor ((,,,,) a b c d) where
+    fmap f (a, b, c, d, e) = (a, b, c, d, f e)
+instance Functor ((,,,,,) a b c d e) where
+    fmap fun (a, b, c, d, e, f) = (a, b, c, d, e, fun f)
+instance Functor ((,,,,,,) a b c d e f) where
+    fmap fun (a, b, c, d, e, f, g) = (a, b, c, d, e, f, fun g)
+
+# if MIN_VERSION_base(4,17,0)
+instance (Generic1 f, Eq (Rep1 f a)) => Eq (Generically1 f a) where
+   Generically1 x == Generically1 y = from1 x == from1 y
+   Generically1 x /= Generically1 y = from1 x /= from1 y
+
+instance (Generic1 f, Ord (Rep1 f a)) => Ord (Generically1 f a) where
+   Generically1 x `compare` Generically1 y = from1 x `compare` from1 y
 # endif
 #endif
 
