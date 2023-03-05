@@ -1,4 +1,4 @@
-## Changes in 0.8.8 [????.??.??]
+## Changes in 0.8.8 [2023.03.05]
  - Backport new instances from GHC 9.6.1/`base-4.18.0.0`:
    * `Functor` instances for the `(,,,,) a b c d`, `(,,,,,) a b c d e`, and
      `(,,,,,) a b c d e f` tuple types.
