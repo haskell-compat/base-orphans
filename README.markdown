@@ -64,7 +64,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Functor`, `Applicative`, and `Monad` instances for
    `(,,) a b` and `(,,,) a b c`
  * `Functor` instances for `(,,,,) a b c d`, `(,,,,,) a b c d e`, and
-    `(,,,,,) a b c d e f`
+   `(,,,,,) a b c d e f`
  * `Functor` instance for `Handler`, `ArgOrder`, `OptDescr`, and `ArgDescr`
  * `Functor`, `Applicative`, `Alternative`, and `MonadPlus` instances for `ArrowMonad`
  * `Functor`, `Applicative`, `Monad`, `Alternative`, and `MonadPlus` instances
