@@ -1,4 +1,4 @@
-## Changes in 0.9.0 [????.??.??]
+## Changes in 0.9.0 [2023.03.05]
  - Adapt to recent changes to `Down` instances:
    * The `Bounded` instance for `Down` was changed in `base-4.15.0.0` to swap
      the values of `minBound` and `maxBound` for the underlying type. This
