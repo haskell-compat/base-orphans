@@ -94,7 +94,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,16,0)) || (MIN_VERSION_base(4,17,0) && !(MIN_VERSION_base(4,18,0)))
+#if !(MIN_VERSION_base(4,16,1)) || (MIN_VERSION_base(4,17,0) && !(MIN_VERSION_base(4,18,0)))
 import           Data.Orphans.Prelude
 #endif
 

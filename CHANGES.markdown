@@ -1,3 +1,7 @@
+## Changes in 0.8.8.2 [????.??.??]
+ - Fix GHC 9.2.1 build error that was accidentally introduced in
+   `base-orphans-0.8.8`.
+
 ## Changes in 0.8.8.1 [2023.03.05]
  - Fix GHC 9.4 build error that was accidentally introduced in
    `base-orphans-0.8.8`.
