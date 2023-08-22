@@ -21,7 +21,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,18,0)
+#if MIN_VERSION_base(4,19,0)
     () where
 #else
     ( module OrphansPrelude

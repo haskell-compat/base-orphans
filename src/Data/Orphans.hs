@@ -94,7 +94,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,18,0))
+#if !(MIN_VERSION_base(4,19,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -2003,6 +2003,50 @@ instance (Generic1 f, Eq (Rep1 f a)) => Eq (Generically1 f a) where
 
 instance (Generic1 f, Ord (Rep1 f a)) => Ord (Generically1 f a) where
    Generically1 x `compare` Generically1 y = from1 x `compare` from1 y
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,19,0))
+# if MIN_VERSION_base(4,9,0)
+deriving instance Enum (f (g a)) => Enum (Compose f g a)
+deriving instance Bounded (f (g a)) => Bounded (Compose f g a)
+deriving instance Num (f (g a)) => Num (Compose f g a)
+
+-- In base-4.18.0.0, the Ord instance for Compose was simplified to:
+--
+--   instance Ord (f (g a)) => Ord (Compose f g a)
+--
+-- Before that, the Ord instance was defined as:
+--
+--   instance (Ord1 f, Ord1 g, Ord a) => Ord (Compose f g a)
+--
+-- This makes deriving Real and Integral instances slightly more complicated for
+-- these older versions of base, as there are no Real1 or Integral1 classes. We
+-- opt for making the instance contexts more complicated instead.
+#  if MIN_VERSION_base(4,18,0)
+deriving instance Real (f (g a)) => Real (Compose f g a)
+deriving instance Integral (f (g a)) => Integral (Compose f g a)
+#  else
+deriving instance (Real (f (g a)), Ord1 f, Ord1 g, Ord a) => Real (Compose f g a)
+deriving instance (Integral (f (g a)), Ord1 f, Ord1 g, Ord a) => Integral (Compose f g a)
+#  endif
+# endif
+
+# if MIN_VERSION_base(4,18,0)
+instance Eq (SChar c) where
+  _ == _ = True
+instance Ord (SChar c) where
+  compare _ _ = EQ
+
+instance Eq (SNat n) where
+  _ == _ = True
+instance Ord (SNat n) where
+  compare _ _ = EQ
+
+instance Eq (SSymbol s) where
+  _ == _ = True
+instance Ord (SSymbol s) where
+  compare _ _ = EQ
 # endif
 #endif
 

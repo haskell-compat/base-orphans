@@ -57,8 +57,10 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Eq`, `Ord`, `Read`, and `Show` instances for data types in `GHC.Generics`
  * `Eq`, `Ord`, `Bounded`, `Enum`, and `Ix` instances for `Solo`
  * `Eq` and `Ord` instances for `Generically1`
+ * `Eq` and `Ord` instances for `SChar`, `SNat`, and `SSymbol`
  * `Eq1`, `Read1`, and `Show1` instances for `Complex`
  * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
+ * `Enum`, `Bounded`, `Num`, `Real`, and `Integral` instances for `Compose`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Foldable` and `Traversable` instances for `Alt` from `Data.Monoid`
  * `Functor`, `Applicative`, and `Monad` instances for
@@ -104,6 +106,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-9.8.*`  / `base-4.19.*`
  * `ghc-9.6.*`  / `base-4.18.*`
  * `ghc-9.4.*`  / `base-4.17.*`
  * `ghc-9.2.*`  / `base-4.16.*`
