@@ -1,3 +1,8 @@
+## Changes in next [????.??.??]
+ - Backport new instances from GHC 9.8/`base-4.19`:
+   * `Eq` and `Ord` instances for `SChar`, `SNat`, and `SSymbol`
+   * `Enum`, `Bounded`, `Num`, `Real`, and `Integral` instances for `Compose`
+
 ## Changes in 0.9.0 [2023.03.05]
  - Adapt to recent changes to `Down` instances:
    * The `Bounded` instance for `Down` was changed in `base-4.15.0.0` to swap
