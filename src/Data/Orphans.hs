@@ -94,7 +94,7 @@ import           GHC.ConsoleHandler as Console
 # endif
 #endif
 
-#if !(MIN_VERSION_base(4,19,0))
+#if !(MIN_VERSION_base(4,20,0))
 import           Data.Orphans.Prelude
 #endif
 
@@ -2047,6 +2047,25 @@ instance Eq (SSymbol s) where
   _ == _ = True
 instance Ord (SSymbol s) where
   compare _ _ = EQ
+# endif
+#endif
+
+#if !(MIN_VERSION_base(4,20,0))
+# if MIN_VERSION_base(4,9,0)
+deriving instance Fractional (f (g a)) => Fractional (Compose f g a)
+deriving instance Floating (f (g a)) => Floating (Compose f g a)
+
+-- RealFrac and RealFloat both have Ord as a superclass. For the reasons stated
+-- above (near the Real/Integral instances for Compose), these
+-- RealFrace/RealFloat instances are slightly more complicated for older
+-- versions of base.
+#  if MIN_VERSION_base(4,18,0)
+deriving instance RealFrac (f (g a)) => RealFrac (Compose f g a)
+deriving instance RealFloat (f (g a)) => RealFloat (Compose f g a)
+#  else
+deriving instance (RealFrac (f (g a)), Ord1 f, Ord1 g, Ord a) => RealFrac (Compose f g a)
+deriving instance (RealFloat (f (g a)), Ord1 f, Ord1 g, Ord a) => RealFloat (Compose f g a)
+#  endif
 # endif
 #endif
 

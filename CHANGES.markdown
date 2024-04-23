@@ -1,3 +1,7 @@
+## Changes in next [????.??.??]
+ - Backport new instances from GHC 9.10/`base-4.20`:
+   * `Fractional`, `RealFrac`, `Floating`, and `RealFloat` instances for `Compose`
+
 ## Changes in 0.9.1 [2023.10.11]
  - Backport new instances from GHC 9.8/`base-4.19`:
    * `Eq` and `Ord` instances for `SChar`, `SNat`, and `SSymbol`
