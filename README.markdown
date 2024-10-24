@@ -118,12 +118,6 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `ghc-8.4.*`  / `base-4.11.*`
  * `ghc-8.2.*`  / `base-4.10.*`
  * `ghc-8.0.*`  / `base-4.9.*`
- * `ghc-7.10.*` / `base-4.8.*`
- * `ghc-7.8.*`  / `base-4.7.*`
- * `ghc-7.6.*`  / `base-4.6.*`
- * `ghc-7.4.*`  / `base-4.5.*`
- * `ghc-7.2.*`  / `base-4.4.*`
- * `ghc-7.0.*`  / `base-4.3.*`
 
 We also make an attempt to keep `base-orphans` building with GHC HEAD, but due
 to its volatility, it may not work at any given point in time. If it doesn't,

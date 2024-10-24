@@ -1,3 +1,6 @@
+## Changes in next [????.??.??]
+ - Drop support for pre-8.0 versions of GHC.
+
 ## Changes in 0.9.2 [2024.04.30]
  - Backport new instances from GHC 9.10/`base-4.20`:
    * `Fractional`, `RealFrac`, `Floating`, and `RealFloat` instances for `Compose`
