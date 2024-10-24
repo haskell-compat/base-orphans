@@ -1,7 +1,5 @@
 {-# LANGUAGE CPP #-}
-#if MIN_VERSION_base(4,7,0)
 {-# LANGUAGE OverloadedLists #-}
-#endif
 module Data.Version.OrphansSpec (main, spec) where
 
 import Test.Hspec
@@ -32,8 +30,6 @@ spec = do
         "Data.Version.Version"
 #endif
 
-#if MIN_VERSION_base(4,7,0)
   describe "IsList Version instance" $
     it "creates a Version from an Int list" $
       [1,2,3] `shouldBe` Version [1,2,3] []
-#endif
