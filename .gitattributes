@@ -1,0 +1,2 @@
+*.cabal linguist-generated=true
+/.github/workflows/haskell-ci.yml linguist-generated=true
