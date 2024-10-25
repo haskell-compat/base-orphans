@@ -1,4 +1,9 @@
 ## Changes in next [????.??.??]
+ - Backport new instances from GHC 9.12/`base-4.21`:
+   * `MonadFix` instance for `(,) a`
+   * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for basic `GHC.Generics`
+     representation types
+   * `Show` instance for `UAddr`
  - Drop support for pre-8.0 versions of GHC.
 
 ## Changes in 0.9.2 [2024.04.30]

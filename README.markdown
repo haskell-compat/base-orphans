@@ -60,6 +60,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Eq` and `Ord` instances for `SChar`, `SNat`, and `SSymbol`
  * `Eq1`, `Read1`, and `Show1` instances for `Complex`
  * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
+ * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for basic `GHC.Generics` representation types
  * `Enum`, `Bounded`, `Num`, `Real`, `Integral`, `Fractional`, `RealFrac`, `Floating`, and `RealFloat` instances for `Compose`
  * `Foldable` instance for `Either`, `(,)` and `Const`
  * `Foldable` and `Traversable` instances for `Alt` from `Data.Monoid`
@@ -76,6 +77,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
  * `Monad` instance for `(,)`
  * `Monad` instance for `WrappedMonad`
  * `MonadFail`, `Monoid`, and `Semigroup` instances for strict `ST`
+ * `MonadFix` instance for `(,) a`
  * `MonadFix` and `MonadZip` instances for `Complex`
  * `MonadZip` instance for `Maybe`
  * `Monoid`, `Eq`, `Ord`, `Read`, and `Show` instances for `Const`
@@ -87,6 +89,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
    `Monoid` instances for the same types (except `V1`).
  * `Semigroup` and `Monoid` instances for `Data.Functor.Product` and `Data.Functor.Compose`
  * `Show` instance for `Fingerprint`
+ * `Show` instance for `UAddr`
  * `Storable` instance for `()`, `Complex`, and `Ratio`
  * `TestEquality` instance for `Compose`
  * `Traversable` instance for `Either`, `(,)` and `Const`
@@ -106,6 +109,7 @@ To use `base-orphans`, simply `import Data.Orphans ()`.
 
 ## Supported versions of GHC/`base`
 
+ * `ghc-9.12.*` / `base-4.21.*`
  * `ghc-9.10.*` / `base-4.20.*`
  * `ghc-9.8.*`  / `base-4.19.*`
  * `ghc-9.6.*`  / `base-4.18.*`
