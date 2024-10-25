@@ -18,7 +18,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,20,0)
+#if MIN_VERSION_base(4,21,0)
     () where
 #else
     ( module OrphansPrelude
@@ -73,7 +73,7 @@ import GHC.Arr as OrphansPrelude (Ix(..))
 import GHC.Base as OrphansPrelude
 import GHC.Conc as OrphansPrelude
 import GHC.Desugar as OrphansPrelude (AnnotationWrapper)
-import GHC.Exts as OrphansPrelude (IsList(..))
+import GHC.Exts as OrphansPrelude (IsList(..), Ptr(..))
 import GHC.Fingerprint as OrphansPrelude
 import GHC.ForeignPtr as OrphansPrelude
 import GHC.GHCi as OrphansPrelude
@@ -84,8 +84,10 @@ import GHC.IO.Encoding as OrphansPrelude
 import GHC.IO.Encoding.Failure as OrphansPrelude
 import GHC.IO.Handle as OrphansPrelude
 import GHC.IO.Handle.Types as OrphansPrelude
+import GHC.Read as OrphansPrelude (expectP, paren)
 import GHC.Real as OrphansPrelude (Ratio(..), (%))
 import GHC.ST as OrphansPrelude
+import GHC.Show as OrphansPrelude (appPrec)
 import GHC.Stack as OrphansPrelude
 import GHC.Stats as OrphansPrelude
 import GHC.TypeLits as OrphansPrelude hiding (type (*))
