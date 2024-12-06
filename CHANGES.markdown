@@ -1,4 +1,4 @@
-## Changes in next [????.??.??]
+## Changes in 0.9.3 [2024.12.06]
  - Backport new instances from GHC 9.12/`base-4.21`:
    * `MonadFix` instance for `(,) a`
    * `Eq1`, `Ord1`, `Read1`, and `Show1` instances for basic `GHC.Generics`
