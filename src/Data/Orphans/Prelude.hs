@@ -18,7 +18,7 @@ This makes it much easier to be -Wall-compliant.
 Note that this module does not export any modules that could introduce name clashes.
 -}
 module Data.Orphans.Prelude
-#if MIN_VERSION_base(4,21,0)
+#if !defined(__GLASGOW_HASKELL__) || MIN_VERSION_base(4,21,0)
     () where
 #else
     ( module OrphansPrelude
