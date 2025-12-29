@@ -29,6 +29,7 @@ To use them, simply @import Data.Orphans ()@.
 -}
 module Data.Orphans () where
 
+#ifdef __GLASGOW_HASKELL__
 #if !(MIN_VERSION_base(4,11,0))
 import qualified Control.Monad.Fail as Fail (MonadFail(..))
 #endif
@@ -1518,4 +1519,5 @@ instance Show (UAddr p) where
   showsPrec d (UAddr x) =
     showParen (d > appPrec)
       (\y -> showString "UAddr {uAddr# = " (showsPrec 0 (Ptr x) (showChar '}' y)))
+#endif
 #endif
