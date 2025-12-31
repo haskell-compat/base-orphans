@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d095de62f8027612092f332d35ab43f3e33733971c2f44f53db2acf9d14b23b9
+-- hash: e1c7fa0d9c2b1d219e431f405f0dc85bf0d800bcd3412fdd0dcc18bc7ed641f7
 
 name:                base-orphans
 version:             0.9.3
@@ -56,7 +56,7 @@ library
   other-modules:
       Data.Orphans.Prelude
   default-language: Haskell2010
-  if impl(ghc == 9.0)
+  if impl(ghc >= 9.0) && !impl(ghc >= 9.2)
     build-depends:
         ghc-prim
 

@@ -55,7 +55,7 @@ dependencies:
 library:
   source-dirs: src
   when:
-    - condition: impl(ghc == 9.0)
+    - condition: impl(ghc >= 9.0) && !impl(ghc >= 9.2)
       dependencies: ghc-prim
   exposed-modules: Data.Orphans
   other-modules: Data.Orphans.Prelude
