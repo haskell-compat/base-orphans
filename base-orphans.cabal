@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.37.0.
+-- This file has been generated from package.yaml by hpack version 0.38.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6458bdc7f3a546586fe9f53d2b25831f0ffd55408907fb98a9b8a5cf1a0f64e3
+-- hash: d095de62f8027612092f332d35ab43f3e33733971c2f44f53db2acf9d14b23b9
 
 name:                base-orphans
 version:             0.9.3
@@ -51,12 +51,14 @@ library
   ghc-options: -Wall
   build-depends:
       base >=4.9 && <5
-    , ghc-prim
   exposed-modules:
       Data.Orphans
   other-modules:
       Data.Orphans.Prelude
   default-language: Haskell2010
+  if impl(ghc == 9.0)
+    build-depends:
+        ghc-prim
 
 test-suite spec
   type: exitcode-stdio-1.0
