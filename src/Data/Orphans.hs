@@ -30,45 +30,45 @@ To use them, simply @import Data.Orphans ()@.
 module Data.Orphans () where
 
 #ifdef __GLASGOW_HASKELL__
-#if !(MIN_VERSION_base(4,11,0))
+# if !(MIN_VERSION_base(4,11,0))
 import qualified Control.Monad.Fail as Fail (MonadFail(..))
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,16,0))
+# if !(MIN_VERSION_base(4,16,0))
 import qualified Data.Functor.Product as Functor
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,10,0))
+# if !(MIN_VERSION_base(4,10,0))
 import           Data.Data as Data
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,11,0))
+# if !(MIN_VERSION_base(4,11,0))
 import           Control.Monad.ST as Strict
-#endif
+# endif
 
-#if MIN_VERSION_base(4,11,0) && !(MIN_VERSION_base(4,21,0))
+# if MIN_VERSION_base(4,11,0) && !(MIN_VERSION_base(4,21,0))
 import           GHC.Read (readField)
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,12,0))
+# if !(MIN_VERSION_base(4,12,0))
 import qualified Data.Foldable as F (Foldable(..))
 import qualified Data.Traversable as T (Traversable(..))
-#endif
+# endif
 
-#if MIN_VERSION_base(4,15,0) && !(MIN_VERSION_base(4,16,0))
+# if MIN_VERSION_base(4,15,0) && !(MIN_VERSION_base(4,16,0))
 import           GHC.Tuple (Solo(..))
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,21,0))
+# if !(MIN_VERSION_base(4,21,0))
 import           Data.Orphans.Prelude
 import           GHC.Generics as Generics hiding (prec)
-#endif
+# endif
 
 #include "HsBaseConfig.h"
 
 -------------------------------------------------------------------------------
 
-#if !(MIN_VERSION_base(4,10,0))
+# if !(MIN_VERSION_base(4,10,0))
 deriving instance (Typeable k, Data a, Typeable (b :: k)) => Data (Const a b)
 
 instance Eq1 NonEmpty where
@@ -91,7 +91,7 @@ instance Show1 NonEmpty where
 instance Semigroup a => Semigroup (IO a) where
     (<>) = liftA2 (<>)
 
-# if !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS)
+#  if !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS)
 instance Semigroup Event where
     (<>) = mappend
     stimes = stimesMonoid
@@ -99,10 +99,10 @@ instance Semigroup Event where
 instance Semigroup Lifetime where
     (<>) = mappend
     stimes = stimesMonoid
+#  endif
 # endif
-#endif
 
-#if !(MIN_VERSION_base(4,11,0))
+# if !(MIN_VERSION_base(4,11,0))
 instance Alternative ZipList where
   empty = ZipList []
   ZipList xs <|> ZipList ys = ZipList (xs ++ drop (length xs) ys)
@@ -133,10 +133,10 @@ deriving instance Semigroup a => Semigroup (Down a)
 instance Semigroup a => Semigroup (Strict.ST s a) where
     (<>) = liftA2 (<>)
 
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
 deriving instance Data IntPtr
 deriving instance Data WordPtr
-# else
+#  else
 -- The constructors for IntPtr and WordPtr aren't exposed on older versions
 -- of base, so we're forced to hand-roll the Data instances here
 instance Data IntPtr where
@@ -174,10 +174,10 @@ tWordPtr = mkDataType "WordPtr" [cWordPtr]
 
 cWordPtr :: Constr
 cWordPtr = mkConstr tWordPtr "WordPtr" [] Data.Prefix
+#  endif
 # endif
-#endif
 
-#if !(MIN_VERSION_base(4,12,0))
+# if !(MIN_VERSION_base(4,12,0))
 instance MonadFix Down where
     mfix f = Down (fix (getDown . f))
       where getDown (Down x) = x
@@ -202,24 +202,24 @@ instance Show1 Down where
 instance Monoid c => Applicative (K1 i c) where
   pure _ = K1 mempty
   (<*>) = coerce (mappend :: c -> c -> c)
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftA2 = \_ -> coerce (mappend :: c -> c -> c)
-# endif
+#  endif
 
 instance Monoid (U1 p) where
   mempty = U1
-# if !(MIN_VERSION_base(4,11,0))
+#  if !(MIN_VERSION_base(4,11,0))
   _ `mappend` _ = U1
-# endif
+#  endif
 deriving instance Monoid p => Monoid (Par1 p)
 deriving instance Monoid (f p) => Monoid (Rec1 f p)
 deriving instance Monoid c => Monoid (K1 i c p)
 deriving instance Monoid (f p) => Monoid (M1 i c f p)
 instance (Monoid (f p), Monoid (g p)) => Monoid ((f :*: g) p) where
   mempty = mempty :*: mempty
-# if !(MIN_VERSION_base(4,11,0))
+#  if !(MIN_VERSION_base(4,11,0))
   (x1 :*: y1) `mappend` (x2 :*: y2) = (x1 `mappend` x2) :*: (y1 `mappend` y2)
-# endif
+#  endif
 deriving instance Monoid (f (g p)) => Monoid ((f :.: g) p)
 
 instance Semigroup (V1 p) where
@@ -236,9 +236,9 @@ deriving instance Semigroup (f (g p)) => Semigroup ((f :.: g) p)
 
 deriving instance Foldable f => Foldable (Alt f)
 deriving instance Traversable f => Traversable (Alt f)
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,14,0))
+# if !(MIN_VERSION_base(4,14,0))
 instance Functor ((,,) a b) where
     fmap f (a, b, c) = (a, b, f c)
 
@@ -325,9 +325,9 @@ instance (TestEquality f) => TestEquality (Compose f g) where
     case testEquality x y of -- :: Maybe (g x :~: g y)
       Just Refl -> Just Refl -- :: Maybe (x :~: y)
       Nothing   -> Nothing
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,15,0))
+# if !(MIN_VERSION_base(4,15,0))
 instance  (Ix a1, Ix a2, Ix a3, Ix a4, Ix a5, Ix a6) =>
       Ix (a1,a2,a3,a4,a5,a6)  where
     range ((l1,l2,l3,l4,l5,l6),(u1,u2,u3,u4,u5,u6)) =
@@ -738,14 +738,14 @@ instance MonadZip Complex where
 
 instance MonadFix Complex where
   mfix f = (let a :+ _ = f a in a) :+ (let _ :+ a = f a in a)
-#endif
+# endif
 
-#if !(MIN_VERSION_base(4,16,0))
+# if !(MIN_VERSION_base(4,16,0))
 instance Eq1 Complex where
     liftEq eq (x :+ y) (u :+ v) = eq x u && eq y v
 
 instance Read1 Complex where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
     liftReadPrec rp _  = parens $ prec complexPrec $ do
         x <- step rp
         expectP (Symbol ":+")
@@ -756,7 +756,7 @@ instance Read1 Complex where
 
     liftReadListPrec = liftReadListPrecDefault
     liftReadList     = liftReadListDefault
-# else
+#  else
     liftReadsPrec rdP _ p s = readParen (p > complexPrec) (\s' -> do
       (x, s'')     <- rdP (complexPrec+1) s'
       (":+", s''') <- lex s''
@@ -764,7 +764,7 @@ instance Read1 Complex where
       return (x :+ y, s'''')) s
       where
         complexPrec = 6
-# endif
+#  endif
 
 instance Show1 Complex where
     liftShowsPrec sp _ d (x :+ y) = showParen (d > complexPrec) $
@@ -783,7 +783,7 @@ instance Ord a => Ord2 ((,,) a) where
         comp1 x1 x2 `mappend` comp2 y1 y2
 
 instance Read a => Read2 ((,,) a) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
     liftReadPrec2 rp1 _ rp2 _ = parens $ paren $ do
         x1 <- readPrec
         expectP (Punc ",")
@@ -794,7 +794,7 @@ instance Read a => Read2 ((,,) a) where
 
     liftReadListPrec2 = liftReadListPrec2Default
     liftReadList2     = liftReadList2Default
-# else
+#  else
     liftReadsPrec2 rp1 _ rp2 _ _ = readParen False $ \ r ->
         [((e1,e2,e3), y) | ("(",s) <- lex r,
                            (e1,t)  <- readsPrec 0 s,
@@ -803,7 +803,7 @@ instance Read a => Read2 ((,,) a) where
                            (",",w) <- lex v,
                            (e3,x)  <- rp2 0 w,
                            (")",y) <- lex x]
-# endif
+#  endif
 
 instance Show a => Show2 ((,,) a) where
     liftShowsPrec2 sp1 _ sp2 _ _ (x1,y1,y2)
@@ -819,14 +819,14 @@ instance (Ord a, Ord b) => Ord1 ((,,) a b) where
     liftCompare = liftCompare2 compare
 
 instance (Read a, Read b) => Read1 ((,,) a b) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
     liftReadPrec = liftReadPrec2 readPrec readListPrec
 
     liftReadListPrec = liftReadListPrecDefault
     liftReadList     = liftReadListDefault
-# else
+#  else
     liftReadsPrec = liftReadsPrec2 readsPrec readList
-# endif
+#  endif
 
 instance (Show a, Show b) => Show1 ((,,) a b) where
     liftShowsPrec = liftShowsPrec2 showsPrec showList
@@ -844,7 +844,7 @@ instance (Ord a, Ord b) => Ord2 ((,,,) a b) where
         comp1 x1 x2 `mappend` comp2 y1 y2
 
 instance (Read a, Read b) => Read2 ((,,,) a b) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
     liftReadPrec2 rp1 _ rp2 _ = parens $ paren $ do
         x1 <- readPrec
         expectP (Punc ",")
@@ -857,7 +857,7 @@ instance (Read a, Read b) => Read2 ((,,,) a b) where
 
     liftReadListPrec2 = liftReadListPrec2Default
     liftReadList2     = liftReadList2Default
-# else
+#  else
     liftReadsPrec2 rp1 _ rp2 _ _ = readParen False $ \ r ->
         [((e1,e2,e3,e4), s9) | ("(",s1) <- lex r,
                                (e1,s2)  <- readsPrec 0 s1,
@@ -868,7 +868,7 @@ instance (Read a, Read b) => Read2 ((,,,) a b) where
                                (",",s7) <- lex s6,
                                (e4,s8)  <- rp2 0 s7,
                                (")",s9) <- lex s8]
-# endif
+#  endif
 
 instance (Show a, Show b) => Show2 ((,,,) a b) where
     liftShowsPrec2 sp1 _ sp2 _ _ (x1,x2,y1,y2)
@@ -885,14 +885,14 @@ instance (Ord a, Ord b, Ord c) => Ord1 ((,,,) a b c) where
     liftCompare = liftCompare2 compare
 
 instance (Read a, Read b, Read c) => Read1 ((,,,) a b c) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
     liftReadPrec = liftReadPrec2 readPrec readListPrec
 
     liftReadListPrec = liftReadListPrecDefault
     liftReadList     = liftReadListDefault
-# else
+#  else
     liftReadsPrec = liftReadsPrec2 readsPrec readList
-# endif
+#  endif
 
 instance (Show a, Show b, Show c) => Show1 ((,,,) a b c) where
     liftShowsPrec = liftShowsPrec2 showsPrec showList
@@ -905,11 +905,11 @@ instance (Semigroup (f a), Semigroup (g a)) => Semigroup (Functor.Product f g a)
 
 instance (Monoid (f a), Monoid (g a)) => Monoid (Functor.Product f g a) where
     mempty = Functor.Pair mempty mempty
-# if !(MIN_VERSION_base(4,11,0))
+#  if !(MIN_VERSION_base(4,11,0))
     Functor.Pair x1 y1 `mappend` Functor.Pair x2 y2 = Functor.Pair (x1 `mappend` x2) (y1 `mappend` y2)
-# endif
+#  endif
 
-# if MIN_VERSION_base(4,15,0)
+#  if MIN_VERSION_base(4,15,0)
 instance Enum a => Enum (Solo a) where
     succ (Solo a) = Solo (succ a)
     pred (Solo a) = Solo (pred a)
@@ -945,10 +945,10 @@ instance Ix a => Ix (Solo a) where -- as derived
       inRange (l, u) i
 
     -- Default method for index
+#  endif
 # endif
-#endif
 
-#if !(MIN_VERSION_base(4,16,1))
+# if !(MIN_VERSION_base(4,16,1))
 deriving instance Ix CChar
 deriving instance Ix CSChar
 deriving instance Ix CUChar
@@ -968,92 +968,92 @@ deriving instance Ix CIntPtr
 deriving instance Ix CUIntPtr
 deriving instance Ix CIntMax
 deriving instance Ix CUIntMax
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
 deriving instance Ix CBool
-# endif
+#  endif
 
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
 -- These are guarded on base-4.10.0 because that was the first version which
 -- exported their constructors, which is necessary to use
 -- GeneralizedNewtypeDeriving. See
 -- https://gitlab.haskell.org/ghc/ghc/-/issues/11983.
 deriving instance Ix WordPtr
 deriving instance Ix IntPtr
-# endif
+#  endif
 
-# if defined(HTYPE_DEV_T)
+#  if defined(HTYPE_DEV_T)
 deriving instance Ix CDev
-# endif
-# if defined(HTYPE_INO_T)
+#  endif
+#  if defined(HTYPE_INO_T)
 deriving instance Ix CIno
-# endif
-# if defined(HTYPE_MODE_T)
+#  endif
+#  if defined(HTYPE_MODE_T)
 deriving instance Ix CMode
-# endif
-# if defined(HTYPE_OFF_T)
+#  endif
+#  if defined(HTYPE_OFF_T)
 deriving instance Ix COff
-# endif
-# if defined(HTYPE_PID_T)
+#  endif
+#  if defined(HTYPE_PID_T)
 deriving instance Ix CPid
-# endif
-# if defined(HTYPE_SSIZE_T)
+#  endif
+#  if defined(HTYPE_SSIZE_T)
 deriving instance Ix CSsize
-# endif
-# if defined(HTYPE_GID_T)
+#  endif
+#  if defined(HTYPE_GID_T)
 deriving instance Ix CGid
-# endif
-# if defined(HTYPE_NLINK_T)
+#  endif
+#  if defined(HTYPE_NLINK_T)
 deriving instance Ix CNlink
-# endif
-# if defined(HTYPE_UID_T)
+#  endif
+#  if defined(HTYPE_UID_T)
 deriving instance Ix CUid
-# endif
-# if defined(HTYPE_CC_T)
+#  endif
+#  if defined(HTYPE_CC_T)
 deriving instance Ix CCc
-# endif
-# if defined(HTYPE_SPEED_T)
+#  endif
+#  if defined(HTYPE_SPEED_T)
 deriving instance Ix CSpeed
-# endif
-# if defined(HTYPE_TCFLAG_T)
+#  endif
+#  if defined(HTYPE_TCFLAG_T)
 deriving instance Ix CTcflag
-# endif
-# if defined(HTYPE_RLIM_T)
+#  endif
+#  if defined(HTYPE_RLIM_T)
 deriving instance Ix CRLim
-# endif
+#  endif
 deriving instance Ix Fd
 
-# if MIN_VERSION_base(4,10,0)
-#  if defined(HTYPE_BLKSIZE_T)
+#  if MIN_VERSION_base(4,10,0)
+#   if defined(HTYPE_BLKSIZE_T)
 deriving instance Ix CBlkSize
-#  endif
-#  if defined(HTYPE_BLKCNT_T)
+#   endif
+#   if defined(HTYPE_BLKCNT_T)
 deriving instance Ix CBlkCnt
-#  endif
-#  if defined(HTYPE_CLOCKID_T)
+#   endif
+#   if defined(HTYPE_CLOCKID_T)
 deriving instance Ix CClockId
-#  endif
-#  if defined(HTYPE_FSBLKCNT_T)
+#   endif
+#   if defined(HTYPE_FSBLKCNT_T)
 deriving instance Ix CFsBlkCnt
-#  endif
-#  if defined(HTYPE_FSFILCNT_T)
+#   endif
+#   if defined(HTYPE_FSFILCNT_T)
 deriving instance Ix CFsFilCnt
-#  endif
-#  if defined(HTYPE_ID_T)
+#   endif
+#   if defined(HTYPE_ID_T)
 deriving instance Ix CId
-#  endif
-#  if defined(HTYPE_KEY_T)
+#   endif
+#   if defined(HTYPE_KEY_T)
 deriving instance Ix CKey
-#  endif
-#  if defined(HTYPE_SOCKLEN_T)
+#   endif
+#   if defined(HTYPE_SOCKLEN_T)
 deriving instance Ix CSocklen
-#  endif
-#  if defined(HTYPE_NFDS_T)
+#   endif
+#   if defined(HTYPE_NFDS_T)
 deriving instance Ix CNfds
+#   endif
 #  endif
 # endif
-#endif
 
-#if !(MIN_VERSION_base(4,18,0))
+# if !(MIN_VERSION_base(4,18,0))
 instance Functor ((,,,,) a b c d) where
     fmap f (a, b, c, d, e) = (a, b, c, d, f e)
 instance Functor ((,,,,,) a b c d e) where
@@ -1061,7 +1061,7 @@ instance Functor ((,,,,,) a b c d e) where
 instance Functor ((,,,,,,) a b c d e f) where
     fmap fun (a, b, c, d, e, f, g) = (a, b, c, d, e, f, fun g)
 
-# if !(MIN_VERSION_base(4,14,0)) || MIN_VERSION_base(4,15,0)
+#  if !(MIN_VERSION_base(4,14,0)) || MIN_VERSION_base(4,15,0)
 -- | Swaps @'succ'@ and @'pred'@ of the underlying type.
 instance (Enum a, Bounded a, Eq a) => Enum (Down a) where
     succ = fmap pred
@@ -1079,19 +1079,19 @@ instance (Enum a, Bounded a, Eq a) => Enum (Down a) where
         | otherwise
         = coerce $ enumFromThen x (pred x)
     enumFromThen (Down x) (Down y) = coerce $ enumFromThen x y
-# endif
+#  endif
 
-# if MIN_VERSION_base(4,17,0)
+#  if MIN_VERSION_base(4,17,0)
 instance (Generic1 f, Eq (Rep1 f a)) => Eq (Generically1 f a) where
    Generically1 x == Generically1 y = from1 x == from1 y
    Generically1 x /= Generically1 y = from1 x /= from1 y
 
 instance (Generic1 f, Ord (Rep1 f a)) => Ord (Generically1 f a) where
    Generically1 x `compare` Generically1 y = from1 x `compare` from1 y
+#  endif
 # endif
-#endif
 
-#if !(MIN_VERSION_base(4,19,0))
+# if !(MIN_VERSION_base(4,19,0))
 deriving instance Enum (f (g a)) => Enum (Compose f g a)
 deriving instance Bounded (f (g a)) => Bounded (Compose f g a)
 deriving instance Num (f (g a)) => Num (Compose f g a)
@@ -1107,15 +1107,15 @@ deriving instance Num (f (g a)) => Num (Compose f g a)
 -- This makes deriving Real and Integral instances slightly more complicated for
 -- these older versions of base, as there are no Real1 or Integral1 classes. We
 -- opt for making the instance contexts more complicated instead.
-# if MIN_VERSION_base(4,18,0)
+#  if MIN_VERSION_base(4,18,0)
 deriving instance Real (f (g a)) => Real (Compose f g a)
 deriving instance Integral (f (g a)) => Integral (Compose f g a)
-# else
+#  else
 deriving instance (Real (f (g a)), Ord1 f, Ord1 g, Ord a) => Real (Compose f g a)
 deriving instance (Integral (f (g a)), Ord1 f, Ord1 g, Ord a) => Integral (Compose f g a)
-# endif
+#  endif
 
-# if MIN_VERSION_base(4,18,0)
+#  if MIN_VERSION_base(4,18,0)
 instance Eq (SChar c) where
   _ == _ = True
 instance Ord (SChar c) where
@@ -1130,10 +1130,10 @@ instance Eq (SSymbol s) where
   _ == _ = True
 instance Ord (SSymbol s) where
   compare _ _ = EQ
+#  endif
 # endif
-#endif
 
-#if !(MIN_VERSION_base(4,20,0))
+# if !(MIN_VERSION_base(4,20,0))
 deriving instance Fractional (f (g a)) => Fractional (Compose f g a)
 deriving instance Floating (f (g a)) => Floating (Compose f g a)
 
@@ -1141,16 +1141,16 @@ deriving instance Floating (f (g a)) => Floating (Compose f g a)
 -- above (near the Real/Integral instances for Compose), these
 -- RealFrace/RealFloat instances are slightly more complicated for older
 -- versions of base.
-# if MIN_VERSION_base(4,18,0)
+#  if MIN_VERSION_base(4,18,0)
 deriving instance RealFrac (f (g a)) => RealFrac (Compose f g a)
 deriving instance RealFloat (f (g a)) => RealFloat (Compose f g a)
-# else
+#  else
 deriving instance (RealFrac (f (g a)), Ord1 f, Ord1 g, Ord a) => RealFrac (Compose f g a)
 deriving instance (RealFloat (f (g a)), Ord1 f, Ord1 g, Ord a) => RealFloat (Compose f g a)
+#  endif
 # endif
-#endif
 
-#if !(MIN_VERSION_base(4,21,0))
+# if !(MIN_VERSION_base(4,21,0))
 instance Monoid a => MonadFix ((,) a) where
     -- See the CLC proposal thread for discussion and proofs of the laws: https://github.com/haskell/core-libraries-committee/issues/238
     mfix f = let a = f (snd a) in a
@@ -1167,10 +1167,10 @@ instance Show1 V1 where
 instance Read1 V1 where
   liftReadsPrec _ _ = readPrec_to_S pfail
 
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# endif
+#  endif
 
 instance Eq1 U1 where
   liftEq _ = \_ _ -> True
@@ -1182,17 +1182,17 @@ instance Show1 U1 where
   liftShowsPrec _ _ _ = \U1 -> showString "U1"
 
 instance Read1 U1 where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec _ _ =
     parens (expectP (Ident "U1") *> pure U1)
 
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# else
+#  else
   liftReadsPrec _ _ =
     readPrec_to_S $
     parens (expectP (Ident "U1") *> pure U1)
-# endif
+#  endif
 
 instance Eq1 Par1 where
   liftEq eq = \(Par1 a) (Par1 a') -> eq a a'
@@ -1205,17 +1205,17 @@ instance Show1 Par1 where
     showsSingleFieldRecordWith sp "Par1" "unPar1" d a
 
 instance Read1 Par1 where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec rp _ =
     readSingleFieldRecordWith rp "Par1" "unPar1" Par1
 
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# else
+#  else
   liftReadsPrec rp _ =
     readPrec_to_S $
     readSingleFieldRecordWith (readS_to_Prec rp) "Par1" "unPar1" Par1
-# endif
+#  endif
 
 instance Eq1 f => Eq1 (Rec1 f) where
   liftEq eq = \(Rec1 a) (Rec1 a') -> liftEq eq a a'
@@ -1228,13 +1228,13 @@ instance Show1 f => Show1 (Rec1 f) where
     showsSingleFieldRecordWith (liftShowsPrec sp sl) "Rec1" "unRec1" d a
 
 instance Read1 f => Read1 (Rec1 f) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec rp rl =
     readSingleFieldRecordWith (liftReadPrec rp rl) "Rec1" "unRec1" Rec1
 
   liftReadListPrec   = liftReadListPrecDefault
   liftReadList       = liftReadListDefault
-# else
+#  else
   liftReadsPrec rp rl =
     readPrec_to_S $
     readSingleFieldRecordWith
@@ -1242,7 +1242,7 @@ instance Read1 f => Read1 (Rec1 f) where
       "Rec1"
       "unRec1"
       Rec1
-# endif
+#  endif
 
 instance Eq c => Eq1 (K1 i c) where
   liftEq _ = \(K1 a) (K1 a') -> a == a'
@@ -1255,18 +1255,18 @@ instance Show c => Show1 (K1 i c) where
     showsSingleFieldRecordWith showsPrec "K1" "unK1" d a
 
 instance Read c => Read1 (K1 i c) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec _ _ = readData $
     readSingleFieldRecordWith readPrec "K1" "unK1" K1
 
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# else
+#  else
   liftReadsPrec _ _ =
     readPrec_to_S $
     readData $
     readSingleFieldRecordWith readPrec "K1" "unK1" K1
-# endif
+#  endif
 
 instance Eq1 f => Eq1 (M1 i c f) where
   liftEq eq = \(M1 a) (M1 a') -> liftEq eq a a'
@@ -1279,13 +1279,13 @@ instance Show1 f => Show1 (M1 i c f) where
     showsSingleFieldRecordWith (liftShowsPrec sp sl) "M1" "unM1" d a
 
 instance Read1 f => Read1 (M1 i c f) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec rp rl = readData $
     readSingleFieldRecordWith (liftReadPrec rp rl) "M1" "unM1" M1
 
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# else
+#  else
   liftReadsPrec rp rl =
     readPrec_to_S $
     readData $
@@ -1294,7 +1294,7 @@ instance Read1 f => Read1 (M1 i c f) where
       "M1"
       "unM1"
       M1
-# endif
+#  endif
 
 instance (Eq1 f, Eq1 g) => Eq1 (f :+: g) where
   liftEq eq = \lhs rhs -> case (lhs, rhs) of
@@ -1315,20 +1315,20 @@ instance (Show1 f, Show1 g) => Show1 (f :+: g) where
     R1 b -> showsUnaryWith (liftShowsPrec sp sl) "R1" d b
 
 instance (Read1 f, Read1 g) => Read1 (f :+: g) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec rp rl = readData $
     readUnaryWith (liftReadPrec rp rl) "L1" L1 <|>
     readUnaryWith (liftReadPrec rp rl) "R1" R1
 
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# else
+#  else
   liftReadsPrec rp rl =
     readPrec_to_S $
     readData $
     readUnaryWith (readS_to_Prec (liftReadsPrec rp rl)) "L1" L1 <|>
     readUnaryWith (readS_to_Prec (liftReadsPrec rp rl)) "R1" R1
-# endif
+#  endif
 
 instance (Eq1 f, Eq1 g) => Eq1 (f :*: g) where
   liftEq eq = \(f :*: g) (f' :*: g') -> liftEq eq f f' && liftEq eq g g'
@@ -1348,13 +1348,13 @@ instance (Show1 f, Show1 g) => Show1 (f :*: g) where
       b
 
 instance (Read1 f, Read1 g) => Read1 (f :*: g) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec rp rl = parens $ prec 6 $
     readBinaryOpWith (liftReadPrec rp rl) (liftReadPrec rp rl) ":*:" (:*:)
 
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# else
+#  else
   liftReadsPrec rp rl =
     readPrec_to_S $
     parens $ prec 6 $
@@ -1363,7 +1363,7 @@ instance (Read1 f, Read1 g) => Read1 (f :*: g) where
       (readS_to_Prec (liftReadsPrec rp rl))
       ":*:"
       (:*:)
-# endif
+#  endif
 
 instance (Eq1 f, Eq1 g) => Eq1 (f :.: g) where
   liftEq eq = \(Comp1 a) (Comp1 a') -> liftEq (liftEq eq) a a'
@@ -1381,7 +1381,7 @@ instance (Show1 f, Show1 g) => Show1 (f :.: g) where
       a
 
 instance (Read1 f, Read1 g) => Read1 (f :.: g) where
-# if MIN_VERSION_base(4,10,0)
+#  if MIN_VERSION_base(4,10,0)
   liftReadPrec rp rl = readData $
     readSingleFieldRecordWith
       (liftReadPrec (liftReadPrec rp rl) (liftReadListPrec rp rl))
@@ -1391,7 +1391,7 @@ instance (Read1 f, Read1 g) => Read1 (f :.: g) where
 
   liftReadListPrec  = liftReadListPrecDefault
   liftReadList      = liftReadListDefault
-# else
+#  else
   liftReadsPrec rp rl =
     readPrec_to_S $
     readData $
@@ -1400,7 +1400,7 @@ instance (Read1 f, Read1 g) => Read1 (f :.: g) where
       "Comp1"
       "unComp1"
       Comp1
-# endif
+#  endif
 
 instance Eq1 UAddr where
   -- NB cannot use eqAddr# because its module isn't safe
@@ -1476,7 +1476,7 @@ readBinaryOpWith
 readBinaryOpWith rp1 rp2 name cons =
   cons <$> step rp1 <* expectP (Symbol name) <*> step rp2
 
-# if !(MIN_VERSION_base(4,10,0))
+#  if !(MIN_VERSION_base(4,10,0))
 readData :: ReadPrec a -> ReadPrec a
 readData reader = parens $ prec 10 reader
 
@@ -1485,16 +1485,16 @@ readUnaryWith rp name cons = do
     expectP $ Ident name
     x <- step rp
     return $ cons x
-# endif
+#  endif
 
-# if !(MIN_VERSION_base(4,11,0))
+#  if !(MIN_VERSION_base(4,11,0))
 readField :: String -> ReadPrec a -> ReadPrec a
 readField fieldName readVal = do
         expectP (Ident fieldName)
         expectP (Punc "=")
         readVal
 {-# NOINLINE readField #-}
-# endif
+#  endif
 
 showsSingleFieldRecordWith :: (Int -> a -> ShowS) -> String -> String -> Int -> a -> ShowS
 showsSingleFieldRecordWith sp name field d x =
@@ -1519,5 +1519,5 @@ instance Show (UAddr p) where
   showsPrec d (UAddr x) =
     showParen (d > appPrec)
       (\y -> showString "UAddr {uAddr# = " (showsPrec 0 (Ptr x) (showChar '}' y)))
-#endif
+# endif
 #endif
