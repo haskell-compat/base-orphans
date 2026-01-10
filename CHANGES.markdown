@@ -1,3 +1,6 @@
+## Changes in next [????.??.??]
+ - Allow building with MicroHs.
+
 ## Changes in 0.9.3 [2024.12.06]
  - Backport new instances from GHC 9.12/`base-4.21`:
    * `MonadFix` instance for `(,) a`
