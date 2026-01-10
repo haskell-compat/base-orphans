@@ -1,4 +1,4 @@
-## Changes in next [????.??.??]
+## Changes in 0.9.4 [2026.01.10]
  - Allow building with MicroHs.
 
 ## Changes in 0.9.3 [2024.12.06]
