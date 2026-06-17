@@ -1,6 +1,5 @@
 # `base-orphans`
 [![Hackage](https://img.shields.io/hackage/v/base-orphans.svg)][Hackage: base-orphans]
-[![Hackage Dependencies](https://img.shields.io/hackage-deps/v/base-orphans.svg)](http://packdeps.haskellers.com/reverse/base-orphans)
 [![Haskell Programming Language](https://img.shields.io/badge/language-Haskell-blue.svg)][Haskell.org]
 [![BSD3 License](http://img.shields.io/badge/license-MIT-brightgreen.svg)][tl;dr Legal: MIT]
 [![Build Status](https://github.com/haskell-compat/base-orphans/workflows/Haskell-CI/badge.svg)](https://github.com/haskell-compat/base-orphans/actions?query=workflow%3AHaskell-CI)
